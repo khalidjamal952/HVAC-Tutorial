@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Live Classes - HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+
+  <body>
+    <!-- ADMIN NAVBAR -->
+    <nav class="admin-navbar">
+      <div class="admin-nav-container">
+        <a href="admin.html" class="admin-logo">
+          🔧 HVAC <span>Tutorial</span>
+        </a>
+
+        <div class="admin-nav-menu">
+          <a href="admin.html">Dashboard</a>
+          <a href="courses.html">Website</a>
+          <a href="#" id="adminLogoutBtn">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- LIVE CLASS MANAGEMENT -->
+    <main class="admin-dashboard-page">
+      <div class="container">
+        <!-- PAGE HEADER -->
+        <div class="admin-dashboard-header">
+          <div>
+            <span class="admin-page-label"> ADMIN PANEL </span>
+
+            <h1>Live Class Management</h1>
+
+            <p>Create and manage upcoming HVAC live classes.</p>
+          </div>
+
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">🔴</div>
+
+            <div>
+              <span>Total Live Classes</span>
+
+              <strong id="liveClassTotal"> 0 </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <section class="admin-management-section">
+          <div class="course-admin-toolbar">
+            <button
+              type="button"
+              class="admin-primary-btn"
+              id="addLiveClassBtn"
+            >
+              + Add Live Class
+            </button>
+
+            <input
+              type="text"
+              id="liveClassSearch"
+              class="course-admin-search"
+              placeholder="Search live classes..."
+            />
+          </div>
+
+          <!-- LIVE CLASS TABLE -->
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Course</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Instructor</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="liveClassesTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- EMPTY STATE -->
+          <div
+            id="liveClassesEmpty"
+            class="admin-empty-state"
+            style="display: none"
+          >
+            <div class="admin-empty-icon">🔴</div>
+
+            <h3>No Live Classes Found</h3>
+
+            <p>Add your first live class to get started.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ADD / EDIT LIVE CLASS MODAL -->
+    <div class="admin-modal" id="liveClassModal">
+      <div class="admin-modal-content">
+        <div class="admin-modal-header">
+          <h2 id="liveClassModalTitle">Add Live Class</h2>
+
+          <button
+            type="button"
+            class="admin-modal-close"
+            id="closeLiveClassModal"
+          >
+            ×
+          </button>
+        </div>
+
+        <form id="liveClassForm">
+          <div class="admin-form-grid">
+            <!-- TITLE -->
+            <div class="admin-form-group">
+              <label for="liveClassTitle"> Class Title </label>
+
+              <input
+                type="text"
+                id="liveClassTitle"
+                placeholder="e.g. HVAC Troubleshooting Live Session"
+                required
+              />
+            </div>
+
+            <!-- COURSE -->
+            <div class="admin-form-group">
+              <label for="liveClassCourse"> Course </label>
+
+              <select id="liveClassCourse" required>
+                <option value="">Select Course</option>
+              </select>
+            </div>
+
+            <!-- DATE -->
+            <div class="admin-form-group">
+              <label for="liveClassDate"> Date </label>
+
+              <input type="date" id="liveClassDate" required />
+            </div>
+
+            <!-- TIME -->
+            <div class="admin-form-group">
+              <label for="liveClassTime"> Time </label>
+
+              <input type="time" id="liveClassTime" required />
+            </div>
+
+            <!-- INSTRUCTOR -->
+            <div class="admin-form-group">
+              <label for="liveClassInstructor"> Instructor </label>
+
+              <input
+                type="text"
+                id="liveClassInstructor"
+                placeholder="Enter instructor name"
+                required
+              />
+            </div>
+
+            <!-- MEETING LINK -->
+            <div class="admin-form-group">
+              <label for="liveClassLink"> Meeting Link </label>
+
+              <input
+                type="url"
+                id="liveClassLink"
+                placeholder="https://meet.google.com/..."
+                required
+              />
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="admin-form-group">
+              <label for="liveClassDescription"> Description </label>
+
+              <textarea
+                id="liveClassDescription"
+                rows="4"
+                placeholder="Enter live class details..."
+              ></textarea>
+            </div>
+          </div>
+
+          <!-- ACTIONS -->
+          <div class="admin-modal-actions">
+            <button
+              type="button"
+              class="admin-secondary-btn"
+              id="cancelLiveClassBtn"
+            >
+              Cancel
+            </button>
+
+            <button type="submit" class="admin-primary-btn">
+              Save Live Class
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer admin-footer">
+      <div class="footer-container container">
+        <div class="footer-brand">
+          <h3>HVAC <span>Tutorial</span></h3>
+
+          <p>
+            Admin panel for managing the HVAC Tutorial learning platform,
+            courses, students and live classes.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Admin</h4>
+
+          <a href="admin.html"> Dashboard </a>
+
+          <a href="admin-courses.html"> Courses </a>
+
+          <a href="admin-students.html"> Students </a>
+
+          <a href="admin-orders.html"> Orders </a>
+        </div>
+
+        <div class="footer-links">
+          <h4>Platform</h4>
+
+          <a href="courses.html"> View Website </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="certificate.html"> Certificates </a>
+
+          <a href="#" id="adminFooterLogout"> Logout </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          ©
+          <span id="currentYear"></span>
+          HVAC Tutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/admin.js"></script>
+  </body>
+</html>

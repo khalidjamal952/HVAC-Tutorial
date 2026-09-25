@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Live Classes - HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="../css/live-classes.css" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="container nav-container">
+        <a href="../index.html" class="logo"> 🔧 HVAC Tutorial </a>
+
+        <button class="menu-toggle" id="menuToggle">☰</button>
+
+        <div class="nav-menu">
+          <a href="../index.html">Home</a>
+
+          <a href="courses.html">Courses</a>
+
+          <a href="live-classes.html" class="active"> Live Classes </a>
+
+          <a href="cart.html" class="cart-link">
+            🛒 Cart
+            <span class="cart-count">0</span>
+          </a>
+
+          <a href="login.html">Login</a>
+
+          <a href="register.html" class="nav-btn"> Get Started </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- PAGE HERO -->
+    <section class="live-classes-hero">
+      <div class="container">
+        <span class="section-label"> LIVE LEARNING </span>
+
+        <h1>HVAC Live Classes</h1>
+
+        <p>
+          Join live HVAC classes, learn from instructors and improve your
+          practical knowledge.
+        </p>
+      </div>
+    </section>
+
+    <!-- LIVE CLASSES CONTENT -->
+    <main class="container live-classes-page">
+      <!-- LIVE NOW -->
+      <section class="live-class-section">
+        <div class="section-heading">
+          <div>
+            <span class="section-label"> LIVE NOW </span>
+
+            <h2>Live Classes</h2>
+          </div>
+        </div>
+
+        <div id="liveNowContainer" class="live-class-grid">
+          <!-- JavaScript will load live classes here -->
+        </div>
+
+        <div id="liveNowEmpty" class="live-empty">
+          <div class="empty-icon">🔴</div>
+
+          <h3>No Live Class Right Now</h3>
+
+          <p>There is no live HVAC class happening at the moment.</p>
+        </div>
+      </section>
+
+      <!-- UPCOMING CLASSES -->
+      <section class="live-class-section">
+        <div class="section-heading">
+          <div>
+            <span class="section-label"> UPCOMING </span>
+
+            <h2>Upcoming Live Classes</h2>
+          </div>
+        </div>
+
+        <div id="upcomingClassesContainer" class="live-class-grid">
+          <!-- JavaScript will load upcoming classes here -->
+        </div>
+
+        <div id="upcomingClassesEmpty" class="live-empty">
+          <div class="empty-icon">📅</div>
+
+          <h3>No Upcoming Classes</h3>
+
+          <p>New live classes will appear here when scheduled.</p>
+        </div>
+      </section>
+
+      <!-- COMPLETED CLASSES -->
+      <section class="live-class-section">
+        <div class="section-heading">
+          <div>
+            <span class="section-label"> COMPLETED </span>
+
+            <h2>Completed Classes</h2>
+          </div>
+        </div>
+
+        <div id="completedClassesContainer" class="live-class-grid">
+          <!-- JavaScript will load completed classes here -->
+        </div>
+
+        <div id="completedClassesEmpty" class="live-empty">
+          <div class="empty-icon">✅</div>
+
+          <h3>No Completed Classes</h3>
+
+          <p>Completed live classes will appear here.</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container footer-container">
+        <div class="footer-brand">
+          <h3>🔧 HVAC <span>Tutorial</span></h3>
+
+          <p>
+            Learn HVAC systems, installation, servicing, troubleshooting and
+            practical skills through structured courses and live classes.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+
+          <a href="../index.html"> Home </a>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="cart.html"> Cart </a>
+        </div>
+
+        <div class="footer-links">
+          <h4>Account</h4>
+
+          <a href="login.html"> Login </a>
+
+          <a href="register.html"> Register </a>
+
+          <a href="dashboard.html"> Dashboard </a>
+
+          <a href="certificate.html"> Certificates </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          © <span id="currentYear"></span>
+          HVAC Tutorial. All Rights Reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script src="../js/main.js"></script>
+    <script src="../js/live-classes.js"></script>
+  </body>
+</html>

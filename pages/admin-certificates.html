@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Certificate Management - HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+
+  <body>
+    <!-- ADMIN NAVBAR -->
+    <nav class="admin-navbar">
+      <div class="admin-nav-container">
+        <a href="admin.html" class="admin-logo">
+          🔧 HVAC <span>Tutorial</span>
+        </a>
+
+        <div class="admin-nav-menu">
+          <a href="admin.html">Dashboard</a>
+          <a href="courses.html">Website</a>
+          <a href="#" id="adminLogoutBtn">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- CERTIFICATE MANAGEMENT -->
+    <main class="admin-dashboard-page">
+      <div class="container">
+        <!-- PAGE HEADER -->
+        <div class="admin-dashboard-header">
+          <div>
+            <span class="admin-page-label"> ADMIN PANEL </span>
+
+            <h1>Certificate Management</h1>
+
+            <p>View and manage certificates issued to students.</p>
+          </div>
+
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">🏆</div>
+
+            <div>
+              <span>Total Certificates</span>
+
+              <strong id="certificateTotal"> 0 </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- CERTIFICATE MANAGEMENT -->
+        <section class="admin-management-section">
+          <!-- SEARCH -->
+          <div class="certificate-admin-toolbar">
+            <input
+              type="text"
+              id="certificateSearch"
+              placeholder="Search by student, course or certificate ID..."
+            />
+          </div>
+
+          <!-- TABLE -->
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Certificate ID</th>
+                  <th>Student</th>
+                  <th>Course</th>
+                  <th>Issue Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="certificatesTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- EMPTY STATE -->
+          <div
+            id="certificatesEmpty"
+            class="admin-empty-state"
+            style="display: none"
+          >
+            <div class="admin-empty-icon">🏆</div>
+
+            <h3>No Certificates Found</h3>
+
+            <p>
+              Certificates will appear here after students complete their
+              courses.
+            </p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer admin-footer">
+      <div class="footer-container container">
+        <div class="footer-brand">
+          <h3>HVAC <span>Tutorial</span></h3>
+
+          <p>
+            Admin panel for managing the HVAC Tutorial learning platform,
+            certificates and students.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Admin</h4>
+
+          <a href="admin.html"> Dashboard </a>
+
+          <a href="admin-courses.html"> Courses </a>
+
+          <a href="admin-students.html"> Students </a>
+
+          <a href="admin-orders.html"> Orders </a>
+        </div>
+
+        <div class="footer-links">
+          <h4>Platform</h4>
+
+          <a href="courses.html"> View Website </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="verify-certificate.html"> Verify Certificate </a>
+
+          <a href="#" id="adminFooterLogout"> Logout </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          ©
+          <span id="currentYear"></span>
+          HVAC Tutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script src="../js/main.js"></script>
+    <script src="../js/admin.js"></script>
+  </body>
+</html>

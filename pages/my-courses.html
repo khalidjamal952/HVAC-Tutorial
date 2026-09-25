@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>My Courses | HVAC Tutorial</title>
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+
+    <!-- My Courses CSS -->
+    <link rel="stylesheet" href="../css/my-courses.css" />
+  </head>
+
+  <body>
+    <!-- =========================================
+         NAVBAR
+    ========================================== -->
+
+    <header class="navbar">
+      <div class="container nav-container">
+        <!-- Logo -->
+
+        <a href="../index.html" class="logo"> HVAC<span>Tutorial</span> </a>
+
+        <!-- Mobile Menu Button -->
+
+        <button class="menu-toggle" id="menuToggle" type="button">☰</button>
+
+        <!-- Navigation -->
+
+        <nav class="nav-menu">
+          <a href="../index.html"> Home </a>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="cart.html" class="cart-link">
+            🛒 Cart
+            <span class="cart-count">0</span>
+          </a>
+
+          <a href="dashboard.html"> Dashboard </a>
+
+          <a href="#" id="logoutBtn" class="logout-link"> Logout </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- =========================================
+         MY COURSES PAGE
+    ========================================== -->
+
+    <main class="my-courses-page">
+      <div class="container">
+        <!-- Page Header -->
+
+        <section class="my-courses-header">
+          <span class="my-courses-label"> MY LEARNING </span>
+
+          <h1>My Courses</h1>
+
+          <p>
+            Continue learning and track your progress across your enrolled HVAC
+            courses.
+          </p>
+        </section>
+
+        <!-- =========================================
+                 COURSE GRID
+            ========================================== -->
+
+        <section class="my-courses-grid" id="myCoursesGrid">
+            
+        </section>
+
+        <!-- =========================================
+                 EMPTY STATE
+            ========================================== -->
+
+        <section class="my-courses-empty" id="myCoursesEmpty">
+          <div class="my-courses-empty-icon">📚</div>
+
+          <h2>No Courses Yet</h2>
+
+          <p>
+            You haven't enrolled in any HVAC courses yet. Explore our courses
+            and start your learning journey.
+          </p>
+
+          <a href="courses.html" class="browse-courses-btn"> Browse Courses </a>
+        </section>
+      </div>
+    </main>
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer class="footer">
+      <div class="container footer-container">
+        <!-- Brand -->
+
+        <div class="footer-brand">
+          <h3>HVAC<span>Tutorial</span></h3>
+
+          <p>
+            Learn HVAC skills with structured courses, practical lectures and
+            professional learning resources.
+          </p>
+        </div>
+
+        <!-- Student Links -->
+
+        <div class="footer-links">
+          <h4>Student</h4>
+
+          <a href="dashboard.html"> Dashboard </a>
+
+          <a href="my-courses.html"> My Courses </a>
+
+          <a href="certificates.html"> Certificates </a>
+
+          <a href="profile.html"> Profile </a>
+        </div>
+
+        <!-- Support Links -->
+
+        <div class="footer-links">
+          <h4>Support</h4>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="cart.html"> Cart </a>
+        </div>
+      </div>
+
+      <!-- Footer Bottom -->
+
+      <div class="footer-bottom">
+        <p>
+          © <span id="currentYear"></span>
+          HVAC Tutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================== -->
+
+    <script src="../js/main.js"></script>
+<script src="../js/authGuard.js"></script>
+    <!-- Future functionality -->
+    <script src="../js/my-courses.js"></script>
+  </body>
+</html>

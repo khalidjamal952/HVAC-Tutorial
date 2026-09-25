@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>HVAC Courses | HVAC Tutorial</title>
+
+    <meta
+      name="description"
+      content="Explore HVAC Tutorial courses covering air conditioning, refrigeration, HVAC electrical systems, installation, servicing and troubleshooting."
+    />
+
+    <link rel="stylesheet" href="../css/style.css" />
+
+    <link rel="stylesheet" href="../css/responsive.css" />
+
+    <link rel="stylesheet" href="../css/courses.css" />
+  </head>
+
+  <body>
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="header">
+      <div class="container navbar">
+        <a href="../index.html" class="logo"> 🔧 HVAC Tutorial </a>
+
+        <nav class="nav-menu">
+          <a href="../index.html"> Home </a>
+
+          <a href="courses.html" class="active"> Courses </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+          <a href="cart.html" class="cart-link"> 🛒 Cart 
+              <span class="cart-count">0</span>
+          </a>
+
+          <a href="login.html"> Login </a>
+
+          <a href="register.html" class="nav-btn"> Get Started </a>
+        </nav>
+
+        <button class="menu-toggle" id="menuToggle" type="button">☰</button>
+      </div>
+    </header>
+
+    <!-- ================= PAGE HERO ================= -->
+
+    <section class="courses-hero">
+      <div class="container">
+        <div class="courses-hero-content">
+          <span class="courses-badge"> 📚 HVAC LEARNING </span>
+
+          <h1>Explore HVAC Courses</h1>
+
+          <p>
+            Learn air conditioning, refrigeration, electrical systems,
+            installation, servicing and troubleshooting with practical
+            HVAC-focused courses.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= COURSES ================= -->
+
+    <main class="courses-page">
+      <div class="container">
+        <!-- SEARCH + FILTER -->
+
+        <div class="courses-toolbar">
+          <div class="course-search">
+            <input
+              type="text"
+              id="courseSearch"
+              placeholder="Search HVAC courses..."
+            />
+
+            <button type="button" id="searchBtn">🔎 Search</button>
+          </div>
+
+          <div class="course-filter">
+            <button type="button" class="filter-btn active" data-category="all">
+              All Courses
+            </button>
+
+            <button type="button" class="filter-btn" data-category="ac">
+              Air Conditioning
+            </button>
+
+            <button
+              type="button"
+              class="filter-btn"
+              data-category="refrigeration"
+            >
+              Refrigeration
+            </button>
+
+            <button type="button" class="filter-btn" data-category="electrical">
+              Electrical
+            </button>
+
+            <button type="button" class="filter-btn" data-category="service">
+              Installation & Service
+            </button>
+          </div>
+        </div>
+
+        <!-- COURSE GRID -->
+
+        <section class="course-grid" id="courseGrid">
+          <!-- COURSE 1 -->
+
+          <article
+            class="course-card"
+            data-category="ac"
+            data-title="HVAC Fundamentals"
+          >
+            <div class="course-image">
+              <div class="course-image-icon">❄️</div>
+
+              <span class="course-category"> Air Conditioning </span>
+            </div>
+
+            <div class="course-content">
+              <h2>HVAC Fundamentals</h2>
+
+              <p>
+                Learn the fundamentals of HVAC systems, components, cooling
+                principles and basic operation.
+              </p>
+
+              <div class="course-meta">
+                <span> ⭐ 4.8 </span>
+
+                <span> 👨‍🎓 125 Students </span>
+              </div>
+
+              <div class="course-info">
+                <span> 📚 25 Lessons </span>
+
+                <span> ⏱️ 6 Hours </span>
+              </div>
+
+              <div class="course-footer">
+                <div class="course-price">
+                  <strong> ₹499 </strong>
+
+                  <del> ₹999 </del>
+                </div>
+
+                <a
+                  href="course-details.html?id=hvac-fundamentals"
+                  class="course-btn"
+                >
+                  View Course
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- COURSE 2 -->
+
+          <article
+            class="course-card"
+            data-category="ac"
+            data-title="Air Conditioning Basics"
+          >
+            <div class="course-image">
+              <div class="course-image-icon">🧊</div>
+
+              <span class="course-category"> Air Conditioning </span>
+            </div>
+
+            <div class="course-content">
+              <h2>Air Conditioning Basics</h2>
+
+              <p>
+                Understand AC components, refrigeration cycle, cooling process
+                and basic AC operation.
+              </p>
+
+              <div class="course-meta">
+                <span> ⭐ 4.7 </span>
+
+                <span> 👨‍🎓 98 Students </span>
+              </div>
+
+              <div class="course-info">
+                <span> 📚 20 Lessons </span>
+
+                <span> ⏱️ 5 Hours </span>
+              </div>
+
+              <div class="course-footer">
+                <div class="course-price">
+                  <strong> ₹599 </strong>
+
+                  <del> ₹1,199 </del>
+                </div>
+
+                <a
+                  href="course-details.html?id=air-conditioning"
+                  class="course-btn"
+                >
+                  View Course
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- COURSE 3 -->
+
+          <article
+            class="course-card"
+            data-category="refrigeration"
+            data-title="Refrigeration Fundamentals"
+          >
+            <div class="course-image">
+              <div class="course-image-icon">🧊</div>
+
+              <span class="course-category"> Refrigeration </span>
+            </div>
+
+            <div class="course-content">
+              <h2>Refrigeration Fundamentals</h2>
+
+              <p>
+                Learn refrigeration cycles, compressors, condensers, evaporators
+                and refrigerants.
+              </p>
+
+              <div class="course-meta">
+                <span> ⭐ 4.9 </span>
+
+                <span> 👨‍🎓 143 Students </span>
+              </div>
+
+              <div class="course-info">
+                <span> 📚 30 Lessons </span>
+
+                <span> ⏱️ 8 Hours </span>
+              </div>
+
+              <div class="course-footer">
+                <div class="course-price">
+                  <strong> ₹699 </strong>
+
+                  <del> ₹1,499 </del>
+                </div>
+
+                <a
+                  href="course-details.html?id=refrigeration"
+                  class="course-btn"
+                >
+                  View Course
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- COURSE 4 -->
+
+          <article
+            class="course-card"
+            data-category="electrical"
+            data-title="HVAC Electrical & Controls"
+          >
+            <div class="course-image">
+              <div class="course-image-icon">⚡</div>
+
+              <span class="course-category"> Electrical </span>
+            </div>
+
+            <div class="course-content">
+              <h2>HVAC Electrical & Controls</h2>
+
+              <p>
+                Understand HVAC wiring, electrical components, controls and
+                basic troubleshooting.
+              </p>
+
+              <div class="course-meta">
+                <span> ⭐ 4.8 </span>
+
+                <span> 👨‍🎓 87 Students </span>
+              </div>
+
+              <div class="course-info">
+                <span> 📚 22 Lessons </span>
+
+                <span> ⏱️ 6 Hours </span>
+              </div>
+
+              <div class="course-footer">
+                <div class="course-price">
+                  <strong> ₹799 </strong>
+
+                  <del> ₹1,599 </del>
+                </div>
+
+                <a
+                  href="course-details.html?id=hvac-electrical"
+                  class="course-btn"
+                >
+                  View Course
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- COURSE 5 -->
+
+          <article
+            class="course-card"
+            data-category="service"
+            data-title="HVAC Installation & Service"
+          >
+            <div class="course-image">
+              <div class="course-image-icon">🔧</div>
+
+              <span class="course-category"> Installation & Service </span>
+            </div>
+
+            <div class="course-content">
+              <h2>HVAC Installation & Service</h2>
+
+              <p>
+                Learn practical HVAC installation, servicing procedures, tools,
+                maintenance and safety practices.
+              </p>
+
+              <div class="course-meta">
+                <span> ⭐ 4.9 </span>
+
+                <span> 👨‍🎓 156 Students </span>
+              </div>
+
+              <div class="course-info">
+                <span> 📚 35 Lessons </span>
+
+                <span> ⏱️ 10 Hours </span>
+              </div>
+
+              <div class="course-footer">
+                <div class="course-price">
+                  <strong> ₹899 </strong>
+
+                  <del> ₹1,799 </del>
+                </div>
+
+                <a
+                  href="course-details.html?id=installation-service"
+                  class="course-btn"
+                >
+                  View Course
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <!-- COURSE 6 -->
+
+          <article
+            class="course-card"
+            data-category="service"
+            data-title="HVAC Troubleshooting"
+          >
+            <div class="course-image">
+              <div class="course-image-icon">🛠️</div>
+
+              <span class="course-category"> Installation & Service </span>
+            </div>
+
+            <div class="course-content">
+              <h2>HVAC Troubleshooting</h2>
+
+              <p>
+                Identify common HVAC problems, diagnose faults and understand
+                practical troubleshooting methods.
+              </p>
+
+              <div class="course-meta">
+                <span> ⭐ 4.8 </span>
+
+                <span> 👨‍🎓 112 Students </span>
+              </div>
+
+              <div class="course-info">
+                <span> 📚 28 Lessons </span>
+
+                <span> ⏱️ 7 Hours </span>
+              </div>
+
+              <div class="course-footer">
+                <div class="course-price">
+                  <strong> ₹749 </strong>
+
+                  <del> ₹1,499 </del>
+                </div>
+
+                <a
+                  href="course-details.html?id=troubleshooting"
+                  class="course-btn"
+                >
+                  View Course
+                </a>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <!-- NO RESULTS -->
+
+        <div class="no-courses" id="noCourses">
+          <div class="no-courses-icon">🔍</div>
+
+          <h3>No Courses Found</h3>
+
+          <p>Try another search term or category.</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer">
+      <div class="container footer-content">
+        <div class="footer-about">
+          <a href="../index.html" class="footer-logo"> 🔧 HVAC Tutorial </a>
+
+          <p>
+            Learn HVAC systems, practical techniques and industry-ready skills
+            to build your career.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h3>Quick Links</h3>
+
+          <a href="../index.html"> Home </a>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="live-classes.html">Live Classes</a>
+
+          <a href="verify-certificate.html"> Verify Certificate </a>
+        </div>
+
+        <div class="footer-links">
+          <h3>Student</h3>
+
+          <a href="dashboard.html"> Dashboard </a>
+
+          <a href="my-courses.html"> My Courses </a>
+
+          <a href="profile.html"> Profile </a>
+
+          <a href="certificate.html"> Certificates </a>
+        </div>
+
+        <div class="footer-contact">
+          <h3>Contact Us</h3>
+
+          <p>📧 support@hvactutorial.com</p>
+
+          <p>📍 India</p>
+
+          <a href="admin-login.html"> ⚙️ Admin Login </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          &copy;
+          <span id="currentYear"></span>
+          HVAC Tutorial. All Rights Reserved.
+        </p>
+
+        <div class="footer-bottom-links">
+          <a href="#"> Privacy Policy </a>
+
+          <span>|</span>
+
+          <a href="#"> Terms & Conditions </a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+
+    <script src="../js/courses.js"></script>
+  </body>
+</html>

@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Lecture Management - HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+
+  <body>
+    <!-- ADMIN NAVBAR -->
+    <nav class="admin-navbar">
+      <div class="admin-nav-container">
+        <a href="admin.html" class="admin-logo">
+          🔧 HVAC <span>Tutorial</span>
+        </a>
+
+        <div class="admin-nav-menu">
+          <a href="admin.html">Dashboard</a>
+          <a href="courses.html">Website</a>
+          <a href="#" id="adminLogoutBtn">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- LECTURE MANAGEMENT -->
+    <main class="admin-dashboard-page">
+      <div class="container">
+        <!-- PAGE HEADER -->
+        <div class="admin-dashboard-header">
+          <div>
+            <span class="admin-page-label"> ADMIN PANEL </span>
+
+            <h1>Lecture Management</h1>
+
+            <p>Add, edit and manage course lectures and videos.</p>
+          </div>
+
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">🎥</div>
+
+            <div>
+              <span>Total Lectures</span>
+
+              <strong id="lectureTotal"> 0 </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <section class="admin-management-section">
+          <div class="course-admin-toolbar">
+            <button type="button" class="admin-primary-btn" id="addLectureBtn">
+              + Add New Lecture
+            </button>
+
+            <input
+              type="text"
+              id="lectureSearch"
+              class="course-admin-search"
+              placeholder="Search lectures..."
+            />
+          </div>
+
+          <!-- LECTURE TABLE -->
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Lecture Title</th>
+                  <th>Course</th>
+                  <th>Video</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="lecturesTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- EMPTY STATE -->
+          <div
+            id="lecturesEmpty"
+            class="admin-empty-state"
+            style="display: none"
+          >
+            <div class="admin-empty-icon">🎥</div>
+
+            <h3>No Lectures Found</h3>
+
+            <p>Add your first lecture to a course.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ADD / EDIT LECTURE MODAL -->
+    <div class="admin-modal" id="lectureModal">
+      <div class="admin-modal-content">
+        <div class="admin-modal-header">
+          <h2 id="lectureModalTitle">Add New Lecture</h2>
+
+          <button
+            type="button"
+            class="admin-modal-close"
+            id="closeLectureModal"
+          >
+            ×
+          </button>
+        </div>
+
+        <form id="lectureForm">
+          <div class="admin-form-grid">
+            <!-- COURSE -->
+            <div class="admin-form-group">
+              <label for="lectureCourse"> Course </label>
+
+              <select id="lectureCourse" required>
+                <option value="">Select Course</option>
+              </select>
+            </div>
+
+            <!-- LECTURE NUMBER -->
+            <div class="admin-form-group">
+              <label for="lectureNumber"> Lecture Number </label>
+
+              <input
+                type="number"
+                id="lectureNumber"
+                min="1"
+                placeholder="e.g. 1"
+                required
+              />
+            </div>
+
+            <!-- TITLE -->
+            <div class="admin-form-group">
+              <label for="lectureTitle"> Lecture Title </label>
+
+              <input
+                type="text"
+                id="lectureTitle"
+                placeholder="Enter lecture title"
+                required
+              />
+            </div>
+
+            <!-- VIDEO -->
+            <div class="admin-form-group">
+              <label for="lectureVideo"> Video URL / File Path </label>
+
+              <input
+                type="text"
+                id="lectureVideo"
+                placeholder="e.g. ../assets/videos/lecture1.mp4"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- ACTIONS -->
+          <div class="admin-modal-actions">
+            <button
+              type="button"
+              class="admin-secondary-btn"
+              id="cancelLectureBtn"
+            >
+              Cancel
+            </button>
+
+            <button type="submit" class="admin-primary-btn">
+              Save Lecture
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer admin-footer">
+      <div class="footer-container container">
+        <div class="footer-brand">
+          <h3>HVAC <span>Tutorial</span></h3>
+
+          <p>
+            Admin panel for managing the HVAC Tutorial learning platform,
+            courses, students and lectures.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Admin</h4>
+
+          <a href="admin.html"> Dashboard </a>
+
+          <a href="admin-courses.html"> Courses </a>
+
+          <a href="admin-students.html"> Students </a>
+
+          <a href="admin-orders.html"> Orders </a>
+        </div>
+
+        <div class="footer-links">
+          <h4>Platform</h4>
+
+          <a href="courses.html"> View Website </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="certificate.html"> Certificates </a>
+
+          <a href="#" id="adminFooterLogout"> Logout </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          ©
+          <span id="currentYear"></span>
+          HVAC Tutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script src="../js/main.js"></script>
+    <script src="../js/admin.js"></script>
+  </body>
+</html>

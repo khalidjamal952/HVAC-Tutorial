@@ -1,0 +1,237 @@
+/* ================================
+   LIVE CLASSES PAGE
+================================ */
+
+.live-classes-hero {
+  padding: 70px 20px;
+  text-align: center;
+  background: #f1f6ff;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.live-classes-hero .section-label {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.live-classes-hero h1 {
+  margin: 0 0 14px;
+  color: #0f172a;
+  font-size: 42px;
+  line-height: 1.2;
+}
+
+.live-classes-hero p {
+  max-width: 700px;
+  margin: 0 auto;
+  color: #64748b;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* MAIN CONTENT */
+
+.live-classes-page {
+  padding-top: 60px;
+  padding-bottom: 70px;
+}
+
+.live-class-section {
+  margin-bottom: 60px;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+.section-heading .section-label {
+  display: block;
+  margin-bottom: 6px;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.section-heading h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 28px;
+}
+
+/* CLASS GRID */
+
+.live-class-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* CLASS CARD */
+
+.live-class-card {
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.live-class-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.1);
+}
+
+.live-class-top {
+  padding: 22px;
+  background: #eff6ff;
+  border-bottom: 1px solid #dbeafe;
+}
+
+.live-class-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.live-class-card h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 19px;
+  line-height: 1.4;
+}
+
+.live-class-body {
+  padding: 22px;
+}
+
+.live-class-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.live-class-info span {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.live-class-info strong {
+  color: #0f172a;
+}
+
+/* BUTTON */
+
+.join-class-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.join-class-btn:hover {
+  background: #1d4ed8;
+}
+
+.join-class-btn.disabled {
+  background: #cbd5e1;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+/* EMPTY STATE */
+
+.live-empty {
+  display: none;
+  padding: 45px 20px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+}
+
+.live-empty .empty-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 15px;
+  border-radius: 50%;
+  background: #eff6ff;
+  font-size: 28px;
+}
+
+.live-empty h3 {
+  margin: 0 0 8px;
+  color: #0f172a;
+  font-size: 18px;
+}
+
+.live-empty p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 1000px) {
+  .live-class-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .live-classes-hero {
+    padding: 50px 20px;
+  }
+
+  .live-classes-hero h1 {
+    font-size: 32px;
+  }
+
+  .live-classes-page {
+    padding-top: 40px;
+  }
+
+  .live-class-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading h2 {
+    font-size: 24px;
+  }
+}

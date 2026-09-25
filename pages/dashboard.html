@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Dashboard | HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="../css/dashboard.css" />
+  </head>
+
+  <body>
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+
+    <header class="navbar">
+      <div class="container nav-container">
+        <a href="../index.html" class="logo"> HVAC<span>Tutorial</span> </a>
+
+        <button class="menu-toggle" id="menuToggle">☰</button>
+
+        <nav class="nav-menu">
+          <a href="../index.html"> Home </a>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="cart.html" class="cart-link">
+            🛒 Cart
+            <span class="cart-count">0</span>
+          </a>
+
+          <a href="dashboard.html" class="active"> Dashboard </a>
+          <a href="#" id="logoutBtn" class="logout-link"> Logout </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- =========================
+         DASHBOARD
+    ========================== -->
+
+    <main class="dashboard-page">
+      <div class="container">
+        <!-- Welcome -->
+
+        <section class="dashboard-welcome">
+          <div>
+            <span class="dashboard-label"> STUDENT DASHBOARD </span>
+
+            <h1>Welcome back, <span id="studentName">Student</span> 👋</h1>
+
+            <p>Continue your HVAC learning journey and track your progress.</p>
+          </div>
+        </section>
+
+        <!-- Stats -->
+
+        <section class="dashboard-stats">
+          <div class="dashboard-stat-card">
+            <div class="stat-icon">📚</div>
+
+            <div>
+              <span>My Courses</span>
+              <strong id="courseCount">0</strong>
+            </div>
+          </div>
+
+          <div class="dashboard-stat-card">
+            <div class="stat-icon">▶️</div>
+
+            <div>
+              <span>Lessons Completed</span>
+              <strong id="lessonCount">0</strong>
+            </div>
+          </div>
+
+          <div class="dashboard-stat-card">
+            <div class="stat-icon">📈</div>
+
+            <div>
+              <span>Overall Progress</span>
+              <strong id="progressPercent">0%</strong>
+            </div>
+          </div>
+
+          <div class="dashboard-stat-card">
+            <div class="stat-icon">🏆</div>
+
+            <div>
+              <span>Certificates</span>
+              <strong id="certificateCount">0</strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- Dashboard Grid -->
+
+        <section class="dashboard-grid">
+          <!-- My Courses -->
+
+          <div class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <span class="card-label"> LEARNING </span>
+
+                <h2>My Courses</h2>
+              </div>
+
+              <a href="my-courses.html"> View All </a>
+            </div>
+
+            <div id="myCourses">
+              <div class="empty-dashboard">
+                <div class="empty-icon">📚</div>
+
+                <h3>No courses yet</h3>
+
+                <p>Enroll in an HVAC course to start learning.</p>
+
+                <a href="courses.html" class="dashboard-btn">
+                  Browse Courses
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress -->
+
+          <div class="dashboard-card">
+            <div class="card-header">
+              <div>
+                <span class="card-label"> PROGRESS </span>
+
+                <h2>Learning Progress</h2>
+              </div>
+            </div>
+
+            <div class="progress-empty">
+              <div class="progress-circle" id="learningProgressCircle">0%</div>
+
+              <h3 id="progressTitle">Start your learning</h3>
+
+              <p id="progressMessage">Your course progress will appear here.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Quick Actions -->
+
+        <section class="quick-actions">
+          <h2>Quick Actions</h2>
+
+          <div class="quick-action-grid">
+            <a href="courses.html" class="quick-action-card">
+              <span>📚</span>
+
+              <div>
+                <h3>Browse Courses</h3>
+
+                <p>Explore HVAC courses</p>
+              </div>
+            </a>
+
+            <a href="live-classes.html" class="quick-action-card">
+              <span>🎥</span>
+
+              <div>
+                <h3>Live Classes</h3>
+
+                <p>Join upcoming classes</p>
+              </div>
+            </a>
+
+            <a href="certificates.html" class="quick-action-card">
+              <span>🏆</span>
+
+              <div>
+                <h3>Certificates</h3>
+
+                <p>View your certificates</p>
+              </div>
+            </a>
+
+            <a href="profile.html" class="quick-action-card">
+              <span>👤</span>
+
+              <div>
+                <h3>My Profile</h3>
+
+                <p>Manage your profile</p>
+              </div>
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer class="footer">
+      <div class="container footer-container">
+        <div class="footer-brand">
+          <h3>HVAC<span>Tutorial</span></h3>
+
+          <p>
+            Learn HVAC skills with structured courses, practical lectures and
+            professional learning resources.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Student</h4>
+
+          <a href="dashboard.html"> Dashboard </a>
+
+          <a href="my-courses.html"> My Courses </a>
+
+          <a href="certificates.html"> Certificates </a>
+
+          <a href="profile.html"> Profile </a>
+        </div>
+
+        <div class="footer-links">
+          <h4>Support</h4>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="cart.html"> Cart </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          © <span id="currentYear"></span>
+          HVAC Tutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script src="../js/main.js"></script>
+    <script src="../js/authGuard.js"></script>
+    <script src="../js/dashboard.js"></script>
+  </body>
+</html>

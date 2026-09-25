@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Course Management - HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+
+  <body>
+    <!-- ADMIN NAVBAR -->
+
+    <nav class="admin-navbar">
+      <div class="admin-nav-container">
+        <a href="admin.html" class="admin-logo">
+          HVAC <span>Tutorial</span>
+          <small>Admin</small>
+        </a>
+
+        <div class="admin-nav-menu">
+          <a href="admin.html"> Dashboard </a>
+
+          <a href="courses.html"> Website </a>
+
+          <a href="#" id="adminLogoutBtn"> Logout </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- COURSE MANAGEMENT -->
+
+    <main class="admin-dashboard-page">
+      <div class="container">
+        <!-- PAGE HEADER -->
+
+        <div class="admin-dashboard-header">
+          <span class="admin-page-label"> ADMIN PANEL </span>
+
+          <h1>Course Management</h1>
+
+          <p>Add, edit, search and manage HVAC courses.</p>
+        </div>
+
+        <!-- COURSE TOOLBAR -->
+
+        <section class="admin-management-section">
+          <div class="course-admin-toolbar">
+            <div>
+              <h2>All Courses</h2>
+
+              <p id="adminCourseTotal">Total Courses: 0</p>
+            </div>
+
+            <button type="button" id="addCourseBtn" class="admin-primary-btn">
+              + Add New Course
+            </button>
+          </div>
+
+          <!-- SEARCH -->
+
+          <div class="course-admin-search">
+            <input
+              type="text"
+              id="adminCourseSearch"
+              placeholder="Search courses by title or category..."
+            />
+          </div>
+
+          <!-- COURSE TABLE -->
+
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Course</th>
+
+                  <th>Category</th>
+
+                  <th>Lessons</th>
+
+                  <th>Price</th>
+
+                  <th>Students</th>
+
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody id="adminCoursesTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- EMPTY STATE -->
+
+          <div class="admin-empty-state" id="adminCoursesEmpty">
+            <div class="admin-empty-icon">📚</div>
+
+            <h3>No Courses Found</h3>
+
+            <p>Add a course or change your search.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- ADD / EDIT COURSE MODAL -->
+
+    <div class="admin-modal" id="courseModal">
+      <div class="admin-modal-content">
+        <div class="admin-modal-header">
+          <div>
+            <span class="admin-page-label"> COURSE </span>
+
+            <h2 id="courseModalTitle">Add New Course</h2>
+          </div>
+
+          <button type="button" id="closeCourseModal" class="admin-modal-close">
+            ×
+          </button>
+        </div>
+
+        <form id="courseForm">
+          <div class="admin-form-grid">
+            <div class="admin-form-group">
+              <label for="courseTitle"> Course Title </label>
+
+              <input
+                type="text"
+                id="courseTitle"
+                placeholder="Enter course title"
+                required
+              />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="courseCategory"> Category </label>
+
+              <select id="courseCategory" required>
+                <option value="">Select Category</option>
+
+                <option value="ac">Air Conditioning</option>
+
+                <option value="refrigeration">Refrigeration</option>
+
+                <option value="electrical">Electrical</option>
+
+                <option value="service">Service</option>
+              </select>
+            </div>
+
+            <div class="admin-form-group">
+              <label for="courseLessons"> Number of Lessons </label>
+
+              <input
+                type="number"
+                id="courseLessons"
+                min="1"
+                placeholder="25"
+                required
+              />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="courseDuration"> Course Duration </label>
+
+              <input
+                type="text"
+                id="courseDuration"
+                placeholder="6 hours"
+                required
+              />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="coursePrice"> Selling Price </label>
+
+              <input
+                type="number"
+                id="coursePrice"
+                min="0"
+                placeholder="499"
+                required
+              />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="courseOriginalPrice"> Original Price </label>
+
+              <input
+                type="number"
+                id="courseOriginalPrice"
+                min="0"
+                placeholder="999"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="courseDescription"> Course Description </label>
+
+            <textarea
+              id="courseDescription"
+              rows="5"
+              placeholder="Enter course description"
+              required
+            ></textarea>
+          </div>
+
+          <div class="admin-modal-actions">
+            <button
+              type="button"
+              id="cancelCourseBtn"
+              class="admin-secondary-btn"
+            >
+              Cancel
+            </button>
+
+            <button type="submit" class="admin-primary-btn">Save Course</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+
+    <footer class="footer admin-footer">
+      <div class="footer-container container">
+        <div class="footer-brand">
+          <h3>HVAC <span>Tutorial</span></h3>
+
+          <p>Admin panel for managing the HVAC Tutorial learning platform.</p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Admin</h4>
+
+          <a href="admin.html"> Dashboard </a>
+
+          <a href="admin-courses.html"> Courses </a>
+
+          <a href="admin-students.html"> Students </a>
+
+          <a href="admin-orders.html"> Orders </a>
+        </div>
+
+        <div class="footer-links">
+          <h4>Platform</h4>
+
+          <a href="courses.html"> View Website </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="certificate.html"> Certificates </a>
+
+          <a href="#" id="adminFooterLogout"> Logout </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          ©
+          <span id="currentYear"></span>
+          HVAC Tutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+
+    <script src="../js/admin.js"></script>
+  </body>
+</html>

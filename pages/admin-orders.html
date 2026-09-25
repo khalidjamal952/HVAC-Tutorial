@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Order Management - HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+
+  <body>
+    <!-- ADMIN NAVBAR -->
+    <nav class="admin-navbar">
+      <div class="admin-nav-container">
+        <a href="admin.html" class="admin-logo">
+          🔧 HVAC <span>Tutorial</span>
+        </a>
+
+        <div class="admin-nav-menu">
+          <a href="admin.html">Dashboard</a>
+          <a href="courses.html">Website</a>
+          <a href="#" id="adminLogoutBtn">Logout</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ORDER MANAGEMENT -->
+    <main class="admin-dashboard-page">
+      <div class="container">
+        <!-- HEADER -->
+        <div class="admin-dashboard-header">
+          <div>
+            <span class="admin-page-label"> ADMIN PANEL </span>
+
+            <h1>Order Management</h1>
+
+            <p>View and manage all course orders and transactions.</p>
+          </div>
+
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">🛒</div>
+
+            <div>
+              <span>Total Orders</span>
+              <strong id="orderTotal"> 0 </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEARCH -->
+        <section class="admin-management-section">
+          <div class="student-toolbar">
+            <input
+              type="text"
+              id="orderSearch"
+              class="student-search"
+              placeholder="Search orders by student, email or course..."
+            />
+          </div>
+
+          <!-- ORDER TABLE -->
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Student</th>
+                  <th>Course</th>
+                  <th>Amount</th>
+                  <th>Payment</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+              <tbody id="ordersTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- EMPTY STATE -->
+          <div id="ordersEmpty" class="admin-empty-state" style="display: none">
+            <div class="admin-empty-icon">🛒</div>
+
+            <h3>No Orders Found</h3>
+
+            <p>No course orders are available yet.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer admin-footer">
+      <div class="footer-container container">
+        <div class="footer-brand">
+          <h3>HVAC <span>Tutorial</span></h3>
+
+          <p>
+            Admin panel for managing the HVAC Tutorial learning platform,
+            courses, students and orders.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Admin</h4>
+
+          <a href="admin.html"> Dashboard </a>
+
+          <a href="admin-courses.html"> Courses </a>
+
+          <a href="admin-students.html"> Students </a>
+
+          <a href="admin-orders.html"> Orders </a>
+        </div>
+
+        <div class="footer-links">
+          <h4>Platform</h4>
+
+          <a href="courses.html"> View Website </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="certificate.html"> Certificates </a>
+
+          <a href="#" id="adminFooterLogout"> Logout </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          ©
+          <span id="currentYear"></span>
+          HVAC Tutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script src="../js/main.js"></script>
+    <script src="../js/admin.js"></script>
+  </body>
+</html>

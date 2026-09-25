@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Certificate - HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/certificate.css" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="container nav-container">
+        <a href="../index.html" class="logo"> HVAC <span>Tutorial</span> </a>
+
+        <div class="nav-menu">
+          <a href="../index.html">Home</a>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="cart.html" class="cart-link">
+            🛒 Cart
+            <span class="cart-count">0</span>
+          </a>
+
+          <a href="dashboard.html"> Dashboard </a>
+
+          <a href="#" id="logoutBtn"> Logout </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- CERTIFICATE PAGE -->
+
+    <main class="certificate-page">
+      <div class="container">
+        <div class="certificate-wrapper">
+          <!-- CERTIFICATE -->
+
+          <div class="certificate-card">
+            <div class="certificate-border">
+              <div class="certificate-content">
+                <div class="certificate-logo">HVAC <span>Tutorial</span></div>
+
+                <div class="certificate-label">CERTIFICATE OF COMPLETION</div>
+
+                <h1>Certificate of Achievement</h1>
+
+                <p class="certificate-intro">
+                  This certificate is proudly presented to
+                </p>
+
+                <h2 id="studentName">Student Name</h2>
+
+                <div class="certificate-line"></div>
+
+                <p class="certificate-text">
+                  for successfully completing the course
+                </p>
+
+                <h3 id="courseName">HVAC Course</h3>
+
+                <p class="certificate-description">
+                  This certificate recognizes the successful completion of the
+                  course and demonstrates the learner's commitment to developing
+                  practical HVAC knowledge and skills.
+                </p>
+
+                <!-- CERTIFICATE DETAILS -->
+
+                <div class="certificate-details">
+                  <div class="certificate-detail">
+                    <span> Certificate ID </span>
+
+                    <strong id="certificateId"> HVAC-000000 </strong>
+                  </div>
+
+                  <div class="certificate-detail">
+                    <span> Completion Date </span>
+
+                    <strong id="completionDate"> -- </strong>
+                  </div>
+                </div>
+
+                <!-- SIGNATURES -->
+
+                <div class="certificate-signatures">
+                  <div class="signature-box">
+                    <div class="signature-line"></div>
+
+                    <span> Course Instructor </span>
+                  </div>
+
+                  <div class="certificate-seal">
+                    🏆
+
+                    <span> VERIFIED </span>
+                  </div>
+
+                  <div class="signature-box">
+                    <div class="signature-line"></div>
+
+                    <span> HVAC Tutorial </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ACTION BUTTONS -->
+
+          <div class="certificate-actions">
+            <button
+              type="button"
+              id="printCertificateBtn"
+              class="certificate-action-btn"
+              onclick="window.print()"
+            >
+              🖨️ Print Certificate
+            </button>
+
+            <a href="dashboard.html" class="certificate-back-btn">
+              ← Back to Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+      <div class="footer-container container">
+        <div class="footer-brand">
+          <h3>HVAC <span>Tutorial</span></h3>
+
+          <p>
+            Learn HVAC skills through practical, structured and professional
+            courses.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Student</h4>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="dashboard.html"> Dashboard </a>
+
+          <a href="my-courses.html"> My Courses </a>
+
+          <a href="dashboard.html"> Certificates </a>
+        </div>
+
+        <div class="footer-links">
+          <h4>Support</h4>
+
+          <a href="#"> Contact Us </a>
+
+          <a href="#"> Help Center </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          © <span id="currentYear"></span>
+          HVAC Tutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+
+    <script src="../js/certificate.js"></script>
+  </body>
+</html>

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Login | HVAC Tutorial</title>
+
+    <meta
+      name="description"
+      content="Login to your HVAC Tutorial student account."
+    />
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="../css/auth.css" />
+  </head>
+
+  <body>
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="header">
+      <div class="container navbar">
+        <a href="../index.html" class="logo"> 🔧 HVAC Tutorial </a>
+
+        <nav class="nav-menu">
+          <a href="../index.html"> Home </a>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="cart.html" class="cart-link">
+            🛒 Cart
+            <span class="cart-count">0</span>
+          </a>
+
+          <a href="login.html" class="active"> Login </a>
+
+          <a href="register.html" class="nav-btn"> Get Started </a>
+        </nav>
+
+        <button class="menu-toggle" id="menuToggle" type="button">☰</button>
+      </div>
+    </header>
+
+    <!-- ================= LOGIN ================= -->
+
+    <main class="auth-page">
+      <div class="container">
+        <div class="auth-wrapper">
+          <div class="auth-card">
+            <div class="auth-header">
+              <div class="auth-icon">🔐</div>
+
+              <h1>Welcome Back</h1>
+
+              <p>Login to continue your HVAC learning journey.</p>
+            </div>
+
+            <form id="loginForm" class="auth-form">
+              <!-- EMAIL -->
+
+              <div class="form-group">
+                <label for="loginEmail"> Email Address </label>
+
+                <input
+                  type="email"
+                  id="loginEmail"
+                  name="email"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+
+              <!-- PASSWORD -->
+
+              <div class="form-group">
+                <label for="loginPassword"> Password </label>
+
+                <div class="password-field">
+                  <input
+                    type="password"
+                    id="loginPassword"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                  />
+
+                  <button
+                    type="button"
+                    class="password-toggle"
+                    id="passwordToggle"
+                    aria-label="Show password"
+                  >
+                    👁️
+                  </button>
+                </div>
+              </div>
+
+              <!-- REMEMBER + FORGOT -->
+
+              <div class="login-options">
+                <label class="checkbox-option">
+                  <input type="checkbox" id="rememberMe" />
+
+                  <span> Remember me </span>
+                </label>
+
+                <a href="forgot-password.html"> Forgot Password? </a>
+              </div>
+
+              <!-- LOGIN BUTTON -->
+
+              <button type="submit" class="auth-btn">Login</button>
+            </form>
+
+            <div class="auth-footer">
+              <p>
+                Don't have an account?
+
+                <a href="register.html"> Create Account </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer">
+      <div class="container footer-content">
+        <div class="footer-about">
+          <a href="../index.html" class="footer-logo"> 🔧 HVAC Tutorial </a>
+
+          <p>
+            Learn HVAC systems, practical techniques and industry-ready skills
+            to build your career.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h3>Quick Links</h3>
+
+          <a href="../index.html"> Home </a>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="verify-certificate.html"> Verify Certificate </a>
+        </div>
+
+        <div class="footer-links">
+          <h3>Student</h3>
+
+          <a href="dashboard.html"> Dashboard </a>
+
+          <a href="my-courses.html"> My Courses </a>
+
+          <a href="profile.html"> Profile </a>
+
+          <a href="certificate.html"> Certificates </a>
+        </div>
+
+        <div class="footer-contact">
+          <h3>Contact Us</h3>
+
+          <p>📧 support@hvactutorial.com</p>
+
+          <p>📍 India</p>
+
+          <a href="admin-login.html"> ⚙️ Admin Login </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          &copy;
+
+          <span id="currentYear"></span>
+
+          HVAC Tutorial. All Rights Reserved.
+        </p>
+
+        <div class="footer-bottom-links">
+          <a href="#"> Privacy Policy </a>
+
+          <span>|</span>
+
+          <a href="#"> Terms & Conditions </a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script src="../js/main.js"></script>
+
+    <script src="../js/login.js"></script>
+  </body>
+</html>

@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Checkout | HVAC Tutorial</title>
+
+    <meta
+      name="description"
+      content="Complete your HVAC Tutorial course purchase securely."
+    />
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="../css/checkout.css" />
+  </head>
+
+  <body>
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="header">
+      <div class="container navbar">
+        <a href="../index.html" class="logo"> 🔧 HVAC Tutorial </a>
+
+        <nav class="nav-menu">
+          <a href="../index.html">Home</a>
+
+          <a href="courses.html">Courses</a>
+
+          <a href="live-classes.html">Live Classes</a>
+
+          <a href="cart.html" class="cart-link">
+            🛒 Cart
+            <span class="cart-count">0</span>
+          </a>
+
+          <a href="login.html">Login</a>
+
+          <a href="register.html" class="nav-btn"> Get Started </a>
+        </nav>
+
+        <button class="menu-toggle" id="menuToggle" type="button">☰</button>
+      </div>
+    </header>
+
+    <!-- ================= CHECKOUT ================= -->
+
+    <main class="checkout-page">
+      <div class="container">
+        <div class="page-heading">
+          <span>🔒 SECURE CHECKOUT</span>
+
+          <h1>Complete Your Purchase</h1>
+
+          <p>
+            Enter your details and review your order before completing the
+            purchase.
+          </p>
+        </div>
+
+        <div class="checkout-layout">
+          <!-- ================= CUSTOMER DETAILS ================= -->
+
+          <section class="checkout-form-card">
+            <h2>Customer Information</h2>
+
+            <form id="checkoutForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="fullName"> Full Name </label>
+
+                  <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    placeholder="Enter your full name"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="email"> Email Address </label>
+
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="phone"> Phone Number </label>
+
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    placeholder="Enter your phone number"
+                    required
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="city"> City </label>
+
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    placeholder="Enter your city"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="address"> Address </label>
+
+                <textarea
+                  id="address"
+                  name="address"
+                  rows="4"
+                  placeholder="Enter your address"
+                  required
+                ></textarea>
+              </div>
+
+              <!-- PAYMENT METHOD -->
+
+              <div class="payment-section">
+                <h2>Payment Method</h2>
+
+                <!-- UPI -->
+                <label class="payment-option">
+                  <input type="radio" name="payment" value="upi" checked />
+
+                  <span> 📱 UPI </span>
+                </label>
+
+                <!-- CARD -->
+                <label class="payment-option">
+                  <input type="radio" name="payment" value="card" />
+
+                  <span> 💳 Credit / Debit Card </span>
+                </label>
+
+                <!-- NET BANKING -->
+                <label class="payment-option">
+                  <input type="radio" name="payment" value="netbanking" />
+
+                  <span> 🏦 Net Banking </span>
+                </label>
+
+                <!-- WALLET -->
+                <label class="payment-option">
+                  <input type="radio" name="payment" value="wallet" />
+
+                  <span> 💰 Wallet </span>
+                </label>
+              </div>
+              <button type="submit" class="place-order-btn">Place Order</button>
+            </form>
+          </section>
+
+          <!-- ================= ORDER SUMMARY ================= -->
+
+          <aside class="checkout-summary">
+            <h2>Order Summary</h2>
+
+            <div id="checkoutItems">
+              <!-- Items will load here -->
+            </div>
+
+            <div class="checkout-summary-row">
+              <span> Subtotal </span>
+
+              <strong id="checkoutSubtotal"> ₹0 </strong>
+            </div>
+
+            <div class="checkout-summary-row">
+              <span> Discount </span>
+
+              <strong class="discount"> ₹0 </strong>
+            </div>
+
+            <div class="checkout-total">
+              <span> Total </span>
+
+              <strong id="checkoutTotal"> ₹0 </strong>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer">
+      <div class="container footer-content">
+        <div class="footer-about">
+          <a href="../index.html" class="footer-logo"> 🔧 HVAC Tutorial </a>
+
+          <p>
+            Learn HVAC systems, practical techniques and industry-ready skills
+            to build your career.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h3>Quick Links</h3>
+
+          <a href="../index.html">Home</a>
+
+          <a href="courses.html">Courses</a>
+
+          <a href="live-classes.html">Live Classes</a>
+
+          <a href="verify-certificate.html"> Verify Certificate </a>
+        </div>
+
+        <div class="footer-links">
+          <h3>Student</h3>
+
+          <a href="dashboard.html">Dashboard</a>
+
+          <a href="my-courses.html">My Courses</a>
+
+          <a href="profile.html">Profile</a>
+
+          <a href="certificate.html">Certificates</a>
+        </div>
+
+        <div class="footer-contact">
+          <h3>Contact Us</h3>
+
+          <p>📧 support@hvactutorial.com</p>
+
+          <p>📍 India</p>
+
+          <a href="admin-login.html"> ⚙️ Admin Login </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          &copy;
+          <span id="currentYear"></span>
+          HVAC Tutorial. All Rights Reserved.
+        </p>
+
+        <div class="footer-bottom-links">
+          <a href="#">Privacy Policy</a>
+
+          <span>|</span>
+
+          <a href="#">Terms & Conditions</a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script src="../js/main.js"></script>
+    <script src="../js/checkout.js"></script>
+  </body>
+</html>

@@ -1,0 +1,473 @@
+/* =========================================
+   DASHBOARD PAGE
+========================================= */
+
+.dashboard-page {
+  padding: 50px 0 70px;
+  background: #f8fafc;
+  min-height: calc(100vh - 80px);
+}
+
+/* =========================================
+   WELCOME SECTION
+========================================= */
+
+.dashboard-welcome {
+  margin-bottom: 30px;
+}
+
+.dashboard-label {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.dashboard-welcome h1 {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.dashboard-welcome h1 span {
+  color: #2563eb;
+}
+
+.dashboard-welcome p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 15px;
+}
+
+/* =========================================
+   DASHBOARD STATS
+========================================= */
+
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.dashboard-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.04);
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #eff6ff;
+  border-radius: 10px;
+  font-size: 22px;
+}
+
+.dashboard-stat-card span {
+  display: block;
+  margin-bottom: 5px;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.dashboard-stat-card strong {
+  display: block;
+  color: #111827;
+  font-size: 24px;
+}
+
+/* =========================================
+   DASHBOARD GRID
+========================================= */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 25px;
+  margin-bottom: 35px;
+}
+
+.dashboard-card {
+  padding: 25px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.04);
+}
+
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.card-label {
+  display: block;
+  margin-bottom: 5px;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+}
+
+.card-header h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 21px;
+}
+
+.card-header > a {
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.card-header > a:hover {
+  text-decoration: underline;
+}
+
+/* =========================================
+   EMPTY DASHBOARD
+========================================= */
+
+.empty-dashboard {
+  padding: 45px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  width: 65px;
+  height: 65px;
+  margin: 0 auto 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eff6ff;
+  border-radius: 50%;
+  font-size: 28px;
+}
+
+.empty-dashboard h3 {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: 18px;
+}
+
+.empty-dashboard p {
+  max-width: 350px;
+  margin: 0 auto 20px;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.dashboard-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 18px;
+  background: #2563eb;
+  color: #ffffff;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.dashboard-btn:hover {
+  background: #1d4ed8;
+}
+
+/* =========================================
+   PROGRESS
+========================================= */
+
+.progress-empty {
+  padding: 35px 20px;
+  text-align: center;
+}
+
+.progress-circle {
+  width: 115px;
+  height: 115px;
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 8px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  color: #111827;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.progress-empty h3 {
+  margin: 0 0 7px;
+  color: #111827;
+  font-size: 17px;
+}
+
+.progress-empty p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+/* =========================================
+   QUICK ACTIONS
+========================================= */
+
+.quick-actions h2 {
+  margin: 0 0 18px;
+  color: #111827;
+  font-size: 23px;
+}
+
+.quick-action-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.quick-action-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.quick-action-card:hover {
+  border-color: #93c5fd;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07);
+}
+
+.quick-action-card > span {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #eff6ff;
+  border-radius: 8px;
+  font-size: 19px;
+}
+
+.quick-action-card h3 {
+  margin: 0 0 4px;
+  color: #111827;
+  font-size: 14px;
+}
+
+.quick-action-card p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1050px) {
+  .dashboard-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .quick-action-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-page {
+    padding: 35px 0 50px;
+  }
+
+  .dashboard-welcome h1 {
+    font-size: 26px;
+  }
+
+  .dashboard-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-card {
+    padding: 20px;
+  }
+
+  .quick-action-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 400px) {
+  .dashboard-welcome h1 {
+    font-size: 23px;
+  }
+
+  .dashboard-stat-card {
+    padding: 17px;
+  }
+
+  .card-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+/* =========================================
+   LOGOUT LINK
+========================================= */
+
+.logout-link {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+.logout-link:hover {
+  color: #b91c1c !important;
+}
+
+/* =========================================
+   MY COURSE ITEM
+========================================= */
+
+.dashboard-course-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.dashboard-course-item:last-child {
+  border-bottom: none;
+}
+
+.dashboard-course-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.dashboard-course-icon {
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #eff6ff;
+  border-radius: 8px;
+  font-size: 20px;
+}
+
+.dashboard-course-info h3 {
+  margin: 0 0 5px;
+  color: #111827;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.dashboard-course-info p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.dashboard-course-item .dashboard-btn {
+  flex-shrink: 0;
+  padding: 10px 17px;
+}
+
+/* =========================================
+   MOBILE COURSE ITEM
+========================================= */
+
+@media (max-width: 600px) {
+  .dashboard-course-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .dashboard-course-item .dashboard-btn {
+    width: 100%;
+  }
+}
+
+/* =========================================
+   DASHBOARD NAVBAR FIX
+========================================= */
+
+.navbar .nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+}
+
+.navbar .logo {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.navbar .nav-menu {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  gap: 28px;
+  margin-left: auto;
+}
+
+.navbar .nav-menu a {
+  white-space: nowrap;
+}
+
+/* =========================================
+   MOBILE NAVBAR
+========================================= */
+
+@media (max-width: 768px) {
+  .navbar .nav-container {
+    flex-wrap: wrap;
+  }
+
+  .navbar .nav-menu {
+    margin-left: 0;
+  }
+}

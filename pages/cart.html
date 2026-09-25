@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>My Cart | HVAC Tutorial</title>
+
+    <meta
+      name="description"
+      content="View your selected HVAC courses and proceed to checkout."
+    />
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="../css/cart.css" />
+  </head>
+
+  <body>
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="header">
+      <div class="container navbar">
+        <a href="../index.html" class="logo"> 🔧 HVAC Tutorial </a>
+
+        <nav class="nav-menu">
+          <a href="../index.html"> Home </a>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="login.html"> Login </a>
+
+          <a href="register.html" class="nav-btn"> Get Started </a>
+        </nav>
+
+        <button class="menu-toggle" id="menuToggle" type="button">☰</button>
+      </div>
+    </header>
+
+    <!-- ================= CART PAGE ================= -->
+
+    <main class="cart-page">
+      <div class="container">
+        <div class="page-heading">
+          <span>🛒 YOUR CART</span>
+
+          <h1>My Cart</h1>
+
+          <p>
+            Review your selected HVAC courses before proceeding to checkout.
+          </p>
+        </div>
+
+        <div class="cart-layout">
+          <!-- ================= CART ITEMS ================= -->
+
+          <section class="cart-items-section">
+            <div class="cart-items" id="cartItems"></div>
+
+            <!-- EMPTY CART -->
+
+            <div class="empty-cart" id="emptyCart">
+              <div class="empty-cart-icon">🛒</div>
+
+              <h2>Your Cart is Empty</h2>
+
+              <p>You haven't added any HVAC course yet.</p>
+
+              <a href="courses.html" class="primary-btn"> Browse Courses </a>
+            </div>
+          </section>
+
+          <!-- ================= CART SUMMARY ================= -->
+
+          <aside class="cart-summary">
+            <h2>Order Summary</h2>
+
+            <div class="summary-row">
+              <span> Courses </span>
+
+              <strong id="cartCount"> 0 </strong>
+            </div>
+
+            <div class="summary-row">
+              <span> Subtotal </span>
+
+              <strong id="cartSubtotal"> ₹0 </strong>
+            </div>
+
+            <div class="summary-row">
+              <span> Discount </span>
+
+              <strong class="discount"> ₹0 </strong>
+            </div>
+
+            <div class="summary-total">
+              <span> Total </span>
+
+              <strong id="cartTotal"> ₹0 </strong>
+            </div>
+
+            <button type="button" class="checkout-btn" id="checkoutBtn">
+              Proceed to Checkout
+            </button>
+
+            <a href="courses.html" class="continue-shopping">
+              ← Continue Shopping
+            </a>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer">
+      <div class="container footer-content">
+        <div class="footer-about">
+          <a href="../index.html" class="footer-logo"> 🔧 HVAC Tutorial </a>
+
+          <p>
+            Learn HVAC systems, practical techniques and industry-ready skills
+            to build your career.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h3>Quick Links</h3>
+
+          <a href="../index.html"> Home </a>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="verify-certificate.html"> Verify Certificate </a>
+        </div>
+
+        <div class="footer-links">
+          <h3>Student</h3>
+
+          <a href="dashboard.html"> Dashboard </a>
+
+          <a href="my-courses.html"> My Courses </a>
+
+          <a href="profile.html"> Profile </a>
+
+          <a href="certificate.html"> Certificates </a>
+        </div>
+
+        <div class="footer-contact">
+          <h3>Contact Us</h3>
+
+          <p>📧 support@hvactutorial.com</p>
+
+          <p>📍 India</p>
+
+          <a href="admin-login.html"> ⚙️ Admin Login </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          &copy;
+          <span id="currentYear"></span>
+          HVAC Tutorial. All Rights Reserved.
+        </p>
+
+        <div class="footer-bottom-links">
+          <a href="#"> Privacy Policy </a>
+
+          <span>|</span>
+
+          <a href="#"> Terms & Conditions </a>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ================= JAVASCRIPT ================= -->
+
+    <script src="../js/main.js"></script>
+
+    <script src="../js/cart.js"></script>
+  </body>
+</html>

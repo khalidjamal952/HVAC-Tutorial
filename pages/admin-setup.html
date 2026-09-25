@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Admin Setup - HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+
+  <body>
+    <main class="admin-login-page">
+      <div class="admin-login-wrapper">
+        <div class="admin-login-card">
+          <div class="admin-login-header">
+            <div class="admin-login-icon">⚙️</div>
+
+            <span> ADMIN SETUP </span>
+
+            <h1>Create Admin Account</h1>
+
+            <p>Set up your HVAC Tutorial administrator account.</p>
+          </div>
+
+          <form id="adminSetupForm">
+            <div class="admin-form-group">
+              <label for="setupAdminName"> Admin Name </label>
+
+              <input
+                type="text"
+                id="setupAdminName"
+                placeholder="Enter admin name"
+                required
+              />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="setupAdminEmail"> Admin Email </label>
+
+              <input
+                type="email"
+                id="setupAdminEmail"
+                placeholder="Enter admin email"
+                required
+              />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="setupAdminPassword"> Password </label>
+
+              <input
+                type="password"
+                id="setupAdminPassword"
+                placeholder="Create admin password"
+                required
+              />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="setupAdminConfirmPassword"> Confirm Password </label>
+
+              <input
+                type="password"
+                id="setupAdminConfirmPassword"
+                placeholder="Confirm admin password"
+                required
+              />
+            </div>
+
+            <button type="submit" class="admin-login-btn">
+              Create Admin Account
+            </button>
+          </form>
+
+          <div class="admin-login-footer">
+            <a href="admin-login.html"> ← Back to Admin Login </a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="../js/admin.js"></script>
+  </body>
+</html>

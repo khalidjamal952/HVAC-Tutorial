@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>My Certificates | HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/certificate.css" />
+  </head>
+
+  <body class="certificate-list-page">
+    <!-- NAVBAR -->
+   <nav class="navbar">
+    <div class="nav-container">
+
+        <a href="../index.html" class="logo">
+            🔧 <span>HVAC</span>Tutorial
+        </a>
+
+        <div class="nav-menu">
+
+            <a href="../index.html">Home</a>
+
+            <a href="courses.html">Courses</a>
+
+            <a href="live-classes.html">Live Classes</a>
+
+            <a href="cart.html" class="cart-link">
+                🛒 Cart
+                <span class="cart-count">0</span>
+            </a>
+
+            <a href="dashboard.html">Dashboard</a>
+
+            <a href="profile.html">Profile</a>
+
+        </div>
+
+    </div>
+</nav>
+    <!-- CERTIFICATES HERO -->
+    <section class="certificate-hero">
+      <div class="container">
+        <p class="section-label">🏆 ACHIEVEMENTS</p>
+
+        <h1>My Certificates</h1>
+
+        <p>View and download certificates for your completed HVAC courses.</p>
+      </div>
+    </section>
+
+    <!-- CERTIFICATES -->
+    <section class="certificate-section">
+      <div class="container">
+        <div id="certificatesGrid" class="certificates-grid"></div>
+
+        <!-- EMPTY STATE -->
+
+        <div
+          id="certificatesEmpty"
+          class="certificates-empty"
+          style="display: none"
+        >
+          <div class="empty-icon">🏆</div>
+
+          <h2>No Certificates Yet</h2>
+
+          <p>Complete an HVAC course to earn your certificate.</p>
+
+          <a href="courses.html" class="course-btn"> Browse Courses </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+      <div class="container footer-container">
+        <div class="footer-brand">
+          <h3>HVAC<span>Tutorial</span></h3>
+
+          <p>
+            Learn HVAC skills through practical, industry-focused online
+            courses.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+
+          <a href="../index.html">Home</a>
+
+          <a href="courses.html">Courses</a>
+
+          <a href="live-classes.html">Live Classes</a>
+        </div>
+
+        <div class="footer-links">
+          <h4>Account</h4>
+
+          <a href="login.html">Login</a>
+
+          <a href="register.html">Register</a>
+
+          <a href="dashboard.html">Dashboard</a>
+
+          <a href="certificates.html">Certificates</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          © <span id="currentYear"></span> HVACTutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+
+    <script src="../js/main.js"></script>
+    <script src="../js/authGuard.js"></script>
+    <script src="../js/certificate.js"></script>
+  </body>
+</html>

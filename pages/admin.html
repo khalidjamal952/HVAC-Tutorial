@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Admin Dashboard - HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+
+  <body>
+    <!-- ADMIN NAVBAR -->
+
+    <nav class="admin-navbar">
+      <div class="admin-nav-container">
+        <a href="admin.html" class="admin-logo">
+          HVAC <span>Tutorial</span>
+          <small>Admin</small>
+        </a>
+
+        <div class="admin-nav-menu">
+          <a href="admin.html"> Dashboard </a>
+
+          <a href="courses.html"> Website </a>
+
+          <a href="#" id="adminLogoutBtn"> Logout </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ADMIN DASHBOARD -->
+
+    <main class="admin-dashboard-page">
+      <div class="container">
+        <!-- HEADER -->
+
+        <div class="admin-dashboard-header">
+          <div>
+            <span class="admin-page-label"> ADMIN PANEL </span>
+
+            <h1>Admin Dashboard</h1>
+
+            <p>Manage your HVAC Tutorial platform.</p>
+          </div>
+        </div>
+
+        <!-- STATISTICS -->
+
+        <section class="admin-stats-grid">
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">📚</div>
+
+            <div>
+              <span> Total Courses </span>
+
+              <strong id="adminCourseCount"> 0 </strong>
+            </div>
+          </div>
+
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">👨‍🎓</div>
+
+            <div>
+              <span> Total Students </span>
+
+              <strong id="adminStudentCount"> 0 </strong>
+            </div>
+          </div>
+
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">🛒</div>
+
+            <div>
+              <span> Total Orders </span>
+
+              <strong id="adminOrderCount"> 0 </strong>
+            </div>
+          </div>
+
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">🏆</div>
+
+            <div>
+              <span> Certificates </span>
+
+              <strong id="adminCertificateCount"> 0 </strong>
+            </div>
+          </div>
+        </section>
+
+        <!-- MANAGEMENT -->
+
+        <section class="admin-management">
+          <div class="admin-section-header">
+            <span class="admin-page-label"> MANAGEMENT </span>
+
+            <h2>Platform Management</h2>
+          </div>
+
+          <div class="admin-management-grid">
+            <!-- COURSES -->
+
+            <a href="admin-courses.html" class="admin-management-card">
+              <div class="admin-management-icon">📚</div>
+
+              <div>
+                <h3>Course Management</h3>
+
+                <p>Add, edit and manage HVAC courses.</p>
+              </div>
+            </a>
+
+            <!-- LECTURES -->
+
+            <a href="admin-lectures.html" class="admin-management-card">
+              <div class="admin-management-icon">🎥</div>
+
+              <div>
+                <h3>Lecture Management</h3>
+
+                <p>Manage course lectures and videos.</p>
+              </div>
+            </a>
+
+            <!-- STUDENTS -->
+
+            <a href="admin-students.html" class="admin-management-card">
+              <div class="admin-management-icon">👨‍🎓</div>
+
+              <div>
+                <h3>Student Management</h3>
+
+                <p>View and manage registered students.</p>
+              </div>
+            </a>
+
+            <!-- ORDERS -->
+
+            <a href="admin-orders.html" class="admin-management-card">
+              <div class="admin-management-icon">🛒</div>
+
+              <div>
+                <h3>Order Management</h3>
+
+                <p>View course orders and transactions.</p>
+              </div>
+            </a>
+
+            <!-- LIVE CLASSES -->
+
+            <a href="admin-live-classes.html" class="admin-management-card">
+              <div class="admin-management-icon">🔴</div>
+
+              <div>
+                <h3>Live Classes</h3>
+
+                <p>Create and manage live classes.</p>
+              </div>
+            </a>
+
+            <!-- CERTIFICATES -->
+
+            <a href="admin-certificates.html" class="admin-management-card">
+              <div class="admin-management-icon">🏆</div>
+
+              <div>
+                <h3>Certificate Management</h3>
+
+                <p>Manage and verify certificates.</p>
+              </div>
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer class="footer admin-footer">
+      <div class="footer-container container">
+        <div class="footer-brand">
+          <h3>HVAC <span>Tutorial</span></h3>
+
+          <p>
+            Admin panel for managing the HVAC Tutorial learning platform,
+            courses, students and orders.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Admin</h4>
+
+          <a href="admin.html"> Dashboard </a>
+
+          <a href="admin-courses.html"> Courses </a>
+
+          <a href="admin-students.html"> Students </a>
+
+          <a href="admin-orders.html"> Orders </a>
+        </div>
+
+        <div class="footer-links">
+          <h4>Platform</h4>
+
+          <a href="courses.html"> View Website </a>
+
+          <a href="admin-live-classes.html">Live Classes</a>
+
+          <a href="certificate.html"> Certificates </a>
+
+          <a href="#" id="adminFooterLogout"> Logout </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          ©
+          <span id="currentYear"></span>
+          HVAC Tutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+    <script src="../js/main.js"></script>
+
+    <script src="../js/admin.js"></script>
+  </body>
+</html>

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Verify Certificate - HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/verify-certificate.css" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="container nav-container">
+        <a href="../index.html" class="logo"> HVAC <span>Tutorial</span> </a>
+
+        <div class="nav-menu">
+          <a href="../index.html">Home</a>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="cart.html" class="cart-link">
+            🛒 Cart
+            <span class="cart-count">0</span>
+          </a>
+
+          <a href="dashboard.html"> Dashboard </a>
+
+          <a href="#" id="logoutBtn"> Logout </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- VERIFICATION PAGE -->
+
+    <main class="verification-page">
+      <div class="container">
+        <div class="verification-wrapper">
+          <div class="verification-header">
+            <span class="page-label"> CERTIFICATE VERIFICATION </span>
+
+            <h1>Verify Certificate</h1>
+
+            <p>
+              Enter the certificate ID to verify the authenticity of an HVAC
+              Tutorial certificate.
+            </p>
+          </div>
+
+          <!-- SEARCH BOX -->
+
+          <div class="verification-card">
+            <form id="verificationForm">
+              <label for="certificateIdInput"> Certificate ID </label>
+
+              <div class="verification-input-group">
+                <input
+                  type="text"
+                  id="certificateIdInput"
+                  placeholder="Example: HVAC-123456789"
+                  required
+                />
+
+                <button type="submit" class="verification-btn">
+                  Verify Certificate
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- VERIFICATION RESULT -->
+
+          <div class="verification-result" id="verificationResult">
+            <div class="verification-icon">🏆</div>
+
+            <h2 id="verificationTitle">Certificate Verified</h2>
+
+            <p id="verificationMessage">
+              Certificate information will appear here.
+            </p>
+
+            <div class="verification-details">
+              <div class="verification-detail">
+                <span> Student Name </span>
+
+                <strong id="verifiedStudentName"> -- </strong>
+              </div>
+
+              <div class="verification-detail">
+                <span> Course </span>
+
+                <strong id="verifiedCourseName"> -- </strong>
+              </div>
+
+              <div class="verification-detail">
+                <span> Certificate ID </span>
+
+                <strong id="verifiedCertificateId"> -- </strong>
+              </div>
+
+              <div class="verification-detail">
+                <span> Completion Date </span>
+
+                <strong id="verifiedCompletionDate"> -- </strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+      <div class="footer-container container">
+        <div class="footer-brand">
+          <h3>HVAC <span>Tutorial</span></h3>
+
+          <p>
+            Learn HVAC skills through practical, structured and professional
+            courses.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <h4>Student</h4>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="dashboard.html"> Dashboard </a>
+
+          <a href="my-courses.html"> My Courses </a>
+
+          <a href="certificate.html"> Certificates </a>
+        </div>
+
+        <div class="footer-links">
+          <h4>Support</h4>
+
+          <a href="#"> Contact Us </a>
+
+          <a href="#"> Help Center </a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>
+          ©
+          <span id="currentYear"></span>
+
+          HVAC Tutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+
+    <script src="../js/certificate.js"></script>
+  </body>
+</html>

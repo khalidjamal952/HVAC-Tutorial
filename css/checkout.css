@@ -1,0 +1,337 @@
+/* =========================================
+   CHECKOUT PAGE
+========================================= */
+
+.checkout-page {
+  padding: 70px 0;
+  background: #f8fafc;
+  min-height: 70vh;
+}
+
+/* =========================================
+   PAGE HEADING
+========================================= */
+
+.page-heading {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.page-heading > span {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.page-heading h1 {
+  margin-bottom: 10px;
+  color: #111827;
+  font-size: 38px;
+}
+
+.page-heading p {
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* =========================================
+   CHECKOUT LAYOUT
+========================================= */
+
+.checkout-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 350px;
+  gap: 30px;
+  align-items: start;
+}
+
+/* =========================================
+   FORM CARD
+========================================= */
+
+.checkout-form-card {
+  padding: 30px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(15, 23, 42, 0.06);
+}
+
+.checkout-form-card > h2 {
+  margin-bottom: 25px;
+  color: #111827;
+  font-size: 21px;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #111827;
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s ease;
+  box-sizing: border-box;
+}
+
+.form-group input {
+  height: 46px;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* =========================================
+   PAYMENT
+========================================= */
+.payment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 15px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #374151;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.payment-option:hover {
+  border-color: #93c5fd;
+  background: #f8fbff;
+}
+
+.payment-option input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.payment-option span {
+  flex: 1;
+  font-weight: 600;
+}
+
+.payment-option:has(input:checked) {
+    border-color: #2563eb;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+/* =========================================
+   PLACE ORDER
+========================================= */
+
+.place-order-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.place-order-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+/* =========================================
+   ORDER SUMMARY
+========================================= */
+
+.checkout-summary {
+  position: sticky;
+  top: 25px;
+  padding: 25px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.07);
+}
+
+.checkout-summary h2 {
+  margin-bottom: 20px;
+  color: #111827;
+  font-size: 20px;
+}
+
+/* =========================================
+   CHECKOUT ITEMS
+========================================= */
+
+.checkout-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.checkout-item h3 {
+  margin: 0;
+  color: #374151;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.checkout-item strong {
+  color: #111827;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* =========================================
+   SUMMARY ROWS
+========================================= */
+
+.checkout-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 13px 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.checkout-summary-row strong {
+  color: #111827;
+}
+
+.checkout-summary-row .discount {
+  color: #16a34a;
+}
+
+/* =========================================
+   TOTAL
+========================================= */
+
+.checkout-total {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-top: 8px;
+  padding-top: 18px;
+  border-top: 1px solid #e5e7eb;
+  color: #111827;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.checkout-total strong {
+  font-size: 22px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+  .checkout-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout-summary {
+    position: static;
+    max-width: 600px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 600px) {
+  .checkout-page {
+    padding: 50px 0;
+  }
+
+  .page-heading h1 {
+    font-size: 30px;
+  }
+
+  .page-heading p {
+    font-size: 14px;
+  }
+
+  .checkout-form-card {
+    padding: 22px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .checkout-summary {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 400px) {
+  .page-heading h1 {
+    font-size: 27px;
+  }
+
+  .checkout-form-card {
+    padding: 18px;
+  }
+
+  .checkout-summary {
+    padding: 18px;
+  }
+}

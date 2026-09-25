@@ -1,0 +1,513 @@
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 1024px) {
+  .container {
+    width: 92%;
+  }
+
+  .nav-menu {
+    gap: 18px;
+  }
+
+  .hero {
+    padding: 75px 0;
+  }
+
+  .hero-content {
+    grid-template-columns: 1fr 0.8fr;
+    gap: 35px;
+  }
+
+  .hero-text h1 {
+    font-size: 44px;
+  }
+
+  .feature-grid,
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footer-content {
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .footer-contact {
+    grid-column: span 3;
+  }
+}
+
+/* =========================================
+   TABLET / SMALL LAPTOP
+========================================= */
+
+@media (max-width: 850px) {
+  .nav-menu {
+    gap: 12px;
+  }
+
+  .nav-menu a {
+    font-size: 14px;
+  }
+
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-text {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .hero-text p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+  }
+
+  .hero-image {
+    margin-top: 10px;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .footer-about {
+    grid-column: span 2;
+  }
+
+  .footer-contact {
+    grid-column: span 2;
+  }
+}
+
+/* =========================================
+   MOBILE NAVBAR
+========================================= */
+
+@media (max-width: 768px) {
+  .nav-menu {
+    display: none !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    padding: 12px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+    z-index: 9999;
+  }
+
+  .nav-menu.active {
+    display: flex !important;
+  }
+  .container {
+    width: 92%;
+  }
+
+  /* ---------- Navbar ---------- */
+
+  .navbar {
+    min-height: 65px;
+    position: relative;
+  }
+
+  .logo {
+    font-size: 20px;
+  }
+
+  .menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    padding: 0;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+
+    background: #f8fafc;
+    color: #0f172a;
+
+    font-size: 24px;
+    line-height: 1;
+
+    cursor: pointer;
+  }
+
+  /* ---------- Mobile Menu ---------- */
+
+  .nav-menu {
+    display: none;
+
+    position: absolute;
+
+    top: 100%;
+    left: 0;
+
+    width: 100%;
+
+    padding: 12px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-top: none;
+
+    border-radius: 0 0 12px 12px;
+
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+
+    flex-direction: column;
+    align-items: stretch;
+
+    gap: 5px;
+
+    z-index: 9999;
+  }
+
+  .nav-menu.active {
+    display: flex !important;
+  }
+  .nav-menu a {
+    display: block;
+
+    width: 100%;
+
+    padding: 12px 14px;
+
+    border-radius: 7px;
+
+    font-size: 15px;
+
+    color: #374151;
+  }
+
+  .nav-menu a:hover {
+    background: #eff6ff;
+    color: #2563eb;
+    transform: none;
+  }
+
+  .nav-menu .nav-btn {
+    margin-top: 5px;
+
+    text-align: center;
+
+    background: #2563eb;
+
+    color: #ffffff !important;
+  }
+
+  /* ---------- Hero ---------- */
+
+  .hero {
+    padding: 60px 0;
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+
+    gap: 35px;
+
+    text-align: center;
+  }
+
+  .hero-text {
+    width: 100%;
+  }
+
+  .hero-text h1 {
+    font-size: 38px;
+    line-height: 1.2;
+  }
+
+  .hero-text p {
+    max-width: 650px;
+
+    margin: 0 auto 25px;
+
+    font-size: 15px;
+  }
+
+  .hero-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* ---------- HVAC Card ---------- */
+
+  .hero-image {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .hvac-card {
+    width: 290px;
+    min-height: 290px;
+  }
+
+  /* ---------- Sections ---------- */
+
+  .features,
+  .categories {
+    padding: 65px 0;
+  }
+
+  .section-heading {
+    margin-bottom: 35px;
+  }
+
+  .section-heading h2 {
+    font-size: 30px;
+  }
+
+  /* ---------- Cards ---------- */
+
+  .feature-grid,
+  .category-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  /* ---------- CTA ---------- */
+
+  .cta {
+    padding: 60px 20px;
+  }
+
+  .cta h2 {
+    font-size: 30px;
+  }
+
+  /* ---------- Footer ---------- */
+
+  .footer {
+    padding-top: 45px;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+
+  .footer-about,
+  .footer-contact {
+    grid-column: span 2;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+  .container {
+    width: 92%;
+  }
+
+  /* Navbar */
+
+  .logo {
+    font-size: 18px;
+  }
+
+  .menu-toggle {
+    width: 40px;
+    height: 40px;
+    font-size: 22px;
+  }
+
+  /* Hero */
+
+  .hero {
+    padding: 50px 0;
+  }
+
+  .hero-badge {
+    font-size: 11px;
+    padding: 6px 10px;
+  }
+
+  .hero-text h1 {
+    font-size: 32px;
+    line-height: 1.2;
+  }
+
+  .hero-text p {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-buttons a {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* HVAC Card */
+
+  .hvac-card {
+    width: 250px;
+    min-height: 250px;
+    padding: 25px;
+  }
+
+  .hvac-icon {
+    width: 85px;
+    height: 85px;
+    font-size: 42px;
+  }
+
+  .hvac-card h3 {
+    font-size: 21px;
+  }
+
+  /* Sections */
+
+  .features,
+  .categories {
+    padding: 55px 0;
+  }
+
+  .section-heading h2 {
+    font-size: 26px;
+  }
+
+  .section-heading p {
+    font-size: 14px;
+  }
+
+  /* Cards */
+
+  .feature-grid,
+  .category-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .feature-card,
+  .category-card {
+    padding: 25px 20px;
+  }
+
+  /* CTA */
+
+  .cta {
+    padding: 50px 20px;
+  }
+
+  .cta h2 {
+    font-size: 26px;
+  }
+
+  .cta .primary-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Footer */
+
+  .footer {
+    padding-top: 40px;
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .footer-about,
+  .footer-contact {
+    grid-column: auto;
+  }
+
+  .footer-logo {
+    font-size: 20px;
+  }
+
+  .footer-bottom {
+    padding: 20px 0;
+  }
+
+  .footer-bottom-links {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 400px) {
+  .container {
+    width: 92%;
+  }
+
+  .logo {
+    font-size: 17px;
+  }
+
+  .hero {
+    padding: 42px 0;
+  }
+
+  .hero-text h1 {
+    font-size: 28px;
+  }
+
+  .hero-text p {
+    font-size: 13px;
+  }
+
+  .hero-badge {
+    font-size: 10px;
+  }
+
+  .hvac-card {
+    width: 225px;
+    min-height: 225px;
+  }
+
+  .section-heading h2 {
+    font-size: 23px;
+  }
+
+  .section-heading p {
+    font-size: 13px;
+  }
+
+  .cta h2 {
+    font-size: 23px;
+  }
+}
+body {
+  outline: 10px solid red !important;
+}
