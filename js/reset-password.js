@@ -10,14 +10,22 @@ const confirmPassword = document.getElementById("confirmPassword");
 
 const resetMessage = document.getElementById("resetMessage");
 
-// Get email saved during forgot password
-const resetEmail = sessionStorage.getItem("hvacResetEmail");
+// ========================================
+// STUDENT RESET PASSWORD
+// ========================================
 
-// If no email is available, go back
-if (!resetEmail) {
-  alert("Please start the password reset process again.");
+const urlParams = new URLSearchParams(
+  window.location.search
+);
 
-  window.location.href = "forgot-password.html";
+const resetToken = urlParams.get("token");
+
+// Check reset token
+if (!resetToken) {
+  alert("Invalid or missing password reset link.");
+
+  window.location.href =
+    "forgot-password.html";
 }
 
 // ========================================
@@ -25,68 +33,144 @@ if (!resetEmail) {
 // ========================================
 
 if (resetPasswordForm) {
-  resetPasswordForm.addEventListener("submit", function (event) {
-    event.preventDefault();
+  resetPasswordForm.addEventListener(
+    "submit",
+    async function (event) {
+      event.preventDefault();
 
-    const password = newPassword.value;
+      const password =
+        newPassword.value;
 
-    const confirm = confirmPassword.value;
+      const confirm =
+        confirmPassword.value;
 
-    // Check password length
-    if (password.length < 6) {
-      resetMessage.textContent = "Password must be at least 6 characters.";
+      // Password length
+      if (password.length < 8) {
+        resetMessage.textContent =
+          "Password must be at least 8 characters.";
 
-      resetMessage.className = "auth-message error";
+        resetMessage.className =
+          "auth-message error";
 
-      return;
+        return;
+      }
+
+      // Uppercase
+      if (!/[A-Z]/.test(password)) {
+        resetMessage.textContent =
+          "Password must contain at least one uppercase letter.";
+
+        resetMessage.className =
+          "auth-message error";
+
+        return;
+      }
+
+      // Lowercase
+      if (!/[a-z]/.test(password)) {
+        resetMessage.textContent =
+          "Password must contain at least one lowercase letter.";
+
+        resetMessage.className =
+          "auth-message error";
+
+        return;
+      }
+
+      // Number
+      if (!/[0-9]/.test(password)) {
+        resetMessage.textContent =
+          "Password must contain at least one number.";
+
+        resetMessage.className =
+          "auth-message error";
+
+        return;
+      }
+
+      // Special character
+      if (
+        !/[!@#$%^&*(),.?":{}|<>]/.test(
+          password
+        )
+      ) {
+        resetMessage.textContent =
+          "Password must contain at least one special character.";
+
+        resetMessage.className =
+          "auth-message error";
+
+        return;
+      }
+
+      // Confirm password
+      if (password !== confirm) {
+        resetMessage.textContent =
+          "Passwords do not match.";
+
+        resetMessage.className =
+          "auth-message error";
+
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/auth/reset-password",
+          {
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body: JSON.stringify({
+              token: resetToken,
+              password: password,
+            }),
+          }
+        );
+
+        const data =
+          await response.json();
+
+        if (!response.ok) {
+          resetMessage.textContent =
+            data.message ||
+            "Unable to reset password.";
+
+          resetMessage.className =
+            "auth-message error";
+
+          return;
+        }
+
+        resetMessage.textContent =
+          data.message ||
+          "Password reset successfully! Redirecting to login...";
+
+        resetMessage.className =
+          "auth-message success";
+
+        setTimeout(function () {
+          window.location.href =
+            "login.html";
+        }, 1500);
+      } catch (error) {
+        console.error(
+          "Student Reset Password Error:",
+          error
+        );
+
+        resetMessage.textContent =
+          "Unable to connect to server. Please try again.";
+
+        resetMessage.className =
+          "auth-message error";
+      }
     }
-
-    // Check passwords match
-    if (password !== confirm) {
-      resetMessage.textContent = "Passwords do not match.";
-
-      resetMessage.className = "auth-message error";
-
-      return;
-    }
-
-    // Get users
-    const users = JSON.parse(localStorage.getItem("hvacUsers")) || [];
-
-    // Find user
-    const userIndex = users.findIndex(function (user) {
-      return (
-        user.email && user.email.toLowerCase() === resetEmail.toLowerCase()
-      );
-    });
-
-    if (userIndex === -1) {
-      resetMessage.textContent = "Account not found.";
-
-      resetMessage.className = "auth-message error";
-
-      return;
-    }
-
-    // Update password
-    users[userIndex].password = password;
-
-    // Save updated users
-    localStorage.setItem("hvacUsers", JSON.stringify(users));
-
-    // Remove temporary reset email
-    sessionStorage.removeItem("hvacResetEmail");
-
-    resetMessage.textContent =
-      "Password reset successfully! Redirecting to login...";
-
-    resetMessage.className = "auth-message success";
-
-    // Go to login
-    setTimeout(function () {
-      window.location.href = "login.html";
-    }, 1500);
-  });
+  );
 }
 
 const newPasswordToggle = document.getElementById("newPasswordToggle");

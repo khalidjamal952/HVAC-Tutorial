@@ -1,5 +1,6 @@
 require("dotenv").config();
 const lectureRoutes = require("./routes/lectureRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const path = require("path");
 const userRoutes = require("./routes/userRoutes");
 const orderRoutes = require("./routes/orderRoutes");
@@ -20,6 +21,7 @@ connectDB();
 
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/certificates", certificateRoutes);

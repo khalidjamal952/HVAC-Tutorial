@@ -1987,48 +1987,47 @@ body.dark-mode .admin-table .admin-view-btn:hover {
   color: #ffffff !important;
 }
 
-
 /* =========================================
    CERTIFICATE TABLE - HOVER & TEXT FIX
    ========================================= */
 
 body.dark-mode .admin-table tbody tr:hover td {
-    background: #26364d !important;
-    color: #f8fafc !important;
+  background: #26364d !important;
+  color: #f8fafc !important;
 }
 
 /* Student name */
 body.dark-mode .admin-table .student-name-cell {
-    color: #f8fafc !important;
-    background: transparent !important;
+  color: #f8fafc !important;
+  background: transparent !important;
 }
 
 /* Student email */
 body.dark-mode .admin-table .student-email-cell {
-    color: #60a5fa !important;
-    background: transparent !important;
+  color: #60a5fa !important;
+  background: transparent !important;
 }
 
 /* Course name */
 body.dark-mode .admin-table td {
-    color: #f8fafc !important;
+  color: #f8fafc !important;
 }
 
 /* Course links */
 body.dark-mode .admin-table td a {
-    background: transparent !important;
-    color: #60a5fa !important;
+  background: transparent !important;
+  color: #60a5fa !important;
 }
 
 body.dark-mode .admin-table td a:hover {
-    background: transparent !important;
-    color: #93c5fd !important;
+  background: transparent !important;
+  color: #93c5fd !important;
 }
 
 /* Prevent text selection highlight looking like white background */
 body.dark-mode .admin-table td strong {
-    background: transparent !important;
-    color: #f8fafc !important;
+  background: transparent !important;
+  color: #f8fafc !important;
 }
 
 /* =========================================
@@ -2036,37 +2035,37 @@ body.dark-mode .admin-table td strong {
    ========================================= */
 
 body.dark-mode .admin-table tbody tr td:nth-child(2) {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 body.dark-mode .admin-table tbody tr td:nth-child(2) * {
-    color: #ffffff !important;
-    background: transparent !important;
+  color: #ffffff !important;
+  background: transparent !important;
 }
 
 /* Student email */
 body.dark-mode .admin-table tbody tr td:nth-child(2) .student-email-cell {
-    color: #60a5fa !important;
+  color: #60a5fa !important;
 }
 
 /* Hover row */
 body.dark-mode .admin-table tbody tr:hover td {
-    background: #26364d !important;
+  background: #26364d !important;
 }
 
 /* Student name remains white on hover */
 body.dark-mode .admin-table tbody tr:hover td:nth-child(2) {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 body.dark-mode .admin-table tbody tr:hover td:nth-child(2) * {
-    color: #ffffff !important;
-    background: transparent !important;
+  color: #ffffff !important;
+  background: transparent !important;
 }
 
 /* Email remains blue */
 body.dark-mode .admin-table tbody tr:hover td:nth-child(2) .student-email-cell {
-    color: #60a5fa !important;
+  color: #60a5fa !important;
 }
 
 /* =========================================
@@ -2075,65 +2074,64 @@ body.dark-mode .admin-table tbody tr:hover td:nth-child(2) .student-email-cell {
 
 /* Table row */
 body.dark-mode .admin-table tbody tr td {
-    background: #1e293b !important;
-    color: #f8fafc !important;
+  background: #1e293b !important;
+  color: #f8fafc !important;
 }
 
 /* Row hover */
 body.dark-mode .admin-table tbody tr:hover td {
-    background: #26364d !important;
-    color: #f8fafc !important;
+  background: #26364d !important;
+  color: #f8fafc !important;
 }
 
 /* Certificate ID */
 body.dark-mode .certificate-id-cell {
-    background: transparent !important;
-    color: #f8fafc !important;
+  background: transparent !important;
+  color: #f8fafc !important;
 }
 
 /* Student name - IMPORTANT */
 body.dark-mode .certificate-student-cell {
-    background: transparent !important;
-    color: #ffffff !important;
-    font-weight: 700 !important;
+  background: transparent !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
 }
 
 /* Student email */
 body.dark-mode .student-email-cell {
-    background: transparent !important;
-    color: #60a5fa !important;
+  background: transparent !important;
+  color: #60a5fa !important;
 }
 
 /* Course */
 body.dark-mode .certificate-course-cell {
-    background: transparent !important;
-    color: #f8fafc !important;
+  background: transparent !important;
+  color: #f8fafc !important;
 }
 
 /* Course hover */
 body.dark-mode .certificate-course-cell:hover {
-    background: transparent !important;
-    color: #93c5fd !important;
+  background: transparent !important;
+  color: #93c5fd !important;
 }
 
 /* View button / link */
 body.dark-mode .admin-view-btn {
-    background: transparent !important;
-    color: #60a5fa !important;
+  background: transparent !important;
+  color: #60a5fa !important;
 }
 
 /* Remove unwanted white background from text/link hover */
 body.dark-mode .admin-view-btn:hover {
-    background: #2563eb !important;
-    color: #ffffff !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
 }
 
 /* Prevent white background on certificate table text */
 body.dark-mode .admin-table span,
 body.dark-mode .admin-table div {
-    background: transparent !important;
+  background: transparent !important;
 }
-
 
 /* FIX LECTURE MODAL ACTION BUTTONS */
 #lectureModal .admin-modal-content {
@@ -2167,4 +2165,94 @@ body.dark-mode .admin-table div {
   padding: 0 20px !important;
   visibility: visible !important;
   opacity: 1 !important;
+}
+
+.admin-password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.admin-password-wrapper input {
+  width: 100%;
+  padding-right: 50px !important;
+  box-sizing: border-box;
+}
+
+.admin-password-wrapper .password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+
+  border: none;
+  background: transparent;
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+}
+
+.admin-password-wrapper .password-toggle:hover {
+  background: transparent;
+  transform: translateY(-50%);
+}
+
+.admin-password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.admin-password-wrapper input {
+  width: 100%;
+  padding-right: 50px !important;
+  box-sizing: border-box;
+}
+
+.admin-password-wrapper .password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  background: transparent;
+
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+}
+
+.admin-password-wrapper .password-toggle:hover {
+  background: transparent;
+}
+
+.admin-forgot-password {
+  text-align: right;
+  margin-top: -8px;
+  margin-bottom: 18px;
+}
+
+.admin-forgot-password a {
+  color: #2563eb;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-forgot-password a:hover {
+  text-decoration: underline;
 }

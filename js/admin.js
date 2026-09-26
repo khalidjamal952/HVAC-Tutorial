@@ -10,13 +10,14 @@ const adminPage =
   window.location.pathname.includes("admin-live-classes.html") ||
   window.location.pathname.includes("admin-certificates.html");
 
-if (adminPage && localStorage.getItem("hvacAdminLoggedIn") !== "true") {
+const adminToken = localStorage.getItem("hvacAdminToken");
+
+if (adminPage && !adminToken) {
   window.location.href = "admin-login.html";
 }
 // =========================================
 // ADMIN LOGIN
 // =========================================
-
 const adminLoginForm = document.getElementById("adminLoginForm");
 
 if (adminLoginForm) {
@@ -36,21 +37,16 @@ if (adminLoginForm) {
     }
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/auth/admin-login",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            email: email,
-            password: password,
-          }),
+      const response = await fetch("http://localhost:5000/api/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
 
       const data = await response.json();
 
@@ -62,8 +58,11 @@ if (adminLoginForm) {
       // Save admin JWT token
       localStorage.setItem("hvacAdminToken", data.token);
 
-      // Keep existing admin login flag
+      // Keep admin login flag
       localStorage.setItem("hvacAdminLoggedIn", "true");
+
+      // Save basic admin information
+      localStorage.setItem("hvacAdmin", JSON.stringify(data.admin));
 
       alert("Admin login successful!");
 
@@ -82,7 +81,7 @@ if (adminLoginForm) {
 const adminSetupForm = document.getElementById("adminSetupForm");
 
 if (adminSetupForm) {
-  adminSetupForm.addEventListener("submit", function (event) {
+  adminSetupForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     const name = document.getElementById("setupAdminName").value.trim();
@@ -98,57 +97,79 @@ if (adminSetupForm) {
       "setupAdminConfirmPassword",
     ).value;
 
-    // =================================
+    // ================================
     // VALIDATION
-    // =================================
+    // ================================
 
-    if (!name || !email || !password) {
+    if (!name || !email || !password || !confirmPassword) {
       alert("Please fill all required fields.");
-
       return;
     }
 
-    if (password.length < 6) {
-      alert("Password must be at least 6 characters.");
+    if (password.length < 8) {
+      alert("Password must be at least 8 characters long.");
+      return;
+    }
 
+    if (!/[A-Z]/.test(password)) {
+      alert("Password must contain at least one uppercase letter.");
+      return;
+    }
+
+    if (!/[a-z]/.test(password)) {
+      alert("Password must contain at least one lowercase letter.");
+      return;
+    }
+
+    if (!/[0-9]/.test(password)) {
+      alert("Password must contain at least one number.");
+      return;
+    }
+
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      alert("Password must contain at least one special character.");
       return;
     }
 
     if (password !== confirmPassword) {
       alert("Passwords do not match.");
-
       return;
     }
 
-    // =================================
-    // CREATE ADMIN OBJECT
-    // =================================
+    // ================================
+    // CREATE ADMIN
+    // ================================
 
-    const admin = {
-      id: "ADMIN" + Date.now(),
+    try {
+      const response = await fetch("http://localhost:5000/api/admin/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          password: password,
+        }),
+      });
 
-      name: name,
+      const data = await response.json();
 
-      email: email,
+      if (!response.ok) {
+        alert(data.message || "Failed to create admin account.");
+        return;
+      }
 
-      password: password,
+      alert("Admin account created successfully!");
 
-      createdAt: new Date().toISOString(),
-    };
+      adminSetupForm.reset();
 
-    // =================================
-    // SAVE ADMIN
-    // =================================
+      window.location.href = "admin-login.html";
+    } catch (error) {
+      console.error("Admin Setup Error:", error);
 
-    localStorage.setItem("hvacAdmin", JSON.stringify(admin));
-
-    alert("Admin account created successfully!");
-
-    // =================================
-    // GO TO ADMIN LOGIN
-    // =================================
-
-    window.location.href = "admin-login.html";
+      alert("Unable to connect to server. Please try again.");
+    }
   });
 }
 
@@ -984,15 +1005,12 @@ async function loadAdminLectures() {
   }
 
   try {
-    const response = await fetch(
-      "http://localhost:5000/api/lectures/admin",
-      {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + adminToken,
-        },
-      }
-    );
+    const response = await fetch("http://localhost:5000/api/lectures/admin", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + adminToken,
+      },
+    });
 
     const data = await response.json();
 
@@ -1008,9 +1026,7 @@ async function loadAdminLectures() {
   } catch (error) {
     console.error("Load Admin Lectures Error:", error);
 
-    alert(
-      "Unable to load lectures. Please check the server."
-    );
+    alert("Unable to load lectures. Please check the server.");
   }
 }
 
@@ -2083,18 +2099,25 @@ if (certificatesTableBody) {
 // ADMIN LOGOUT
 // =========================================
 
+// =========================================
+// ADMIN LOGOUT
+// =========================================
+
 const adminLogoutBtn = document.getElementById("adminLogoutBtn");
 
 if (adminLogoutBtn) {
   adminLogoutBtn.addEventListener("click", function (event) {
     event.preventDefault();
 
+    // Remove admin authentication data
+    localStorage.removeItem("hvacAdminToken");
     localStorage.removeItem("hvacAdminLoggedIn");
+    localStorage.removeItem("hvacAdmin");
 
+    // Redirect to admin login
     window.location.href = "admin-login.html";
   });
 }
-
 // =========================================
 // ADMIN DASHBOARD STATISTICS
 // =========================================
@@ -2163,4 +2186,260 @@ if (document.getElementById("adminCourseCount")) {
   }
 
   adminCertificateCount.textContent = certificateCount;
+}
+
+const setupPasswordToggle = document.getElementById("setupPasswordToggle");
+
+const setupAdminPassword = document.getElementById("setupAdminPassword");
+
+if (setupPasswordToggle && setupAdminPassword) {
+  setupPasswordToggle.addEventListener("click", function () {
+    if (setupAdminPassword.type === "password") {
+      setupAdminPassword.type = "text";
+      setupPasswordToggle.textContent = "🙈";
+      setupPasswordToggle.setAttribute("aria-label", "Hide password");
+    } else {
+      setupAdminPassword.type = "password";
+      setupPasswordToggle.textContent = "👁️";
+      setupPasswordToggle.setAttribute("aria-label", "Show password");
+    }
+  });
+}
+
+const setupConfirmPasswordToggle = document.getElementById(
+  "setupConfirmPasswordToggle",
+);
+
+const setupAdminConfirmPassword = document.getElementById(
+  "setupAdminConfirmPassword",
+);
+
+if (setupConfirmPasswordToggle && setupAdminConfirmPassword) {
+  setupConfirmPasswordToggle.addEventListener("click", function () {
+    if (setupAdminConfirmPassword.type === "password") {
+      setupAdminConfirmPassword.type = "text";
+      setupConfirmPasswordToggle.textContent = "🙈";
+      setupConfirmPasswordToggle.setAttribute("aria-label", "Hide password");
+    } else {
+      setupAdminConfirmPassword.type = "password";
+      setupConfirmPasswordToggle.textContent = "👁️";
+      setupConfirmPasswordToggle.setAttribute("aria-label", "Show password");
+    }
+  });
+}
+
+const adminLoginPasswordToggle = document.getElementById(
+  "adminLoginPasswordToggle",
+);
+
+const adminLoginPassword = document.getElementById("adminPassword");
+
+if (adminLoginPasswordToggle && adminLoginPassword) {
+  adminLoginPasswordToggle.addEventListener("click", function () {
+    if (adminLoginPassword.type === "password") {
+      adminLoginPassword.type = "text";
+      adminLoginPasswordToggle.textContent = "🙈";
+      adminLoginPasswordToggle.setAttribute("aria-label", "Hide password");
+    } else {
+      adminLoginPassword.type = "password";
+      adminLoginPasswordToggle.textContent = "👁️";
+      adminLoginPasswordToggle.setAttribute("aria-label", "Show password");
+    }
+  });
+}
+
+// ==========================================
+// ADMIN RESET PASSWORD - SHOW / HIDE
+// ==========================================
+
+const adminNewPasswordToggle = document.getElementById(
+  "adminNewPasswordToggle",
+);
+
+const adminNewPassword = document.getElementById("adminNewPassword");
+
+if (adminNewPasswordToggle && adminNewPassword) {
+  adminNewPasswordToggle.addEventListener("click", function () {
+    if (adminNewPassword.type === "password") {
+      adminNewPassword.type = "text";
+      adminNewPasswordToggle.textContent = "🙈";
+      adminNewPasswordToggle.setAttribute("aria-label", "Hide password");
+    } else {
+      adminNewPassword.type = "password";
+      adminNewPasswordToggle.textContent = "👁️";
+      adminNewPasswordToggle.setAttribute("aria-label", "Show password");
+    }
+  });
+}
+
+const adminConfirmPasswordToggle = document.getElementById(
+  "adminConfirmPasswordToggle",
+);
+
+const adminConfirmPassword = document.getElementById("adminConfirmPassword");
+
+if (adminConfirmPasswordToggle && adminConfirmPassword) {
+  adminConfirmPasswordToggle.addEventListener("click", function () {
+    if (adminConfirmPassword.type === "password") {
+      adminConfirmPassword.type = "text";
+      adminConfirmPasswordToggle.textContent = "🙈";
+      adminConfirmPasswordToggle.setAttribute("aria-label", "Hide password");
+    } else {
+      adminConfirmPassword.type = "password";
+      adminConfirmPasswordToggle.textContent = "👁️";
+      adminConfirmPasswordToggle.setAttribute("aria-label", "Show password");
+    }
+  });
+}
+
+// ==========================================
+// ADMIN FORGOT PASSWORD
+// ==========================================
+
+const adminForgotPasswordForm = document.getElementById(
+  "adminForgotPasswordForm",
+);
+
+if (adminForgotPasswordForm) {
+  adminForgotPasswordForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const email = document
+      .getElementById("adminForgotEmail")
+      .value.trim()
+      .toLowerCase();
+
+    if (!email) {
+      alert("Please enter your admin email.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/admin/forgot-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Unable to process password reset request.");
+        return;
+      }
+
+      alert(data.message || "Password reset request submitted successfully.");
+
+      if (data.resetUrl) {
+        window.location.href = data.resetUrl;
+      }
+    } catch (error) {
+      console.error("Admin Forgot Password Error:", error);
+
+      alert("Unable to connect to server. Please try again.");
+    }
+  });
+}
+
+// ==========================================
+// ADMIN RESET PASSWORD
+// ==========================================
+
+const adminResetPasswordForm = document.getElementById(
+  "adminResetPasswordForm",
+);
+
+if (adminResetPasswordForm) {
+  adminResetPasswordForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const newPassword = document.getElementById("adminNewPassword").value;
+
+    const confirmPassword = document.getElementById(
+      "adminConfirmPassword",
+    ).value;
+
+    // Get reset token from URL
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const token = urlParams.get("token");
+
+    if (!token) {
+      alert("Invalid or missing password reset link.");
+      return;
+    }
+
+    if (!newPassword || !confirmPassword) {
+      alert("Please fill all required fields.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      alert("Passwords do not match.");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      alert("Password must be at least 8 characters long.");
+      return;
+    }
+
+    if (!/[A-Z]/.test(newPassword)) {
+      alert("Password must contain at least one uppercase letter.");
+      return;
+    }
+
+    if (!/[a-z]/.test(newPassword)) {
+      alert("Password must contain at least one lowercase letter.");
+      return;
+    }
+
+    if (!/[0-9]/.test(newPassword)) {
+      alert("Password must contain at least one number.");
+      return;
+    }
+
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+      alert("Password must contain at least one special character.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/admin/reset-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            token: token,
+            password: newPassword,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Unable to reset password.");
+        return;
+      }
+
+      alert(data.message || "Admin password reset successfully.");
+
+      window.location.href = "admin-login.html";
+    } catch (error) {
+      console.error("Admin Reset Password Error:", error);
+
+      alert("Unable to connect to server. Please try again.");
+    }
+  });
 }
