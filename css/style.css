@@ -632,45 +632,42 @@ img {
 ========================================= */
 
 .navbar .nav-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: nowrap;
 }
 
 .navbar .logo {
-    flex-shrink: 0;
-    white-space: nowrap;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .navbar .nav-menu {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex-wrap: nowrap;
-    gap: 28px;
-    margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  gap: 28px;
+  margin-left: auto;
 }
 
 .navbar .nav-menu a {
-    white-space: nowrap;
+  white-space: nowrap;
 }
-
 
 /* =========================================
    MOBILE NAVBAR
 ========================================= */
 
 @media (max-width: 768px) {
+  .navbar .nav-container {
+    flex-wrap: wrap;
+  }
 
-    .navbar .nav-container {
-        flex-wrap: wrap;
-    }
-
-    .navbar .nav-menu {
-        margin-left: 0;
-    }
-
+  .navbar .nav-menu {
+    margin-left: 0;
+  }
 }
 
 /* =========================================
@@ -678,101 +675,712 @@ img {
 ========================================= */
 
 .footer {
-    background: #0b1220;
-    color: #ffffff;
-    margin-top: 0;
+  background: #0b1220;
+  color: #ffffff;
+  margin-top: 0;
 }
 
 .footer-container {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 60px;
-    padding-top: 55px;
-    padding-bottom: 45px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 60px;
+  padding-top: 55px;
+  padding-bottom: 45px;
 }
 
 .footer-brand h3 {
-    margin: 0 0 14px;
-    color: #ffffff;
-    font-size: 22px;
+  margin: 0 0 14px;
+  color: #ffffff;
+  font-size: 22px;
 }
 
 .footer-brand h3 span {
-    color: #60a5fa;
+  color: #60a5fa;
 }
 
 .footer-brand p {
-    max-width: 480px;
-    margin: 0;
-    color: #cbd5e1;
-    font-size: 14px;
-    line-height: 1.7;
+  max-width: 480px;
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.7;
 }
 
 .footer-links {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .footer-links h4 {
-    margin: 0 0 18px;
-    color: #ffffff;
-    font-size: 15px;
+  margin: 0 0 18px;
+  color: #ffffff;
+  font-size: 15px;
 }
 
 .footer-links a {
-    margin-bottom: 11px;
-    color: #94a3b8;
-    font-size: 14px;
-    text-decoration: none;
-    transition: color 0.3s ease;
+  margin-bottom: 11px;
+  color: #94a3b8;
+  font-size: 14px;
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 .footer-links a:hover {
-    color: #60a5fa;
+  color: #60a5fa;
 }
 
 .footer-bottom {
-    border-top: 1px solid #1e293b;
-    padding: 18px 20px;
-    text-align: center;
+  border-top: 1px solid #1e293b;
+  padding: 18px 20px;
+  text-align: center;
 }
 
 .footer-bottom p {
-    margin: 0;
-    color: #64748b;
-    font-size: 13px;
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
 }
-
 
 /* =========================================
    FOOTER RESPONSIVE
 ========================================= */
 
 @media (max-width: 768px) {
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+  }
 
-    .footer-container {
-        grid-template-columns: 1fr 1fr;
-        gap: 35px;
-    }
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+}
 
-    .footer-brand {
-        grid-column: 1 / -1;
-    }
+@media (max-width: 500px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
 
+  .footer-brand {
+    grid-column: auto;
+  }
+}
+
+/* =========================================
+   DARK MODE
+========================================= */
+
+body.dark-mode {
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+body.dark-mode .navbar {
+  background: #111827;
+  border-bottom-color: #1f2937;
+}
+
+body.dark-mode .nav-menu a {
+  color: #e5e7eb;
+}
+
+body.dark-mode .nav-menu a:hover {
+  color: #60a5fa;
+}
+
+body.dark-mode .theme-toggle {
+  background: #1f2937;
+  color: #facc15;
+  border-color: #374151;
+}
+
+body.dark-mode .footer {
+  background: #080f1d;
+  color: #cbd5e1;
+}
+
+body.dark-mode .footer h3,
+body.dark-mode .footer p,
+body.dark-mode .footer a {
+  color: #cbd5e1;
+}
+
+body.dark-mode .footer a:hover {
+  color: #60a5fa;
+}
+
+/* COMMON CARDS */
+
+body.dark-mode .course-card,
+body.dark-mode .ebook-card,
+body.dark-mode .dashboard-card,
+body.dark-mode .profile-card,
+body.dark-mode .certificate-card {
+  background: #111827;
+  border-color: #1f2937;
+  color: #e5e7eb;
+}
+
+body.dark-mode .course-card h3,
+body.dark-mode .ebook-card h3,
+body.dark-mode .dashboard-card h3,
+body.dark-mode .profile-card h3 {
+  color: #f8fafc;
+}
+
+/* COMMON TEXT */
+
+body.dark-mode p {
+  color: #cbd5e1;
+}
+
+/* FORM ELEMENTS */
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background: #111827;
+  color: #f8fafc;
+  border-color: #374151;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* BUTTON */
+
+.theme-toggle {
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 1px solid #dbeafe;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #1e3a8a;
+  font-size: 17px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+}
+
+/* =========================================
+   DARK MODE - COURSES PAGE COMPLETE FIX
+========================================= */
+
+body.dark-mode {
+  background: #0f172a !important;
+  color: #e5e7eb !important;
+}
+
+/* MAIN PAGE BACKGROUND */
+
+body.dark-mode main {
+  background: #0f172a !important;
+}
+
+body.dark-mode section {
+  background-color: #0f172a;
+}
+
+/* HERO / PAGE HEADER */
+
+body.dark-mode .hero,
+body.dark-mode .page-hero,
+body.dark-mode .courses-hero,
+body.dark-mode .courses-header {
+  background: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+body.dark-mode .hero h1,
+body.dark-mode .page-hero h1,
+body.dark-mode .courses-hero h1,
+body.dark-mode .courses-header h1 {
+  color: #f8fafc !important;
+}
+
+body.dark-mode .hero p,
+body.dark-mode .page-hero p,
+body.dark-mode .courses-hero p,
+body.dark-mode .courses-header p {
+  color: #cbd5e1 !important;
+}
+
+/* ALL HEADINGS */
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: #f8fafc;
+}
+
+/* NORMAL TEXT */
+
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode label {
+  color: #cbd5e1;
+}
+
+/* LOGO */
+
+body.dark-mode .logo {
+  color: #ffffff !important;
+}
+
+body.dark-mode .logo span {
+  color: #60a5fa !important;
+}
+
+/* NAVBAR */
+
+body.dark-mode .navbar {
+  background: #111827 !important;
+  border-bottom-color: #1f2937 !important;
+}
+
+body.dark-mode .nav-menu a {
+  color: #f8fafc !important;
+}
+
+body.dark-mode .nav-menu a:hover {
+  color: #60a5fa !important;
+}
+
+/* SEARCH AREA */
+
+body.dark-mode .search-section,
+body.dark-mode .courses-section,
+body.dark-mode .course-section {
+  background: #0f172a !important;
+}
+
+/* SEARCH INPUT */
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+  background: #111827 !important;
+  color: #f8fafc !important;
+  border-color: #374151 !important;
+}
+
+body.dark-mode input::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* FILTER BUTTONS */
+
+body.dark-mode .filter-btn {
+  background: #111827;
+  color: #cbd5e1;
+  border-color: #374151;
+}
+
+body.dark-mode .filter-btn:hover {
+  background: #1e3a8a;
+  color: #ffffff;
+}
+
+body.dark-mode .filter-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+/* COURSE CARDS */
+
+body.dark-mode .course-card {
+  background: #111827 !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .course-card h3 {
+  color: #f8fafc !important;
+}
+
+body.dark-mode .course-card p {
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .course-card span {
+  color: #cbd5e1;
+}
+
+body.dark-mode .course-price strong {
+  color: #ffffff !important;
+}
+
+body.dark-mode .course-price del {
+  color: #94a3b8 !important;
+}
+
+/* COURSE CARD IMAGE / TOP */
+
+body.dark-mode .course-image,
+body.dark-mode .course-thumbnail {
+  background: #1e293b !important;
+}
+
+/* FOOTER */
+
+body.dark-mode .footer {
+  background: #080f1d !important;
+  color: #cbd5e1 !important;
+  border-top-color: #1f2937 !important;
+}
+
+body.dark-mode .footer h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .footer p,
+body.dark-mode .footer a {
+  color: #94a3b8 !important;
+}
+
+body.dark-mode .footer a:hover {
+  color: #60a5fa !important;
+}
+
+/* =========================================
+   DARK MODE NAVBAR FULL WIDTH FIX
+========================================= */
+
+body.dark-mode .navbar {
+  width: 100% !important;
+  background: #111827 !important;
+  border-bottom: 1px solid #1f2937 !important;
+}
+
+body.dark-mode .nav-container {
+  background: #111827 !important;
+}
+
+body.dark-mode .logo {
+  color: #ffffff !important;
+}
+
+body.dark-mode .logo span {
+  color: #60a5fa !important;
+}
+
+body.dark-mode .nav-menu a {
+  color: #f8fafc !important;
+}
+
+body.dark-mode .nav-menu a:hover {
+  color: #60a5fa !important;
+}
+
+body.dark-mode .cart-link {
+  color: #f8fafc !important;
+}
+
+body.dark-mode .menu-toggle {
+  color: #ffffff !important;
+  background: transparent !important;
+}
+
+body.dark-mode .theme-toggle {
+  background: #1f2937 !important;
+  color: #facc15 !important;
+  border-color: #374151 !important;
+}
+
+/* =========================================
+   DARK MODE - HVAC HERO CARD
+========================================= */
+
+body.dark-mode .hvac-card {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .hvac-card h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .hvac-card p {
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .hvac-icon {
+  color: #38bdf8 !important;
+}
+
+/* =========================================
+   DARK MODE - FEATURE CARDS
+========================================= */
+
+body.dark-mode .feature-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+body.dark-mode .feature-card h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .feature-card p {
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .feature-card .feature-icon {
+  background: #334155 !important;
+}
+
+body.dark-mode .feature-card .feature-icon {
+  color: #ffffff !important;
+}
+
+/* =========================================
+   DARK MODE - HVAC CATEGORY CARDS
+========================================= */
+
+body.dark-mode .category-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+body.dark-mode .category-card h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .category-card p {
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .category-card > div {
+  color: #ffffff !important;
+}
+
+/* =========================================
+   DARK MODE - HOME NAVBAR FINAL
+========================================= */
+
+body.dark-mode .header {
+  background: #111827 !important;
+  border-bottom: 1px solid #1f2937 !important;
+}
+
+body.dark-mode .header .navbar {
+  background: transparent !important;
+}
+
+body.dark-mode .header .logo {
+  color: #ffffff !important;
+}
+
+body.dark-mode .header .nav-menu a {
+  color: #f8fafc !important;
+}
+
+body.dark-mode .header .nav-menu a:hover {
+  color: #60a5fa !important;
+}
+
+body.dark-mode .header .theme-toggle {
+  background: #1f2937 !important;
+  color: #facc15 !important;
+  border-color: #374151 !important;
+}
+
+/* =========================================
+   DARK MODE - MOBILE NAVBAR
+========================================= */
+
+@media (max-width: 768px) {
+  body.dark-mode .header .nav-menu {
+    background: #111827 !important;
+    border-color: #374151 !important;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35) !important;
+  }
+
+  body.dark-mode .header .nav-menu a {
+    color: #f8fafc !important;
+    background: transparent !important;
+  }
+
+  body.dark-mode .header .nav-menu a:hover {
+    color: #60a5fa !important;
+    background: #1e293b !important;
+  }
+
+  body.dark-mode .header .nav-menu .theme-toggle {
+    background: #1e293b !important;
+    color: #facc15 !important;
+    border-color: #374151 !important;
+  }
+
+  body.dark-mode .header .menu-toggle {
+    background: #111827 !important;
+    color: #ffffff !important;
+    border-color: #ffffff !important;
+  }
+}
+
+/* =========================================
+   DARK MODE - MOBILE NAV BUTTON FIX
+========================================= */
+
+@media (max-width: 768px) {
+  /* DARK MODE BUTTON */
+
+  body.dark-mode .header .nav-menu .theme-toggle {
+    width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    margin: 8px 32px !important;
+    align-self: flex-start !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 auto !important;
+
+    background: #1e293b !important;
+    color: #facc15 !important;
+    border: 1px solid #475569 !important;
+    border-radius: 50% !important;
+
+    font-size: 18px !important;
+  }
+
+  /* GET STARTED BUTTON */
+
+  body.dark-mode .header .nav-menu .nav-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    width: calc(100% - 32px) !important;
+    min-height: 48px !important;
+
+    margin: 8px 16px 16px !important;
+    padding: 12px 20px !important;
+
+    background: #2563eb !important;
+    color: #ffffff !important;
+
+    border: 1px solid #2563eb !important;
+    border-radius: 8px !important;
+
+    font-size: 15px !important;
+    font-weight: 700 !important;
+
+    box-sizing: border-box !important;
+  }
+
+  body.dark-mode .header .nav-menu .nav-btn:hover {
+    background: #1d4ed8 !important;
+    color: #ffffff !important;
+  }
+}
+
+/* =========================================
+   MOBILE THEME BUTTON POSITION - ALL MODES
+========================================= */
+
+@media (max-width: 768px) {
+  .header .nav-menu .theme-toggle {
+    width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+
+    margin: 8px 32px !important;
+    padding: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    align-self: flex-start !important;
+    flex: 0 0 auto !important;
+
+    border-radius: 50% !important;
+    font-size: 18px !important;
+  }
+}
+/* ================================
+   DARK MODE - COURSE CATEGORY BADGES
+================================ */
+
+body.dark-mode .course-card .course-category,
+body.dark-mode .course-card .category,
+body.dark-mode .course-card .badge {
+  background: #334155 !important;
+  color: #e2e8f0 !important;
+  border-color: #475569 !important;
 }
 
 
-@media (max-width: 500px) {
+/* Dark Mode - Courses Hero Badge */
 
-    .footer-container {
-        grid-template-columns: 1fr;
-        gap: 30px;
-    }
+body.dark-mode .courses-badge {
+    background: #dbeafe !important;
+    color: #2563eb !important;
+    border-color: #bfdbfe !important;
+}
 
-    .footer-brand {
-        grid-column: auto;
-    }
+/* Course price and button spacing */
 
+.course-card .course-price {
+    margin-right: 8px !important;
+}
+
+.course-card .course-btn {
+    margin-left: 0 !important;
+    margin-top: 6px !important;
+}
+
+.feature-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.feature-card:hover {
+    text-decoration: none;
+}
+
+/* ===============================
+   CLICKABLE FEATURE CARDS
+================================ */
+
+.feature-grid .feature-card {
+    position: relative !important;
+    z-index: 10 !important;
+    display: block !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+.feature-grid .feature-card:hover {
+    text-decoration: none !important;
+}
+
+/* Dark mode - Hero badge text */
+
+body.dark-mode .hero-badge {
+    color: #60a5fa !important;
 }

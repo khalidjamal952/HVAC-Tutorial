@@ -440,32 +440,41 @@ if (myCoursesContainer && uniqueCourses.length > 0) {
     // =========================================
     // COURSE BUTTON
     // =========================================
+// =========================================
+// COURSE BUTTON
+// =========================================
+let courseButton = "";
 
-    let courseButton = "";
+if (progress >= 100) {
+  courseButton = `
+    <div class="dashboard-course-actions">
 
-    if (progress >= 100) {
+      <a
+        href="course-player.html?id=${course.id}"
+        class="dashboard-btn"
+      >
+        📖 Study Course
+      </a>
 
-      courseButton = `
-        <a
-          href="certificate.html?id=${course.id}"
-          class="dashboard-btn"
-        >
-          🏆 View Certificate
-        </a>
-      `;
+      <a
+        href="certificate.html?id=${course.id}"
+        class="dashboard-btn"
+      >
+        🏆 View Certificate
+      </a>
 
-    } else {
-
-      courseButton = `
-        <a
-          href="course-player.html?id=${course.id}"
-          class="dashboard-btn"
-        >
-          Continue
-        </a>
-      `;
-
-    }
+    </div>
+  `;
+} else {
+  courseButton = `
+    <a
+      href="course-player.html?id=${course.id}"
+      class="dashboard-btn"
+    >
+      📖 Continue Learning
+    </a>
+  `;
+}
 
     // =========================================
     // COURSE CARD

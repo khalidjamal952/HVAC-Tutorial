@@ -455,3 +455,195 @@
     font-size: 28px;
   }
 }
+
+/* =========================================
+   DARK MODE - COURSE DETAILS
+========================================= */
+
+body.dark-mode .course-details-page {
+  color: #e5e7eb !important;
+}
+
+/* Main course area */
+
+body.dark-mode .course-details-main {
+  background: #111827 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .course-details-content {
+  background: #111827 !important;
+  color: #e5e7eb !important;
+}
+
+/* Category */
+
+body.dark-mode .course-details-category {
+  background: #1e3a8a !important;
+  color: #93c5fd !important;
+}
+
+/* Title */
+
+body.dark-mode #courseTitle {
+  color: #ffffff !important;
+}
+
+/* Description */
+
+body.dark-mode #courseDescription {
+  color: #cbd5e1 !important;
+}
+
+/* Stats */
+
+body.dark-mode .course-details-stats {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .course-details-stats div {
+  border-color: #334155 !important;
+}
+
+body.dark-mode .course-details-stats strong {
+  color: #ffffff !important;
+}
+
+body.dark-mode .course-details-stats span {
+  color: #94a3b8 !important;
+}
+
+/* Sections */
+
+body.dark-mode .course-section {
+  background: #111827 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .course-section h2 {
+  color: #ffffff !important;
+}
+
+/* What You'll Learn */
+
+body.dark-mode .learning-list {
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .learning-list div {
+  color: #cbd5e1 !important;
+}
+
+/* Course Content */
+
+body.dark-mode .lesson-list {
+  background: transparent !important;
+}
+
+body.dark-mode .lesson-item {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .lesson-item > span {
+  background: #334155 !important;
+  color: #93c5fd !important;
+}
+
+body.dark-mode .lesson-item h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .lesson-item p {
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .lesson-item > strong {
+  color: #93c5fd !important;
+}
+
+/* =========================================
+   DARK MODE - COURSE BUY SIDEBAR
+========================================= */
+
+body.dark-mode .course-sidebar {
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .course-buy-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+/* Price */
+
+body.dark-mode .course-price-large strong {
+  color: #ffffff !important;
+}
+
+body.dark-mode .course-price-large del {
+  color: #94a3b8 !important;
+}
+
+/* Special price text */
+
+body.dark-mode .discount-text {
+  color: #93c5fd !important;
+}
+
+/* Enroll button */
+
+body.dark-mode .enroll-btn {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+body.dark-mode .enroll-btn:hover {
+  background: #1d4ed8 !important;
+}
+
+/* Add to Cart */
+
+body.dark-mode .cart-btn {
+  background: #1e293b !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+body.dark-mode .cart-btn:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+/* Includes section */
+
+body.dark-mode .course-includes {
+  border-color: #334155 !important;
+}
+
+body.dark-mode .course-includes h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .course-includes p {
+  color: #cbd5e1 !important;
+}
+
+/* =========================================
+   DARK MODE - COURSE IMAGE AREA
+========================================= */
+
+body.dark-mode .course-details-image {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .course-details-icon {
+  background: #ffffff !important;
+  color: #2563eb !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
+}

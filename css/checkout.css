@@ -335,3 +335,126 @@
     padding: 18px;
   }
 }
+
+/* ========================================
+   CHECKOUT DARK MODE
+======================================== */
+
+body.dark-mode .checkout-page {
+    background: #0f172a !important;
+    color: #f8fafc !important;
+}
+
+/* Page Heading */
+
+body.dark-mode .checkout-page .page-heading span {
+    color: #60a5fa !important;
+}
+
+body.dark-mode .checkout-page .page-heading h1 {
+    color: #f8fafc !important;
+}
+
+body.dark-mode .checkout-page .page-heading p {
+    color: #cbd5e1 !important;
+}
+
+/* Customer Information */
+
+body.dark-mode .checkout-form-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+body.dark-mode .checkout-form-card h2 {
+    color: #ffffff !important;
+}
+
+/* Labels */
+
+body.dark-mode .checkout-form-card label {
+    color: #e2e8f0 !important;
+}
+
+/* Inputs */
+
+body.dark-mode .checkout-form-card input,
+body.dark-mode .checkout-form-card textarea {
+    background: #0f172a !important;
+    color: #ffffff !important;
+    border-color: #475569 !important;
+}
+
+body.dark-mode .checkout-form-card input::placeholder,
+body.dark-mode .checkout-form-card textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Payment Method */
+
+body.dark-mode .payment-section h2 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .payment-option {
+    background: #0f172a !important;
+    color: #f8fafc !important;
+    border-color: #475569 !important;
+}
+
+body.dark-mode .payment-option span {
+    color: #e2e8f0 !important;
+}
+
+/* Order Summary */
+
+body.dark-mode .checkout-summary {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+}
+
+body.dark-mode .checkout-summary h2 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .checkout-summary-row span {
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode .checkout-summary-row strong {
+    color: #ffffff !important;
+}
+
+body.dark-mode .checkout-summary .discount {
+    color: #22c55e !important;
+}
+
+body.dark-mode .checkout-total {
+    border-color: #475569 !important;
+}
+
+body.dark-mode .checkout-total span {
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode .checkout-total strong {
+    color: #ffffff !important;
+}
+
+/* Order Items */
+
+body.dark-mode #checkoutItems {
+    color: #e2e8f0 !important;
+}
+
+body.dark-mode #checkoutItems * {
+    color: #e2e8f0 !important;
+}
+
+/* Place Order */
+
+body.dark-mode .place-order-btn {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #2563eb !important;
+}

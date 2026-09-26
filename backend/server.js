@@ -1,4 +1,5 @@
 require("dotenv").config();
+const lectureRoutes = require("./routes/lectureRoutes");
 const path = require("path");
 const userRoutes = require("./routes/userRoutes");
 const orderRoutes = require("./routes/orderRoutes");
@@ -23,7 +24,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/ebooks", ebookRoutes);
-
+app.use("/api/lectures", lectureRoutes);
 app.get("/", function (req, res) {
   res.send("HVAC Tutorial Backend is Running!");
 });

@@ -1044,10 +1044,12 @@
 
 /* Lecture modal */
 
+/* Lecture modal */
 #lectureModal .admin-modal-content {
   max-width: 720px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
 }
-
 #lectureModal .admin-form-grid {
   grid-template-columns: 1fr 1fr;
 }
@@ -1301,136 +1303,868 @@
 ========================= */
 
 .certificate-admin-toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 25px;
 }
 
 #certificateSearch {
-    display: block !important;
-    width: 420px !important;
-    max-width: 100% !important;
-    height: 48px !important;
+  display: block !important;
+  width: 420px !important;
+  max-width: 100% !important;
+  height: 48px !important;
 
-    padding: 0 18px !important;
-    margin: 0 !important;
+  padding: 0 18px !important;
+  margin: 0 !important;
 
-    box-sizing: border-box !important;
+  box-sizing: border-box !important;
 
-    border: 1px solid #dbe3ef !important;
-    border-radius: 10px !important;
+  border: 1px solid #dbe3ef !important;
+  border-radius: 10px !important;
 
-    background: #ffffff !important;
-    color: #0f172a !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
 
-    font-family: inherit !important;
-    font-size: 14px !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
 
-    outline: none !important;
-    transition: all 0.3s ease !important;
+  outline: none !important;
+  transition: all 0.3s ease !important;
 }
 
 #certificateSearch::placeholder {
-    color: #94a3b8 !important;
+  color: #94a3b8 !important;
 }
 
 #certificateSearch:hover {
-    border-color: #93c5fd !important;
+  border-color: #93c5fd !important;
 }
 
 #certificateSearch:focus {
-    border-color: #2563eb !important;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12) !important;
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12) !important;
 }
-
 
 /* Certificate ID */
 
 .certificate-id-cell {
-    font-weight: 700;
-    color: #1e3a8a;
-    font-size: 13px;
+  font-weight: 700;
+  color: #1e3a8a;
+  font-size: 13px;
 }
-
 
 /* Student */
 
 .certificate-student-cell {
-    font-weight: 600;
-    color: #334155;
+  font-weight: 600;
+  color: #334155;
 }
-
 
 /* Course */
 
 .certificate-course-cell {
-    color: #475569;
+  color: #475569;
 }
-
 
 /* Status */
 
 .certificate-status {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-    padding: 5px 11px;
+  padding: 5px 11px;
 
-    border-radius: 20px;
+  border-radius: 20px;
 
-    background: #dcfce7;
-    color: #166534;
+  background: #dcfce7;
+  color: #166534;
 
-    font-size: 12px;
-    font-weight: 600;
+  font-size: 12px;
+  font-weight: 600;
 
-    white-space: nowrap;
+  white-space: nowrap;
 }
-
 
 /* Action Buttons */
 
 .certificate-view-btn {
-    background: #eff6ff;
-    color: #2563eb;
-    border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
 }
 
 .certificate-view-btn:hover {
-    background: #dbeafe;
+  background: #dbeafe;
 }
 
-
 .certificate-delete-btn {
-    background: #fef2f2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
 }
 
 .certificate-delete-btn:hover {
-    background: #fee2e2;
+  background: #fee2e2;
 }
-
 
 /* Mobile */
 
 @media (max-width: 700px) {
+  .certificate-admin-toolbar {
+    justify-content: stretch;
+  }
 
-    .certificate-admin-toolbar {
-        justify-content: stretch;
-    }
+  #certificateSearch {
+    width: 100% !important;
+  }
 
-    #certificateSearch {
-        width: 100% !important;
-    }
+  .admin-table-wrapper {
+    overflow-x: auto;
+  }
 
-    .admin-table-wrapper {
-        overflow-x: auto;
-    }
+  .admin-table {
+    min-width: 900px;
+  }
+}
 
-    .admin-table {
-        min-width: 900px;
-    }
+/* =========================================
+   ADMIN DASHBOARD - DARK MODE
+========================================= */
+
+/* Stats Cards */
+body.dark-mode .admin-stat-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .admin-stat-card span {
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .admin-stat-card strong {
+  color: #ffffff !important;
+}
+
+body.dark-mode .admin-stat-icon {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+/* Management Section */
+body.dark-mode .admin-section-header {
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .admin-page-label {
+  color: #60a5fa !important;
+}
+
+body.dark-mode .admin-section-header h2 {
+  color: #ffffff !important;
+}
+
+/* Management Cards */
+body.dark-mode .admin-management-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .admin-management-card h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .admin-management-card p {
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .admin-management-icon {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .admin-management-card:hover {
+  background: #243449 !important;
+  border-color: #475569 !important;
+}
+
+body.dark-mode .admin-management-card:hover h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .admin-management-card:hover p {
+  color: #cbd5e1 !important;
+}
+
+/* =========================================
+   ADMIN COURSE CATEGORY - DARK MODE
+========================================= */
+
+body.dark-mode .course-category,
+body.dark-mode .admin-course-category,
+body.dark-mode td .category,
+body.dark-mode td span {
+  color: #2563eb !important;
+  background: #dbeafe !important;
+  border-color: #bfdbfe !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
+
+/* =========================================
+   ADMIN LECTURES - DARK MODE
+========================================= */
+
+/* Search */
+body.dark-mode .admin-search input,
+body.dark-mode input[type="search"] {
+  background: #111827 !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+body.dark-mode .admin-search input::placeholder,
+body.dark-mode input[type="search"]::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Table wrapper */
+body.dark-mode .admin-table-wrapper {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+/* Table */
+body.dark-mode .admin-table {
+  background: #1e293b !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .admin-table thead {
+  background: #334155 !important;
+}
+
+body.dark-mode .admin-table th {
+  background: #334155 !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+body.dark-mode .admin-table td {
+  background: #1e293b !important;
+  color: #e5e7eb !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .admin-table tbody tr:hover td {
+  background: #243449 !important;
+  color: #ffffff !important;
+}
+
+/* Links inside table */
+body.dark-mode .admin-table a {
+  color: #93c5fd !important;
+}
+
+body.dark-mode .admin-table a:hover {
+  color: #60a5fa !important;
+}
+
+/* Edit button */
+body.dark-mode .admin-table .admin-edit-btn {
+  background: #1e3a8a !important;
+  color: #93c5fd !important;
+  border-color: #3b82f6 !important;
+}
+
+/* Delete button */
+body.dark-mode .admin-table .admin-delete-btn {
+  background: #450a0a !important;
+  color: #fca5a5 !important;
+  border-color: #7f1d1d !important;
+}
+
+/* Empty state */
+body.dark-mode .admin-empty-state {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .admin-empty-state h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .admin-empty-state p {
+  color: #cbd5e1 !important;
+}
+
+/* Modal */
+body.dark-mode .admin-modal-content {
+  background: #1e293b !important;
+  color: #e5e7eb !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .admin-modal-header {
+  border-color: #334155 !important;
+}
+
+body.dark-mode .admin-modal-header h2 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .admin-modal-close {
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .admin-form-group label {
+  color: #f8fafc !important;
+}
+
+body.dark-mode .admin-form-group input,
+body.dark-mode .admin-form-group select,
+body.dark-mode .admin-form-group textarea {
+  background: #111827 !important;
+  color: #f8fafc !important;
+  border-color: #475569 !important;
+}
+
+body.dark-mode .admin-form-group input::placeholder,
+body.dark-mode .admin-form-group textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* =========================================
+   ADMIN LECTURE ROW - FINAL DARK MODE FIX
+========================================= */
+
+/* Search box */
+body.dark-mode #lectureSearch {
+  background: #111827 !important;
+  color: #f8fafc !important;
+  border: 1px solid #475569 !important;
+}
+
+body.dark-mode #lectureSearch::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Lecture number */
+body.dark-mode .lecture-number-cell {
+  color: #f8fafc !important;
+}
+
+/* Lecture title */
+body.dark-mode .admin-table td strong {
+  color: #ffffff !important;
+}
+
+/* Course name */
+body.dark-mode .lecture-course-cell {
+  color: #93c5fd !important;
+}
+
+/* Video */
+body.dark-mode .lecture-video-cell {
+  color: #93c5fd !important;
+}
+
+/* Action buttons */
+body.dark-mode .lecture-edit-btn {
+  background: #1e3a8a !important;
+  color: #bfdbfe !important;
+  border: 1px solid #3b82f6 !important;
+}
+
+body.dark-mode .lecture-edit-btn:hover {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .lecture-delete-btn {
+  background: #450a0a !important;
+  color: #fca5a5 !important;
+  border: 1px solid #7f1d1d !important;
+}
+
+body.dark-mode .lecture-delete-btn:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+/* Lecture number - final visibility fix */
+
+body.dark-mode .admin-table tbody tr td:first-child,
+body.dark-mode .admin-table tbody tr td:first-child span {
+  color: #ffffff !important;
+  background: transparent !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+  font-weight: 700 !important;
+}
+
+body.dark-mode .admin-table .lecture-number-cell {
+  color: #ffffff !important;
+  background: transparent !important;
+}
+
+/* =========================================
+   ORDER TABLE - REMOVE WHITE CELL HOVER
+   ========================================= */
+
+body.dark-mode #ordersTableBody tr:hover,
+body.dark-mode #ordersTableBody tr:hover td,
+body.dark-mode #ordersTableBody td:hover {
+  background: #1e293b !important;
+}
+
+/* Keep all order text visible */
+body.dark-mode #ordersTableBody td,
+body.dark-mode #ordersTableBody td:hover {
+  color: #f8fafc !important;
+}
+
+/* Order ID */
+body.dark-mode #ordersTableBody td strong,
+body.dark-mode #ordersTableBody td strong:hover {
+  color: #f8fafc !important;
+  background: transparent !important;
+}
+
+/* Student name */
+body.dark-mode #ordersTableBody .student-name-cell,
+body.dark-mode #ordersTableBody .student-name-cell:hover {
+  color: #f8fafc !important;
+  background: transparent !important;
+}
+
+/* Student email */
+body.dark-mode #ordersTableBody .student-email-cell,
+body.dark-mode #ordersTableBody .student-email-cell:hover {
+  color: #60a5fa !important;
+  background: transparent !important;
+}
+
+/* Status */
+body.dark-mode #ordersTableBody .student-status {
+  background: #dbeafe !important;
+  color: #2563eb !important;
+}
+
+/* =========================================
+   ADMIN LIVE CLASSES - DARK MODE
+   ========================================= */
+
+body.dark-mode .admin-dashboard-page {
+  background: #0f172a !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .admin-dashboard-header h1 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .admin-dashboard-header p {
+  color: #cbd5e1 !important;
+}
+
+/* Total Live Classes Card */
+body.dark-mode .admin-stat-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .admin-stat-card span {
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .admin-stat-card strong {
+  color: #ffffff !important;
+}
+
+/* Search Box */
+body.dark-mode .student-search {
+  background: #111827 !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .student-search::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Add Button */
+body.dark-mode .admin-primary-btn {
+  color: #ffffff !important;
+}
+
+/* Table */
+body.dark-mode .admin-table-wrapper {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .admin-table {
+  background: #1e293b !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .admin-table thead {
+  background: #334155 !important;
+}
+
+body.dark-mode .admin-table th {
+  background: #334155 !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+body.dark-mode .admin-table td {
+  background: #1e293b !important;
+  color: #e5e7eb !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .admin-table tr:hover td {
+  background: #26364d !important;
+}
+
+/* Status */
+body.dark-mode .student-status {
+  background: #334155 !important;
+  color: #bfdbfe !important;
+}
+
+/* Edit / Delete buttons */
+body.dark-mode .student-action-btn {
+  background: #1e293b !important;
+  color: #93c5fd !important;
+  border-color: #475569 !important;
+}
+
+body.dark-mode .student-action-btn:hover {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .student-action-btn.lecture-delete-btn:hover {
+  background: #dc2626 !important;
+  color: #ffffff !important;
+}
+
+/* =========================================
+   LIVE CLASS TITLE - DARK MODE HOVER FIX
+   ========================================= */
+
+body.dark-mode #liveClassesTableBody tr:hover td {
+  background: #26364d !important;
+}
+
+body.dark-mode #liveClassesTableBody td:hover {
+  background: #26364d !important;
+}
+
+/* Title text */
+body.dark-mode #liveClassesTableBody td strong,
+body.dark-mode #liveClassesTableBody td strong:hover {
+  background: transparent !important;
+  color: #f8fafc !important;
+}
+
+/* Links / clickable title */
+body.dark-mode #liveClassesTableBody td a,
+body.dark-mode #liveClassesTableBody td a:hover {
+  background: transparent !important;
+  color: #60a5fa !important;
+}
+
+/* =========================================
+   CERTIFICATE MANAGEMENT - DARK MODE
+   ========================================= */
+
+body.dark-mode .admin-dashboard-page {
+  background: #0f172a !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .admin-dashboard-header h1 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .admin-dashboard-header p {
+  color: #cbd5e1 !important;
+}
+
+/* Total Certificates Card */
+body.dark-mode .admin-stat-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .admin-stat-card span {
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .admin-stat-card strong {
+  color: #ffffff !important;
+}
+
+/* Search */
+body.dark-mode .student-search {
+  background: #111827 !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .student-search::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Table */
+body.dark-mode .admin-table-wrapper {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .admin-table {
+  background: #1e293b !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .admin-table thead {
+  background: #334155 !important;
+}
+
+body.dark-mode .admin-table th {
+  background: #334155 !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+body.dark-mode .admin-table td {
+  background: #1e293b !important;
+  color: #e5e7eb !important;
+  border-color: #334155 !important;
+}
+
+/* Remove white hover */
+body.dark-mode .admin-table tr:hover td {
+  background: #26364d !important;
+}
+
+/* Certificate ID / links */
+body.dark-mode .admin-table td a {
+  background: transparent !important;
+  color: #60a5fa !important;
+}
+
+body.dark-mode .admin-table td a:hover {
+  background: transparent !important;
+  color: #93c5fd !important;
+}
+
+/* Status */
+body.dark-mode .student-status {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+/* View button */
+body.dark-mode .admin-table .admin-view-btn {
+  background: #1e293b !important;
+  color: #60a5fa !important;
+  border-color: #475569 !important;
+}
+
+body.dark-mode .admin-table .admin-view-btn:hover {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+
+/* =========================================
+   CERTIFICATE TABLE - HOVER & TEXT FIX
+   ========================================= */
+
+body.dark-mode .admin-table tbody tr:hover td {
+    background: #26364d !important;
+    color: #f8fafc !important;
+}
+
+/* Student name */
+body.dark-mode .admin-table .student-name-cell {
+    color: #f8fafc !important;
+    background: transparent !important;
+}
+
+/* Student email */
+body.dark-mode .admin-table .student-email-cell {
+    color: #60a5fa !important;
+    background: transparent !important;
+}
+
+/* Course name */
+body.dark-mode .admin-table td {
+    color: #f8fafc !important;
+}
+
+/* Course links */
+body.dark-mode .admin-table td a {
+    background: transparent !important;
+    color: #60a5fa !important;
+}
+
+body.dark-mode .admin-table td a:hover {
+    background: transparent !important;
+    color: #93c5fd !important;
+}
+
+/* Prevent text selection highlight looking like white background */
+body.dark-mode .admin-table td strong {
+    background: transparent !important;
+    color: #f8fafc !important;
+}
+
+/* =========================================
+   CERTIFICATE STUDENT NAME - FINAL FIX
+   ========================================= */
+
+body.dark-mode .admin-table tbody tr td:nth-child(2) {
+    color: #ffffff !important;
+}
+
+body.dark-mode .admin-table tbody tr td:nth-child(2) * {
+    color: #ffffff !important;
+    background: transparent !important;
+}
+
+/* Student email */
+body.dark-mode .admin-table tbody tr td:nth-child(2) .student-email-cell {
+    color: #60a5fa !important;
+}
+
+/* Hover row */
+body.dark-mode .admin-table tbody tr:hover td {
+    background: #26364d !important;
+}
+
+/* Student name remains white on hover */
+body.dark-mode .admin-table tbody tr:hover td:nth-child(2) {
+    color: #ffffff !important;
+}
+
+body.dark-mode .admin-table tbody tr:hover td:nth-child(2) * {
+    color: #ffffff !important;
+    background: transparent !important;
+}
+
+/* Email remains blue */
+body.dark-mode .admin-table tbody tr:hover td:nth-child(2) .student-email-cell {
+    color: #60a5fa !important;
+}
+
+/* =========================================
+   CERTIFICATE MANAGEMENT - FINAL DARK FIX
+   ========================================= */
+
+/* Table row */
+body.dark-mode .admin-table tbody tr td {
+    background: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+/* Row hover */
+body.dark-mode .admin-table tbody tr:hover td {
+    background: #26364d !important;
+    color: #f8fafc !important;
+}
+
+/* Certificate ID */
+body.dark-mode .certificate-id-cell {
+    background: transparent !important;
+    color: #f8fafc !important;
+}
+
+/* Student name - IMPORTANT */
+body.dark-mode .certificate-student-cell {
+    background: transparent !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+/* Student email */
+body.dark-mode .student-email-cell {
+    background: transparent !important;
+    color: #60a5fa !important;
+}
+
+/* Course */
+body.dark-mode .certificate-course-cell {
+    background: transparent !important;
+    color: #f8fafc !important;
+}
+
+/* Course hover */
+body.dark-mode .certificate-course-cell:hover {
+    background: transparent !important;
+    color: #93c5fd !important;
+}
+
+/* View button / link */
+body.dark-mode .admin-view-btn {
+    background: transparent !important;
+    color: #60a5fa !important;
+}
+
+/* Remove unwanted white background from text/link hover */
+body.dark-mode .admin-view-btn:hover {
+    background: #2563eb !important;
+    color: #ffffff !important;
+}
+
+/* Prevent white background on certificate table text */
+body.dark-mode .admin-table span,
+body.dark-mode .admin-table div {
+    background: transparent !important;
+}
+
+
+/* FIX LECTURE MODAL ACTION BUTTONS */
+#lectureModal .admin-modal-content {
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+#lectureModal .admin-modal-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-top: 20px !important;
+  padding: 16px 0 4px !important;
+  border-top: 1px solid #334155 !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 50 !important;
+  flex-shrink: 0 !important;
+  background: #1e293b !important;
+}
+
+#lectureModal .admin-modal-actions button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 100px !important;
+  min-height: 42px !important;
+  padding: 0 20px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }

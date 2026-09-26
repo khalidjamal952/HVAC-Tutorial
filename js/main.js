@@ -69,3 +69,26 @@ function updateCartCount() {
 }
 
 updateCartCount();
+
+const themeToggle = document.getElementById("themeToggle");
+
+if (themeToggle) {
+    const savedTheme = localStorage.getItem("hvacTheme");
+
+    if (savedTheme === "dark") {
+        document.body.classList.add("dark-mode");
+        themeToggle.textContent = "☀️";
+    }
+
+    themeToggle.addEventListener("click", function () {
+        document.body.classList.toggle("dark-mode");
+
+        if (document.body.classList.contains("dark-mode")) {
+            localStorage.setItem("hvacTheme", "dark");
+            themeToggle.textContent = "☀️";
+        } else {
+            localStorage.setItem("hvacTheme", "light");
+            themeToggle.textContent = "🌙";
+        }
+    });
+}

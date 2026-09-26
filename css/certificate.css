@@ -1161,3 +1161,273 @@
         font-size: 2mm !important;
     }
 }
+
+/* =========================================
+   DARK MODE - CERTIFICATE PAGE
+========================================= */
+
+body.dark-mode .certificate-page {
+    background: #0f172a !important;
+    color: #e5e7eb !important;
+}
+
+/* Outer certificate wrapper */
+body.dark-mode .certificate-wrapper {
+    background: #111827 !important;
+    border-color: #334155 !important;
+}
+
+/* Keep actual certificate WHITE */
+body.dark-mode .certificate-card {
+    background: #ffffff !important;
+    color: #111827 !important;
+}
+
+body.dark-mode .certificate-border {
+    background: #ffffff !important;
+    color: #111827 !important;
+}
+
+body.dark-mode .certificate-content {
+    background: #ffffff !important;
+    color: #111827 !important;
+}
+
+/* Certificate text stays readable */
+body.dark-mode .certificate-content h1 {
+    color: #111827 !important;
+}
+
+body.dark-mode .certificate-content h2 {
+    color: #111827 !important;
+}
+
+body.dark-mode .certificate-content h3 {
+    color: #111827 !important;
+}
+
+body.dark-mode .certificate-intro,
+body.dark-mode .certificate-text,
+body.dark-mode .certificate-description {
+    color: #475569 !important;
+}
+
+body.dark-mode .certificate-detail span {
+    color: #64748b !important;
+}
+
+body.dark-mode .certificate-detail strong {
+    color: #111827 !important;
+}
+
+body.dark-mode .signature-box span {
+    color: #64748b !important;
+}
+
+body.dark-mode .signature-line {
+    background: #64748b !important;
+}
+
+/* Action buttons */
+body.dark-mode .certificate-action-btn {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #2563eb !important;
+}
+
+body.dark-mode .certificate-action-btn:hover {
+    background: #1d4ed8 !important;
+}
+
+body.dark-mode .certificate-back-btn {
+    background: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #475569 !important;
+}
+
+body.dark-mode .certificate-back-btn:hover {
+    background: #334155 !important;
+    color: #ffffff !important;
+}
+
+
+/* =========================================
+   INSTRUCTOR SIGNATURE + HVAC STAMP
+========================================= */
+
+.certificate-signatures {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 0 70px;
+    box-sizing: border-box;
+}
+
+.certificate-instructor {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.certificate-signature {
+    width: 210px;
+    height: auto;
+    display: block;
+}
+
+.certificate-stamp-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.certificate-stamp {
+    width: 110px;
+    height: auto;
+    display: block;
+}
+
+/* =========================================
+   MY CERTIFICATES - DARK MODE
+   ========================================= */
+
+body.dark-mode .certificates-page {
+    background: #0f172a !important;
+    color: #e5e7eb !important;
+}
+
+body.dark-mode .certificates-header h1 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .certificates-header p {
+    color: #94a3b8 !important;
+}
+
+/* Certificate Cards */
+body.dark-mode .certificate-list-card,
+body.dark-mode .certificate-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e5e7eb !important;
+}
+
+/* Card title */
+body.dark-mode .certificate-card h2,
+body.dark-mode .certificate-card h3 {
+    color: #ffffff !important;
+}
+
+/* Card description */
+body.dark-mode .certificate-card p {
+    color: #cbd5e1 !important;
+}
+
+/* Certificate ID and date */
+body.dark-mode .certificate-card strong {
+    color: #22c55e !important;
+}
+
+/* Trophy circle */
+body.dark-mode .certificate-card .certificate-icon {
+    background: #334155 !important;
+}
+
+/* View Certificate button */
+body.dark-mode .certificate-card a,
+body.dark-mode .certificate-card .certificate-view-btn {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #2563eb !important;
+}
+
+body.dark-mode .certificate-card a:hover,
+body.dark-mode .certificate-card .certificate-view-btn:hover {
+    background: #1d4ed8 !important;
+    color: #ffffff !important;
+}
+
+/* =========================================
+   CERTIFICATE - DARK MODE TEXT FIX
+   Certificate itself stays WHITE
+   ========================================= */
+
+body.dark-mode .certificate-card,
+body.dark-mode .certificate-border,
+body.dark-mode .certificate-content {
+    background: #ffffff !important;
+    color: #111827 !important;
+}
+
+/* Main certificate heading */
+body.dark-mode .certificate-content h1 {
+    color: #111827 !important;
+}
+
+/* Student Name */
+body.dark-mode #studentName {
+    color: #111827 !important;
+}
+
+/* Course Name */
+body.dark-mode #courseName {
+    color: #111827 !important;
+}
+
+/* Normal certificate text */
+body.dark-mode .certificate-intro,
+body.dark-mode .certificate-text,
+body.dark-mode .certificate-description {
+    color: #64748b !important;
+}
+
+/* Certificate label */
+body.dark-mode .certificate-label {
+    color: #2563eb !important;
+}
+
+/* Details labels */
+body.dark-mode .certificate-detail span {
+    color: #64748b !important;
+}
+
+/* Certificate ID + Date */
+body.dark-mode .certificate-detail strong {
+    color: #111827 !important;
+}
+
+/* Signature labels */
+body.dark-mode .signature-box span {
+    color: #64748b !important;
+}
+
+/* Back button */
+body.dark-mode .certificate-back-btn {
+    background: #1e293b !important;
+    color: #ffffff !important;
+    border-color: #334155 !important;
+}
+
+/* =========================================
+   CERTIFICATE - DARKER TEXT
+   ========================================= */
+
+body.dark-mode .certificate-content h1,
+body.dark-mode #studentName,
+body.dark-mode #courseName,
+body.dark-mode .certificate-detail strong {
+    color: #000000 !important;
+}
+
+body.dark-mode .certificate-intro,
+body.dark-mode .certificate-text,
+body.dark-mode .certificate-description {
+    color: #1f2937 !important;
+}
+
+body.dark-mode .certificate-detail span,
+body.dark-mode .signature-box span {
+    color: #374151 !important;
+}

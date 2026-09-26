@@ -471,3 +471,65 @@
     margin-left: 0;
   }
 }
+/* ================================
+   DARK MODE - DASHBOARD STATS
+================================ */
+
+body.dark-mode .dashboard-stat-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .dashboard-stat-card > div:last-child span {
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .dashboard-stat-card > div:last-child strong {
+  color: #ffffff !important;
+}
+
+body.dark-mode .dashboard-stat-card .stat-icon {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+/* ================================
+   DARK MODE - QUICK ACTIONS
+================================ */
+
+body.dark-mode .quick-actions h2 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .quick-action-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e5e7eb !important;
+}
+
+body.dark-mode .quick-action-card h3 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .quick-action-card p {
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode .quick-action-card > span {
+    background: #334155 !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .quick-action-card:hover {
+    background: #243449 !important;
+    border-color: #475569 !important;
+}
+
+body.dark-mode .quick-action-card:hover h3 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .quick-action-card:hover p {
+    color: #cbd5e1 !important;
+}

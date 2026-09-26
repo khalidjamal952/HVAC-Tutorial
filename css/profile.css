@@ -282,3 +282,38 @@
     }
 
 }
+
+/* =========================================
+   PROFILE ROLE BADGE
+   ========================================= */
+
+.profile-role,
+.profile-card .profile-role,
+#profileRole {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 7px 16px !important;
+    min-width: 80px !important;
+    min-height: 34px !important;
+    box-sizing: border-box !important;
+
+    background: #eff6ff !important;
+    color: #2563eb !important;
+    border: 1px solid #bfdbfe !important;
+    border-radius: 999px !important;
+
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    letter-spacing: 0.2px !important;
+}
+
+/* Dark Mode */
+body.dark-mode .profile-role,
+body.dark-mode .profile-card .profile-role,
+body.dark-mode #profileRole {
+    background: #1e3a8a !important;
+    color: #bfdbfe !important;
+    border-color: #3b82f6 !important;
+}

@@ -41,6 +41,43 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+
+// =========================================
+// GET TOTAL REVENUE FOR ADMIN
+// =========================================
+
+const adminAuthMiddleware = require("../middleware/adminAuthMiddleware");
+
+router.get(
+  "/admin/revenue",
+  adminAuthMiddleware,
+  async (req, res) => {
+    try {
+      const paidOrders = await Order.find({
+        status: {
+          $in: ["Paid", "Completed", "Success", "Successful"],
+        },
+      });
+
+      const totalRevenue = paidOrders.reduce(function (sum, order) {
+        return sum + (Number(order.total) || 0);
+      }, 0);
+
+      res.status(200).json({
+        message: "Revenue fetched successfully",
+        totalRevenue: totalRevenue,
+        paidOrders: paidOrders.length,
+      });
+    } catch (error) {
+      console.error("Get Revenue Error:", error);
+
+      res.status(500).json({
+        message: "Server error",
+      });
+    }
+  }
+);
+
 // =========================================
 // GET LOGGED-IN USER ORDERS
 // =========================================

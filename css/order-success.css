@@ -212,3 +212,78 @@
     gap: 10px;
   }
 }
+
+/* ================================
+   DARK MODE - SUCCESS PAGE
+================================ */
+
+body.dark-mode .success-page {
+    background: #0f172a !important;
+    color: #e5e7eb !important;
+}
+
+body.dark-mode .success-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e5e7eb !important;
+}
+
+body.dark-mode .success-icon {
+    background: #dcfce7 !important;
+    color: #16a34a !important;
+}
+
+body.dark-mode .success-badge {
+    background: #dcfce7 !important;
+    color: #15803d !important;
+}
+
+body.dark-mode .success-card h1 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .success-card > p {
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode .success-order {
+    background: #111827 !important;
+    border-color: #334155 !important;
+}
+
+body.dark-mode .success-order-row {
+    border-color: #334155 !important;
+}
+
+body.dark-mode .success-order-row span {
+    color: #94a3b8 !important;
+}
+
+body.dark-mode .success-order-row strong {
+    color: #f8fafc !important;
+}
+
+body.dark-mode .success-order-row .success-status {
+    color: #22c55e !important;
+}
+
+body.dark-mode .primary-btn {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #2563eb !important;
+}
+
+body.dark-mode .primary-btn:hover {
+    background: #1d4ed8 !important;
+}
+
+body.dark-mode .secondary-btn {
+    background: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #475569 !important;
+}
+
+body.dark-mode .secondary-btn:hover {
+    background: #334155 !important;
+    color: #ffffff !important;
+}

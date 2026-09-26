@@ -329,3 +329,130 @@
     font-size: 20px;
   }
 }
+
+/* =========================================
+   DARK MODE - CART PAGE
+========================================= */
+
+body.dark-mode .cart-page {
+    color: #e5e7eb !important;
+}
+
+body.dark-mode .page-heading span {
+    color: #60a5fa !important;
+}
+
+body.dark-mode .page-heading h1 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .page-heading p {
+    color: #cbd5e1 !important;
+}
+
+/* Cart Summary */
+
+body.dark-mode .cart-summary {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e5e7eb !important;
+}
+
+body.dark-mode .cart-summary h2 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .summary-row {
+    color: #cbd5e1 !important;
+    border-color: #334155 !important;
+}
+
+body.dark-mode .summary-row span {
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode .summary-row strong {
+    color: #ffffff !important;
+}
+
+body.dark-mode .summary-row .discount {
+    color: #22c55e !important;
+}
+
+body.dark-mode .summary-total {
+    border-color: #475569 !important;
+}
+
+body.dark-mode .summary-total span {
+    color: #ffffff !important;
+}
+
+body.dark-mode .summary-total strong {
+    color: #ffffff !important;
+}
+
+/* Checkout */
+
+body.dark-mode .checkout-btn {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #2563eb !important;
+}
+
+body.dark-mode .checkout-btn:hover {
+    background: #1d4ed8 !important;
+}
+
+/* Continue Shopping */
+
+body.dark-mode .continue-shopping {
+    color: #93c5fd !important;
+}
+
+body.dark-mode .continue-shopping:hover {
+    color: #60a5fa !important;
+}
+
+/* Empty Cart */
+
+body.dark-mode .empty-cart {
+    color: #e5e7eb !important;
+}
+
+body.dark-mode .empty-cart h2 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .empty-cart p {
+    color: #cbd5e1 !important;
+}
+
+/* ================= DARK MODE CART TEXT ================= */
+
+body.dark-mode .cart-item {
+    background: #ffffff !important;
+    border-color: #d1d5db !important;
+}
+
+body.dark-mode .cart-item-content h3 {
+    color: #111827 !important;
+}
+
+body.dark-mode .cart-item-content p {
+    color: #64748b !important;
+}
+
+body.dark-mode .cart-item-price strong {
+    color: #111827 !important;
+}
+
+body.dark-mode .cart-item-image {
+    background: #dbeafe !important;
+    color: #475569 !important;
+}
+
+body.dark-mode .remove-cart-btn {
+    color: #dc2626 !important;
+    border-color: #fecaca !important;
+    background: #ffffff !important;
+}

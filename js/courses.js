@@ -232,6 +232,18 @@ const filterButtons = document.querySelectorAll(".filter-btn");
 
 let currentCategory = "all";
 
+const urlParams = new URLSearchParams(window.location.search);
+const urlCategory = urlParams.get("category");
+
+if (
+  urlCategory === "ac" ||
+  urlCategory === "refrigeration" ||
+  urlCategory === "electrical" ||
+  urlCategory === "service"
+) {
+  currentCategory = urlCategory;
+}
+
 function filterCourses() {
   const searchText = searchInput ? searchInput.value.toLowerCase().trim() : "";
 
@@ -295,7 +307,16 @@ function setupCourseFilters() {
       filterCourses();
     };
   });
+   
+   filterButtons.forEach(function (button) {
 
+    if (button.dataset.category === currentCategory) {
+        button.classList.add("active");
+    } else {
+        button.classList.remove("active");
+    }
+
+});
   filterCourses();
 }
 

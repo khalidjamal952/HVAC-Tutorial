@@ -406,3 +406,244 @@
     width: 100%;
   }
 }
+
+/* =========================================
+   DARK MODE - COURSE PLAYER
+========================================= */
+
+body.dark-mode .course-player-page {
+  background: #0f172a !important;
+  color: #e5e7eb !important;
+}
+
+/* Course Header */
+body.dark-mode .player-header {
+  background: #0f172a !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .player-category {
+  background: #dbeafe !important;
+  color: #2563eb !important;
+}
+
+body.dark-mode .player-header h1 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .player-header p {
+  color: #cbd5e1 !important;
+}
+
+/* Progress Card */
+body.dark-mode .player-progress {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .player-progress span {
+  color: #94a3b8 !important;
+}
+
+body.dark-mode .player-progress strong {
+  color: #60a5fa !important;
+}
+
+/* Main Video Section */
+body.dark-mode .video-section {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+/* Video */
+body.dark-mode .video-container {
+  background: #020617 !important;
+}
+
+/* Current Lecture */
+body.dark-mode .current-lecture {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .lecture-label {
+  color: #60a5fa !important;
+}
+
+body.dark-mode .current-lecture h2 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .complete-btn {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+body.dark-mode .complete-btn:hover {
+  background: #1d4ed8 !important;
+}
+
+/* Lecture Description */
+body.dark-mode .lecture-description {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .lecture-description h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .lecture-description p {
+  color: #cbd5e1 !important;
+}
+
+/* Lecture Sidebar */
+body.dark-mode .lecture-sidebar {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .sidebar-header {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+body.dark-mode .sidebar-header span {
+  color: #60a5fa !important;
+}
+
+body.dark-mode .sidebar-header h2 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .sidebar-header strong {
+  background: #dbeafe !important;
+  color: #2563eb !important;
+}
+
+/* Lecture List */
+body.dark-mode .lecture-list {
+  background: #1e293b !important;
+}
+
+body.dark-mode .lecture-item {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .lecture-item:hover {
+  background: #243449 !important;
+}
+
+body.dark-mode .lecture-item.active {
+  background: #dbeafe !important;
+  border-color: #bfdbfe !important;
+}
+
+body.dark-mode .lecture-item h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .lecture-item p {
+  color: #94a3b8 !important;
+}
+
+body.dark-mode .lecture-item.active h3 {
+  color: #1d4ed8 !important;
+}
+
+body.dark-mode .lecture-item.active p {
+  color: #2563eb !important;
+}
+
+/* Lecture Number */
+body.dark-mode .lecture-number {
+  background: #334155 !important;
+  color: #cbd5e1 !important;
+}
+
+body.dark-mode .lecture-item.active .lecture-number {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+/* Navigation */
+body.dark-mode .lecture-navigation {
+  color: #e5e7eb !important;
+}
+
+body.dark-mode .lecture-nav-btn {
+  background: #1e293b !important;
+  color: #ffffff !important;
+  border-color: #475569 !important;
+}
+
+body.dark-mode .lecture-nav-btn:hover:not(:disabled) {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .lecture-nav-btn:disabled {
+  background: #475569 !important;
+  color: #94a3b8 !important;
+  border-color: #475569 !important;
+}
+
+/* Course Player Navigation Buttons - Final Dark Mode */
+
+body.dark-mode .lecture-nav-btn {
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border: 1px solid #475569 !important;
+}
+
+body.dark-mode .lecture-nav-btn:hover:not(:disabled) {
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
+}
+
+/* Disabled Previous button */
+body.dark-mode .lecture-nav-btn:disabled {
+  background: #334155 !important;
+  color: #94a3b8 !important;
+  border-color: #475569 !important;
+  opacity: 1 !important;
+  cursor: not-allowed !important;
+}
+
+/* =========================================
+   ACTIVE LECTURE - DARK MODE TEXT FIX
+========================================= */
+
+body.dark-mode .lecture-item.active {
+  background: #dbeafe !important;
+  color: #1e3a8a !important;
+}
+
+body.dark-mode .lecture-item.active h3 {
+  color: #1e3a8a !important;
+}
+
+body.dark-mode .lecture-item.active p {
+  color: #2563eb !important;
+}
+
+body.dark-mode .lecture-item.active span:not(.lecture-number) {
+  color: #2563eb !important;
+}
+
+body.dark-mode .lecture-item.active strong {
+  color: #1e3a8a !important;
+}
+
+/* Active lecture number */
+body.dark-mode .lecture-item.active .lecture-number {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}

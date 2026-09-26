@@ -17,84 +17,63 @@ if (adminPage && localStorage.getItem("hvacAdminLoggedIn") !== "true") {
 // ADMIN LOGIN
 // =========================================
 
-
-const adminLoginForm =
-  document.getElementById("adminLoginForm");
+const adminLoginForm = document.getElementById("adminLoginForm");
 
 if (adminLoginForm) {
-  adminLoginForm.addEventListener(
-    "submit",
-    async function (event) {
-      event.preventDefault();
+  adminLoginForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-      const email = document
-        .getElementById("adminEmail")
-        .value
-        .trim()
-        .toLowerCase();
+    const email = document
+      .getElementById("adminEmail")
+      .value.trim()
+      .toLowerCase();
 
-      const password =
-        document.getElementById("adminPassword").value;
+    const password = document.getElementById("adminPassword").value;
 
-      if (!email || !password) {
-        alert("Please enter admin email and password.");
+    if (!email || !password) {
+      alert("Please enter admin email and password.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/admin-login",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Invalid admin email or password.");
         return;
       }
 
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/auth/admin-login",
-          {
-            method: "POST",
+      // Save admin JWT token
+      localStorage.setItem("hvacAdminToken", data.token);
 
-            headers: {
-              "Content-Type": "application/json",
-            },
+      // Keep existing admin login flag
+      localStorage.setItem("hvacAdminLoggedIn", "true");
 
-            body: JSON.stringify({
-              email: email,
-              password: password,
-            }),
-          }
-        );
+      alert("Admin login successful!");
 
-        const data = await response.json();
+      window.location.href = "admin.html";
+    } catch (error) {
+      console.error("Admin Login Error:", error);
 
-        if (!response.ok) {
-          alert(
-            data.message ||
-              "Invalid admin email or password."
-          );
-          return;
-        }
-
-        // Save admin JWT token
-        localStorage.setItem(
-          "hvacAdminToken",
-          data.token
-        );
-
-        // Keep existing admin login flag
-        localStorage.setItem(
-          "hvacAdminLoggedIn",
-          "true"
-        );
-
-        alert("Admin login successful!");
-
-        window.location.href = "admin.html";
-      } catch (error) {
-        console.error(
-          "Admin Login Error:",
-          error
-        );
-
-        alert(
-          "Unable to connect to server. Please try again."
-        );
-      }
+      alert("Unable to connect to server. Please try again.");
     }
-  );
+  });
 }
 // =========================================
 // ADMIN SETUP
@@ -996,13 +975,43 @@ function getAdminCoursesForLectures() {
 // =========================
 // LOAD LECTURES
 // =========================
+async function loadAdminLectures() {
+  const adminToken = localStorage.getItem("hvacAdminToken");
 
-function loadAdminLectures() {
-  allLectures = JSON.parse(localStorage.getItem(ADMIN_LECTURES_KEY)) || [];
+  if (!adminToken) {
+    alert("Admin authentication required. Please login again.");
+    return;
+  }
 
-  populateLectureCourses();
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/lectures/admin",
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + adminToken,
+        },
+      }
+    );
 
-  renderAdminLectures();
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Failed to load lectures.");
+      return;
+    }
+
+    allLectures = data.lectures || [];
+
+    populateLectureCourses();
+    renderAdminLectures();
+  } catch (error) {
+    console.error("Load Admin Lectures Error:", error);
+
+    alert(
+      "Unable to load lectures. Please check the server."
+    );
+  }
 }
 
 // =========================
@@ -1229,69 +1238,62 @@ function closeLectureModalWindow() {
 // =========================
 // SAVE LECTURE
 // =========================
-
 if (lectureForm) {
-  lectureForm.addEventListener("submit", function (event) {
+  lectureForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     const courseId = lectureCourse.value;
-
     const number = lectureNumber.value;
-
     const title = lectureTitle.value.trim();
+    const videoFile = lectureVideo.files[0];
 
-    const video = lectureVideo.value.trim();
-
-    if (!courseId || !number || !title || !video) {
-      alert("Please fill all lecture details.");
-
+    if (!courseId || !number || !title || !videoFile) {
+      alert("Please fill all lecture details and select a video.");
       return;
     }
 
-    if (editingLectureId) {
-      const index = allLectures.findIndex(function (item) {
-        return item.id === editingLectureId;
-      });
+    const adminToken = localStorage.getItem("hvacAdminToken");
 
-      if (index !== -1) {
-        allLectures[index] = {
-          ...allLectures[index],
-
-          courseId,
-          number: Number(number),
-          title,
-          video,
-        };
-      }
-    } else {
-      const newLecture = {
-        id: "LECTURE" + Date.now(),
-
-        courseId,
-
-        number: Number(number),
-
-        title,
-
-        video,
-
-        createdAt: new Date().toISOString(),
-      };
-
-      allLectures.push(newLecture);
+    if (!adminToken) {
+      alert("Admin authentication required. Please login again.");
+      return;
     }
 
-    localStorage.setItem(ADMIN_LECTURES_KEY, JSON.stringify(allLectures));
+    const formData = new FormData();
 
-    closeLectureModalWindow();
+    formData.append("courseId", courseId);
+    formData.append("number", number);
+    formData.append("title", title);
+    formData.append("video", videoFile);
 
-    renderAdminLectures();
+    try {
+      const response = await fetch("http://localhost:5000/api/lectures", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + adminToken,
+        },
+        body: formData,
+      });
 
-    alert(
-      editingLectureId
-        ? "Lecture updated successfully!"
-        : "Lecture added successfully!",
-    );
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Failed to upload lecture.");
+        return;
+      }
+
+      alert("Lecture added successfully!");
+
+      closeLectureModalWindow();
+
+      lectureForm.reset();
+
+      loadAdminLectures();
+    } catch (error) {
+      console.error("Add Lecture Error:", error);
+
+      alert("Unable to upload lecture. Please check the server.");
+    }
   });
 }
 
@@ -2124,7 +2126,30 @@ if (document.getElementById("adminCourseCount")) {
 
   adminOrderCount.textContent = orders.length;
 
-  // TOTAL CERTIFICATES
+  // TOTAL REVENUE FROM BACKEND
+  const adminRevenue = document.getElementById("adminRevenue");
+  const adminToken = localStorage.getItem("hvacAdminToken");
+
+  if (adminRevenue && adminToken) {
+    fetch("http://localhost:5000/api/orders/admin/revenue", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + adminToken,
+      },
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (data.totalRevenue !== undefined) {
+          adminRevenue.textContent =
+            "₹" + Number(data.totalRevenue).toLocaleString("en-IN");
+        }
+      })
+      .catch(function (error) {
+        console.error("Revenue Fetch Error:", error);
+      });
+  }
 
   // TOTAL CERTIFICATES
   let certificateCount = 0;

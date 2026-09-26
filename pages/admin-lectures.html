@@ -22,6 +22,9 @@
         <div class="admin-nav-menu">
           <a href="admin.html">Dashboard</a>
           <a href="courses.html">Website</a>
+          <button class="theme-toggle" id="themeToggle" type="button">
+            🌙
+          </button>
           <a href="#" id="adminLogoutBtn">Logout</a>
         </div>
       </div>
@@ -149,18 +152,21 @@
                 required
               />
             </div>
+          </div>
+          <!-- VIDEO -->
+          <div class="admin-form-group">
+            <label for="lectureVideo">Upload Lecture Video</label>
 
-            <!-- VIDEO -->
-            <div class="admin-form-group">
-              <label for="lectureVideo"> Video URL / File Path </label>
+            <input
+              type="file"
+              id="lectureVideo"
+              accept="video/mp4,video/webm,video/ogg,video/quicktime"
+              required
+            />
 
-              <input
-                type="text"
-                id="lectureVideo"
-                placeholder="e.g. ../assets/videos/lecture1.mp4"
-                required
-              />
-            </div>
+            <small class="admin-form-help">
+              Supported: MP4, WebM, OGG, MOV. Maximum size: 500 MB.
+            </small>
           </div>
 
           <!-- ACTIONS -->
