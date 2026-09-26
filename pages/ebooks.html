@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>E-Books & Notes | HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/ebooks.css" />
+  </head>
+
+  <body>
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+
+    <header class="navbar">
+      <div class="container nav-container">
+        <a href="../index.html" class="logo"> HVAC<span>Tutorial</span> </a>
+
+        <button class="menu-toggle" id="menuToggle">☰</button>
+
+        <nav class="nav-menu">
+          <a href="../index.html">Home</a>
+
+          <a href="courses.html"> Courses </a>
+
+          <a href="ebooks.html" class="active"> E-Books </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="cart.html" class="cart-link">
+            🛒 Cart
+            <span class="cart-count">0</span>
+          </a>
+
+          <a href="dashboard.html"> Dashboard </a>
+
+          <a href="#" id="logoutBtn" class="logout-link"> Logout </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- =========================
+         E-BOOK HERO
+    ========================== -->
+
+    <section class="ebooks-hero">
+      <div class="container">
+        <div class="ebooks-hero-content">
+          <span class="ebooks-badge"> 📚 Study Resources </span>
+
+          <h1>E-Books & Notes</h1>
+
+          <p>
+            Learn HVAC concepts with useful notes, study materials and PDF
+            books.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         E-BOOK SECTION
+    ========================== -->
+
+    <main class="ebooks-section">
+      <div class="container">
+        <div class="ebooks-header">
+          <div>
+            <h2>Available E-Books & Notes</h2>
+
+            <p>
+              Explore our study materials and download useful PDF resources.
+            </p>
+          </div>
+
+          <div class="ebooks-search">
+            <input
+              type="search"
+              id="ebookSearch"
+              placeholder="Search books or notes..."
+            />
+          </div>
+        </div>
+
+        <!-- E-BOOK GRID -->
+
+        <div class="ebooks-grid" id="ebooksGrid">
+          <!-- Books will be loaded here -->
+        </div>
+
+        <!-- EMPTY MESSAGE -->
+
+        <div class="ebooks-empty" id="ebooksEmpty" style="display: none">
+          <div class="empty-icon">📚</div>
+
+          <h3>No E-Books Found</h3>
+
+          <p>Try searching with another keyword.</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer class="footer">
+      <div class="container">
+        <p>
+          © <span id="currentYear"></span>
+          HVAC Tutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script src="../js/main.js"></script>
+    <script src="../js/ebooks.js"></script>
+  </body>
+</html>

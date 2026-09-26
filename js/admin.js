@@ -17,38 +17,85 @@ if (adminPage && localStorage.getItem("hvacAdminLoggedIn") !== "true") {
 // ADMIN LOGIN
 // =========================================
 
-const adminLoginForm = document.getElementById("adminLoginForm");
 
-// Demo admin credentials
-const ADMIN_EMAIL = "admin@hvactutorial.com";
-
-const ADMIN_PASSWORD = "admin123";
+const adminLoginForm =
+  document.getElementById("adminLoginForm");
 
 if (adminLoginForm) {
-  adminLoginForm.addEventListener("submit", function (event) {
-    event.preventDefault();
+  adminLoginForm.addEventListener(
+    "submit",
+    async function (event) {
+      event.preventDefault();
 
-    const email = document
-      .getElementById("adminEmail")
-      .value.trim()
-      .toLowerCase();
+      const email = document
+        .getElementById("adminEmail")
+        .value
+        .trim()
+        .toLowerCase();
 
-    const password = document.getElementById("adminPassword").value;
+      const password =
+        document.getElementById("adminPassword").value;
 
-    // =================================
-    // CHECK ADMIN CREDENTIALS
-    // =================================
+      if (!email || !password) {
+        alert("Please enter admin email and password.");
+        return;
+      }
 
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      localStorage.setItem("hvacAdminLoggedIn", "true");
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/auth/admin-login",
+          {
+            method: "POST",
 
-      window.location.href = "admin.html";
-    } else {
-      alert("Invalid admin email or password.");
+            headers: {
+              "Content-Type": "application/json",
+            },
+
+            body: JSON.stringify({
+              email: email,
+              password: password,
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(
+            data.message ||
+              "Invalid admin email or password."
+          );
+          return;
+        }
+
+        // Save admin JWT token
+        localStorage.setItem(
+          "hvacAdminToken",
+          data.token
+        );
+
+        // Keep existing admin login flag
+        localStorage.setItem(
+          "hvacAdminLoggedIn",
+          "true"
+        );
+
+        alert("Admin login successful!");
+
+        window.location.href = "admin.html";
+      } catch (error) {
+        console.error(
+          "Admin Login Error:",
+          error
+        );
+
+        alert(
+          "Unable to connect to server. Please try again."
+        );
+      }
     }
-  });
+  );
 }
-
 // =========================================
 // ADMIN SETUP
 // =========================================

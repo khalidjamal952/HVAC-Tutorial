@@ -101,27 +101,79 @@ router.post("/login", async (req, res) => {
 });
 
 router.get("/profile", authMiddleware, async (req, res) => {
-    try {
-        const user = await User.findById(req.user.userId)
-            .select("-password");
+  try {
+    const user = await User.findById(req.user.userId).select("-password");
 
-        if (!user) {
-            return res.status(404).json({
-                message: "User not found"
-            });
-        }
-
-        res.status(200).json({
-            message: "Protected profile accessed successfully",
-            user: user
-        });
-
-    } catch (error) {
-        console.error("Profile Error:", error);
-
-        res.status(500).json({
-            message: "Server error"
-        });
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
     }
+
+    res.status(200).json({
+      message: "Protected profile accessed successfully",
+      user: user,
+    });
+  } catch (error) {
+    console.error("Profile Error:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
+});
+
+// =========================================
+// ADMIN LOGIN
+// =========================================
+
+router.post("/admin-login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        message: "Email and password are required",
+      });
+    }
+
+    const adminEmail = process.env.ADMIN_EMAIL;
+    const adminPassword = process.env.ADMIN_PASSWORD;
+
+    if (
+      email.trim().toLowerCase() !== adminEmail.toLowerCase() ||
+      password !== adminPassword
+    ) {
+      return res.status(401).json({
+        message: "Invalid admin email or password",
+      });
+    }
+
+    const token = jwt.sign(
+      {
+        role: "admin",
+        email: adminEmail,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
+
+    res.status(200).json({
+      message: "Admin login successful",
+      token: token,
+      admin: {
+        email: adminEmail,
+        role: "admin",
+      },
+    });
+  } catch (error) {
+    console.error("Admin Login Error:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
+  }
 });
 module.exports = router;
