@@ -22,27 +22,60 @@ const myCoursesGrid = document.getElementById("myCoursesGrid");
 const myCoursesEmpty = document.getElementById("myCoursesEmpty");
 
 // =========================================
-// GET ALL ORDERS
-// =========================================
-
-const orders = JSON.parse(localStorage.getItem("hvacOrders")) || [];
-
-// =========================================
-// FIND USER'S PURCHASED COURSES
+// GET USER'S PAID COURSES FROM BACKEND
 // =========================================
 
 let purchasedCourses = [];
 
-if (currentUser) {
-  orders.forEach(function (order) {
-    if (order.customer && order.customer.email === currentUser.email) {
-      if (Array.isArray(order.courses)) {
-        purchasedCourses = purchasedCourses.concat(order.courses);
+async function loadPurchasedCourses() {
+  const token = localStorage.getItem("hvacToken");
+
+  if (!token) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/orders",
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
       }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error(
+        "Orders Fetch Error:",
+        data.message
+      );
+      return;
     }
-  });
+
+    if (Array.isArray(data.orders)) {
+      data.orders.forEach(function (order) {
+        // Only Paid orders unlock courses
+        if (
+          order.status === "Paid" &&
+          Array.isArray(order.courses)
+        ) {
+          purchasedCourses =
+            purchasedCourses.concat(order.courses);
+        }
+      });
+    }
+  } catch (error) {
+    console.error(
+      "My Courses Orders Error:",
+      error
+    );
+  }
 }
 
+await loadPurchasedCourses();
 // =========================================
 // REMOVE DUPLICATE COURSES
 // =========================================

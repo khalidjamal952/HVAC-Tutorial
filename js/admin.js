@@ -433,14 +433,33 @@ if (adminCoursesTableBody) {
   // =====================================
   // LOAD SAVED COURSES
   // =====================================
+  let adminCourses = [];
 
-  let adminCourses = JSON.parse(localStorage.getItem("hvacAdminCourses"));
+  async function loadAdminCourses() {
+    try {
+      const response = await fetch("http://localhost:5000/api/courses");
 
-  if (!Array.isArray(adminCourses)) {
-    adminCourses = defaultCourses;
+      const data = await response.json();
 
-    localStorage.setItem("hvacAdminCourses", JSON.stringify(adminCourses));
+      if (!response.ok) {
+        console.error("Admin Courses Fetch Error:", data.message);
+        return;
+      }
+
+      if (Array.isArray(data.courses)) {
+        adminCourses = data.courses;
+      } else {
+        adminCourses = [];
+      }
+
+      updateCourseCount();
+      displayAdminCourses(adminCourses);
+    } catch (error) {
+      console.error("Admin Courses Backend Error:", error);
+    }
   }
+
+  loadAdminCourses();
 
   // =====================================
   // CATEGORY NAME
@@ -480,53 +499,53 @@ if (adminCoursesTableBody) {
 
       row.innerHTML = `
 
-                <td class="course-title-cell">
-                    ${course.title}
-                </td>
+                  <td class="course-title-cell">
+                      ${course.title}
+                  </td>
 
-                <td>
-                    <span class="course-category-cell">
-                        ${getCategoryName(course.category)}
-                    </span>
-                </td>
+                  <td>
+                      <span class="course-category-cell">
+                          ${getCategoryName(course.category)}
+                      </span>
+                  </td>
 
-                <td>
-                    ${course.lessons}
-                </td>
+                  <td>
+                      ${course.lessons}
+                  </td>
 
-                <td class="course-price-cell">
-                    ₹${course.price}
-                </td>
+                  <td class="course-price-cell">
+                      ₹${course.price}
+                  </td>
 
-                <td class="course-student-cell">
-                    ${course.students || 0}
-                </td>
+                  <td class="course-student-cell">
+                      ${course.students || 0}
+                  </td>
 
-                <td>
+                  <td>
 
-                    <div class="course-action-group">
+                      <div class="course-action-group">
 
-                        <button
-                            type="button"
-                            class="course-edit-btn"
-                            data-course-id="${course.id}"
-                        >
-                            Edit
-                        </button>
+                          <button
+                              type="button"
+                              class="course-edit-btn"
+                              data-course-id="${course.id}"
+                          >
+                              Edit
+                          </button>
 
-                        <button
-                            type="button"
-                            class="course-delete-btn"
-                            data-course-id="${course.id}"
-                        >
-                            Delete
-                        </button>
+                          <button
+                              type="button"
+                              class="course-delete-btn"
+                              data-course-id="${course.id}"
+                          >
+                              Delete
+                          </button>
 
-                    </div>
+                      </div>
 
-                </td>
+                  </td>
 
-            `;
+              `;
 
       adminCoursesTableBody.appendChild(row);
     });
@@ -554,7 +573,7 @@ if (adminCoursesTableBody) {
       adminCoursesTableBody.querySelectorAll(".course-delete-btn");
 
     deleteButtons.forEach(function (button) {
-      button.addEventListener("click", function () {
+      button.addEventListener("click", async function () {
         const courseId = button.dataset.courseId;
 
         const course = adminCourses.find(function (item) {
@@ -573,15 +592,33 @@ if (adminCoursesTableBody) {
           return;
         }
 
-        adminCourses = adminCourses.filter(function (item) {
-          return item.id !== courseId;
-        });
+        const adminToken = localStorage.getItem("hvacAdminToken");
 
-        localStorage.setItem("hvacAdminCourses", JSON.stringify(adminCourses));
+        try {
+          const response = await fetch(
+            "http://localhost:5000/api/courses/admin/" + courseId,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: "Bearer " + adminToken,
+              },
+            },
+          );
 
-        updateCourseCount();
+          const data = await response.json();
 
-        displayAdminCourses(adminCourses);
+          if (!response.ok) {
+            alert(data.message || "Unable to delete course.");
+            return;
+          }
+
+          alert("Course deleted successfully!");
+
+          loadAdminCourses();
+        } catch (error) {
+          console.error("Delete Course Error:", error);
+          alert("Server error while deleting course.");
+        }
       });
     });
   }
@@ -692,7 +729,7 @@ if (adminCoursesTableBody) {
   // =====================================
 
   if (courseForm) {
-    courseForm.addEventListener("submit", function (event) {
+    courseForm.addEventListener("submit", async function (event) {
       event.preventDefault();
 
       const title = document.getElementById("courseTitle").value.trim();
@@ -715,82 +752,95 @@ if (adminCoursesTableBody) {
 
       const editingId = courseForm.dataset.editingId;
 
-      // =============================
-      // EDIT EXISTING COURSE
-      // =============================
+      const adminToken = localStorage.getItem("hvacAdminToken");
 
-      if (editingId) {
-        const course = adminCourses.find(function (item) {
-          return item.id === editingId;
-        });
+      try {
+        // =============================
+        // EDIT EXISTING COURSE
+        // =============================
 
-        if (course) {
-          course.title = title;
+        if (editingId) {
+          const response = await fetch(
+            "http://localhost:5000/api/courses/admin/" + editingId,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + adminToken,
+              },
+              body: JSON.stringify({
+                title: title,
+                category: category,
+                lessons: lessons,
+                duration: duration,
+                price: price,
+                originalPrice: originalPrice,
+                students: 0,
+                description: description,
+              }),
+            },
+          );
 
-          course.category = category;
+          const data = await response.json();
 
-          course.lessons = lessons;
+          if (!response.ok) {
+            alert(data.message || "Unable to update course.");
+            return;
+          }
 
-          course.duration = duration;
-
-          course.price = price;
-
-          course.originalPrice = originalPrice;
-
-          course.description = description;
+          alert("Course updated successfully!");
         }
+
+        // =============================
+        // ADD NEW COURSE
+        // =============================
+        else {
+          const newCourse = {
+            id: "course-" + Date.now(),
+            title: title,
+            category: category,
+            lessons: lessons,
+            duration: duration,
+            price: price,
+            originalPrice: originalPrice,
+            students: 0,
+            description: description,
+          };
+
+          const response = await fetch(
+            "http://localhost:5000/api/courses/admin",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + adminToken,
+              },
+              body: JSON.stringify(newCourse),
+            },
+          );
+
+          const data = await response.json();
+
+          if (!response.ok) {
+            alert(data.message || "Unable to add course.");
+            return;
+          }
+
+          alert("Course added successfully!");
+        }
+
+        delete courseForm.dataset.editingId;
+
+        closeCourseModalBox();
+
+        loadAdminCourses();
+      } catch (error) {
+        console.error("Save Course Error:", error);
+
+        alert("Server error while saving course.");
       }
-
-      // =============================
-      // ADD NEW COURSE
-      // =============================
-      else {
-        const newCourse = {
-          id: "course-" + Date.now(),
-
-          title: title,
-
-          category: category,
-
-          lessons: lessons,
-
-          duration: duration,
-
-          price: price,
-
-          originalPrice: originalPrice,
-
-          students: 0,
-
-          description: description,
-        };
-
-        adminCourses.push(newCourse);
-      }
-
-      // =============================
-      // SAVE
-      // =============================
-
-      localStorage.setItem("hvacAdminCourses", JSON.stringify(adminCourses));
-
-      updateCourseCount();
-
-      displayAdminCourses(adminCourses);
-
-      closeCourseModalBox();
-
-      alert("Course saved successfully!");
     });
   }
-
-  // =====================================
-  // INITIAL LOAD
-  // =====================================
-
-  updateCourseCount();
-
-  displayAdminCourses(adminCourses);
 }
 
 // =========================
@@ -807,12 +857,40 @@ const orderSearch = document.getElementById("orderSearch");
 
 let allOrders = [];
 
-function loadAdminOrders() {
-  allOrders = JSON.parse(localStorage.getItem("hvacOrders")) || [];
+async function loadAdminOrders() {
+  const token = localStorage.getItem("hvacAdminToken");
 
-  renderAdminOrders();
+  if (!token) {
+    console.error("Admin token not found.");
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:5000/api/orders/admin/all", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Admin Orders Fetch Error:", data.message);
+      return;
+    }
+
+    if (Array.isArray(data.orders)) {
+      allOrders = data.orders;
+    } else {
+      allOrders = [];
+    }
+
+    renderAdminOrders();
+  } catch (error) {
+    console.error("Admin Orders Error:", error);
+  }
 }
-
 function renderAdminOrders() {
   if (!ordersTableBody) {
     return;
@@ -822,7 +900,31 @@ function renderAdminOrders() {
 
   const searchText = orderSearch ? orderSearch.value.toLowerCase().trim() : "";
 
+  // const filteredOrders = allOrders.filter(function (order) {
+  //   const student = (order.customer?.fullName || "").toLowerCase();
+
+  //   const email = (order.customer?.email || "").toLowerCase();
+
+  //   const course = (order.courses || [])
+  //     .map(function (item) {
+  //       return item.title || "";
+  //     })
+  //     .join(" ")
+  //     .toLowerCase();
+
+  //   return (
+  //     student.includes(searchText) ||
+  //     email.includes(searchText) ||
+  //     course.includes(searchText)
+  //   );
+  // });
+
   const filteredOrders = allOrders.filter(function (order) {
+    // Sirf successful/paid orders show honge
+    if (order.status !== "Paid") {
+      return false;
+    }
+
     const student = (order.customer?.fullName || "").toLowerCase();
 
     const email = (order.customer?.email || "").toLowerCase();
@@ -840,7 +942,6 @@ function renderAdminOrders() {
       course.includes(searchText)
     );
   });
-
   if (orderTotal) {
     orderTotal.textContent = filteredOrders.length;
   }
@@ -861,8 +962,7 @@ function renderAdminOrders() {
     const row = document.createElement("tr");
 
     // ORDER ID
-    const orderId = order.orderId || "N/A";
-
+    const orderId = order._id || "N/A";
     // CUSTOMER
     const studentName = order.customer?.fullName || "Unknown";
 
@@ -884,10 +984,9 @@ function renderAdminOrders() {
     // DATE
     let formattedDate = "N/A";
 
-    if (order.orderDate) {
-      formattedDate = new Date(order.orderDate).toLocaleDateString("en-IN");
+    if (order.createdAt) {
+      formattedDate = new Date(order.createdAt).toLocaleDateString("en-IN");
     }
-
     // STATUS
     const status = order.status || "Pending";
 
@@ -989,10 +1088,6 @@ let editingLectureId = null;
 // GET COURSES
 // =========================
 
-function getAdminCoursesForLectures() {
-  return JSON.parse(localStorage.getItem("hvacAdminCourses")) || [];
-}
-
 // =========================
 // LOAD LECTURES
 // =========================
@@ -1033,36 +1128,42 @@ async function loadAdminLectures() {
 // =========================
 // COURSE DROPDOWN
 // =========================
-
-function populateLectureCourses() {
+async function populateLectureCourses() {
   if (!lectureCourse) {
     return;
   }
 
-  const courses = getAdminCoursesForLectures();
+  try {
+    const response = await fetch("http://localhost:5000/api/courses");
 
-  lectureCourse.innerHTML = `
-        <option value="">
-            Select Course
-        </option>
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Lecture Courses Error:", data.message);
+      return;
+    }
+
+    const courses = Array.isArray(data.courses) ? data.courses : [];
+
+    lectureCourse.innerHTML = `
+      <option value="">
+        Select Course
+      </option>
     `;
 
-  courses.forEach(function (course) {
-    const option = document.createElement("option");
+    courses.forEach(function (course) {
+      const option = document.createElement("option");
 
-    option.value = course.id;
+      option.value = course.id;
+      option.textContent = course.title;
 
-    option.textContent = course.title;
-
-    lectureCourse.appendChild(option);
-  });
+      lectureCourse.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Populate Lecture Courses Error:", error);
+  }
 }
-
-// =========================
-// RENDER LECTURES
-// =========================
-
-function renderAdminLectures() {
+async function renderAdminLectures() {
   if (!lectureTableBody) {
     return;
   }
@@ -1073,7 +1174,19 @@ function renderAdminLectures() {
     ? lectureSearch.value.toLowerCase().trim()
     : "";
 
-  const courses = getAdminCoursesForLectures();
+  let courses = [];
+
+  try {
+    const response = await fetch("http://localhost:5000/api/courses");
+
+    const data = await response.json();
+
+    if (response.ok && Array.isArray(data.courses)) {
+      courses = data.courses;
+    }
+  } catch (error) {
+    console.error("Render Lecture Courses Error:", error);
+  }
 
   const filteredLectures = allLectures.filter(function (lecture) {
     const course = courses.find(function (item) {
@@ -1105,6 +1218,7 @@ function renderAdminLectures() {
   }
 
   filteredLectures.forEach(function (lecture) {
+    console.log("LECTURE OBJECT:", lecture);
     const row = document.createElement("tr");
 
     const course = courses.find(function (item) {
@@ -1114,62 +1228,55 @@ function renderAdminLectures() {
     const courseName = course ? course.title : "Unknown Course";
 
     row.innerHTML = `
+      <td>
+        <span class="lecture-number-cell">
+          ${lecture.number}
+        </span>
+      </td>
 
-            <td>
-                <span class="lecture-number-cell">
-                    ${lecture.number}
-                </span>
-            </td>
+      <td>
+        <strong>
+          ${lecture.title}
+        </strong>
+      </td>
 
-            <td>
-                <strong>
-                    ${lecture.title}
-                </strong>
-            </td>
+      <td>
+        <span class="lecture-course-cell">
+          ${courseName}
+        </span>
+      </td>
 
-            <td>
-                <span class="lecture-course-cell">
-                    ${courseName}
-                </span>
-            </td>
+      <td>
+        <span class="lecture-video-cell">
+          🎥 Video
+        </span>
+      </td>
 
-            <td>
-                <span class="lecture-video-cell">
-                    🎥 Video
-                </span>
-            </td>
+      <td>
+        <div class="course-action-group">
+           <button
+  type="button"
+  class="student-action-btn lecture-edit-btn"
+ data-id="${lecture._id}"
+>
+  Edit
+</button>
 
-            <td>
-
-                <div class="course-action-group">
-
-                    <button
-                        type="button"
-                        class="student-action-btn lecture-edit-btn"
-                        data-id="${lecture.id}"
-                    >
-                        Edit
-                    </button>
-
-                    <button
-                        type="button"
-                        class="student-action-btn lecture-delete-btn"
-                        data-id="${lecture.id}"
-                    >
-                        Delete
-                    </button>
-
-                </div>
-
-            </td>
-
-        `;
+         <button
+  type="button"
+  class="student-action-btn lecture-delete-btn"
+  data-id="${lecture._id}"
+>
+  Delete
+</button>
+        </div>
+      </td>
+    `;
 
     lectureTableBody.appendChild(row);
   });
 
   // EDIT BUTTONS
-
   lectureTableBody
     .querySelectorAll(".lecture-edit-btn")
     .forEach(function (button) {
@@ -1179,7 +1286,6 @@ function renderAdminLectures() {
     });
 
   // DELETE BUTTONS
-
   lectureTableBody
     .querySelectorAll(".lecture-delete-btn")
     .forEach(function (button) {
@@ -1188,7 +1294,6 @@ function renderAdminLectures() {
       });
     });
 }
-
 // =========================
 // OPEN ADD MODAL
 // =========================
@@ -1217,7 +1322,7 @@ function openLectureAdd() {
 
 function openLectureEdit(id) {
   const lecture = allLectures.find(function (item) {
-    return item.id === id;
+    return item._id === id;
   });
 
   if (!lecture) {
@@ -1234,7 +1339,8 @@ function openLectureEdit(id) {
 
   lectureTitle.value = lecture.title;
 
-  lectureVideo.value = lecture.video;
+  // lectureVideo.value = lecture.video;
+  lectureVideo.value = "";
 
   lectureModal.classList.add("active");
 }
@@ -1263,13 +1369,65 @@ if (lectureForm) {
     const title = lectureTitle.value.trim();
     const videoFile = lectureVideo.files[0];
 
-    if (!courseId || !number || !title || !videoFile) {
-      alert("Please fill all lecture details and select a video.");
+    if (!courseId || !number || !title) {
+      alert("Please fill all lecture details.");
       return;
     }
 
     const adminToken = localStorage.getItem("hvacAdminToken");
+       // =========================
+// EDIT EXISTING LECTURE
+// =========================
 
+if (editingLectureId) {
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/lectures/" + editingLectureId,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + adminToken,
+        },
+        body: JSON.stringify({
+          courseId: courseId,
+          number: number,
+          title: title,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(
+        data.message ||
+          "Failed to update lecture."
+      );
+      return;
+    }
+
+    alert("Lecture updated successfully!");
+
+    closeLectureModalWindow();
+    lectureForm.reset();
+
+    await loadAdminLectures();
+
+    return;
+  } catch (error) {
+    console.error(
+      "Edit Lecture Error:",
+      error
+    );
+
+    alert(
+      "Unable to update lecture. Please check the server."
+    );
+
+    return;
+  }
+}
     if (!adminToken) {
       alert("Admin authentication required. Please login again.");
       return;
@@ -1317,7 +1475,7 @@ if (lectureForm) {
 // DELETE LECTURE
 // =========================
 
-function deleteLecture(id) {
+async function deleteLecture(id) {
   const confirmDelete = confirm(
     "Are you sure you want to delete this lecture?",
   );
@@ -1326,17 +1484,36 @@ function deleteLecture(id) {
     return;
   }
 
-  allLectures = allLectures.filter(function (lecture) {
-    return lecture.id !== id;
-  });
+  const adminToken = localStorage.getItem("hvacAdminToken");
 
-  localStorage.setItem(ADMIN_LECTURES_KEY, JSON.stringify(allLectures));
+  if (!adminToken) {
+    alert("Admin authentication required. Please login again.");
+    return;
+  }
 
-  renderAdminLectures();
+  try {
+    const response = await fetch("http://localhost:5000/api/lectures/" + id, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + adminToken,
+      },
+    });
 
-  alert("Lecture deleted successfully!");
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Unable to delete lecture.");
+      return;
+    }
+
+    alert("Lecture deleted successfully!");
+
+    await loadAdminLectures();
+  } catch (error) {
+    console.error("Delete Lecture Error:", error);
+    alert("Server error while deleting lecture.");
+  }
 }
-
 // =========================
 // SEARCH
 // =========================
@@ -1883,95 +2060,68 @@ const certificateSearch = document.getElementById("certificateSearch");
 
 let allCertificates = [];
 
-// =========================
-// LOAD CERTIFICATES
-// =========================
-
-function loadAdminCertificates() {
+async function loadAdminCertificates() {
   allCertificates = [];
 
-  const orders = JSON.parse(localStorage.getItem("hvacOrders")) || [];
+  const adminToken = localStorage.getItem("hvacAdminToken");
 
-  const adminCourses =
-    JSON.parse(localStorage.getItem("hvacAdminCourses")) || [];
-
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-
-    if (!key || !key.startsWith("hvacCertificate_") || key.endsWith("_date")) {
-      continue;
-    }
-
-    const certificateId = localStorage.getItem(key);
-
-    if (!certificateId) {
-      continue;
-    }
-
-    const certificateData = key.replace("hvacCertificate_", "");
-
-    const separatorIndex = certificateData.indexOf("_");
-
-    if (separatorIndex === -1) {
-      continue;
-    }
-
-    const courseId = certificateData.substring(separatorIndex + 1);
-
-    // Find student's order using course ID
-    const matchingOrder = orders.find(function (order) {
-      return (
-        order.customer &&
-        Array.isArray(order.courses) &&
-        order.courses.some(function (course) {
-          return course.id === courseId;
-        })
-      );
-    });
-
-    if (!matchingOrder) {
-      continue;
-    }
-
-    // Find course details
-    let course = matchingOrder.courses.find(function (item) {
-      return item.id === courseId;
-    });
-
-    if (!course) {
-      course = adminCourses.find(function (item) {
-        return item.id === courseId;
-      });
-    }
-
-    if (!course) {
-      continue;
-    }
-
-    const certificateDate = localStorage.getItem(key + "_date");
-
-    allCertificates.push({
-      certificateId: certificateId,
-
-      studentName: matchingOrder.customer.fullName,
-
-      studentEmail: matchingOrder.customer.email,
-
-      courseId: courseId,
-
-      courseName: course.title,
-
-      issueDate: certificateDate,
-
-      userId: null,
-
-      status: "Valid",
-    });
+  if (!adminToken) {
+    console.error("Admin token not found.");
+    renderAdminCertificates();
+    return;
   }
 
-  renderAdminCertificates();
-}
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/certificates/admin/all",
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + adminToken,
+        },
+      },
+    );
 
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Admin Certificates Fetch Error:", data.message);
+      renderAdminCertificates();
+      return;
+    }
+
+    if (Array.isArray(data.certificates)) {
+      allCertificates = data.certificates.map(function (certificate) {
+        return {
+          certificateId: certificate.certificateId,
+
+          studentName: certificate.user?.name || "N/A",
+
+          studentEmail: certificate.user?.email || "N/A",
+
+          courseId: certificate.courseId,
+
+          courseName: certificate.courseName,
+
+          issueDate: certificate.completionDate,
+
+          userId: certificate.user?._id || null,
+
+          status: certificate.status || "Valid",
+        };
+      });
+    } else {
+      allCertificates = [];
+    }
+
+    renderAdminCertificates();
+  } catch (error) {
+    console.error("Admin Certificates Error:", error);
+
+    allCertificates = [];
+    renderAdminCertificates();
+  }
+}
 // =========================
 // RENDER CERTIFICATES
 // =========================
@@ -2134,24 +2284,68 @@ if (document.getElementById("adminCourseCount")) {
   );
 
   // TOTAL COURSES
-  const adminCourses =
-    JSON.parse(localStorage.getItem("hvacAdminCourses")) || [];
+  async function loadAdminCourseCount() {
+    try {
+      const response = await fetch("http://localhost:5000/api/courses");
 
-  adminCourseCount.textContent = adminCourses.length;
+      const data = await response.json();
 
+      if (!response.ok) {
+        console.error("Course Count Error:", data.message);
+        return;
+      }
+
+      if (adminCourseCount) {
+        adminCourseCount.textContent = Array.isArray(data.courses)
+          ? data.courses.length
+          : 0;
+      }
+    } catch (error) {
+      console.error("Course Count Backend Error:", error);
+    }
+  }
+
+  loadAdminCourseCount();
   // TOTAL STUDENTS
   const students = JSON.parse(localStorage.getItem("hvacUsers")) || [];
 
   adminStudentCount.textContent = students.length;
 
-  // TOTAL ORDERS
-  const orders = JSON.parse(localStorage.getItem("hvacOrders")) || [];
+  // TOTAL ORDERS FROM BACKEND
 
-  adminOrderCount.textContent = orders.length;
+  const adminToken = localStorage.getItem("hvacAdminToken");
+
+  if (adminOrderCount && adminToken) {
+    fetch("http://localhost:5000/api/orders/admin/all", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + adminToken,
+      },
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (Array.isArray(data.orders)) {
+          const paidOrders = data.orders.filter(function (order) {
+            return ["Paid", "Completed", "Success", "Successful"].includes(
+              order.status,
+            );
+          });
+
+          adminOrderCount.textContent = paidOrders.length;
+        } else {
+          adminOrderCount.textContent = "0";
+        }
+      })
+      .catch(function (error) {
+        console.error("Orders Count Fetch Error:", error);
+        adminOrderCount.textContent = "0";
+      });
+  }
 
   // TOTAL REVENUE FROM BACKEND
   const adminRevenue = document.getElementById("adminRevenue");
-  const adminToken = localStorage.getItem("hvacAdminToken");
 
   if (adminRevenue && adminToken) {
     fetch("http://localhost:5000/api/orders/admin/revenue", {
@@ -2175,17 +2369,32 @@ if (document.getElementById("adminCourseCount")) {
   }
 
   // TOTAL CERTIFICATES
-  let certificateCount = 0;
+  // TOTAL CERTIFICATES FROM BACKEND
+  // const adminToken = localStorage.getItem("hvacAdminToken");
 
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
+  if (adminCertificateCount && adminToken) {
+    fetch("http://localhost:5000/api/certificates/admin/all", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + adminToken,
+      },
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (Array.isArray(data.certificates)) {
+          adminCertificateCount.textContent = data.certificates.length;
+        } else {
+          adminCertificateCount.textContent = "0";
+        }
+      })
+      .catch(function (error) {
+        console.error("Certificates Count Fetch Error:", error);
 
-    if (key && key.startsWith("hvacCertificate_") && !key.endsWith("_date")) {
-      certificateCount++;
-    }
+        adminCertificateCount.textContent = "0";
+      });
   }
-
-  adminCertificateCount.textContent = certificateCount;
 }
 
 const setupPasswordToggle = document.getElementById("setupPasswordToggle");

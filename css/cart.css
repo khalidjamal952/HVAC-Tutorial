@@ -456,3 +456,24 @@ body.dark-mode .remove-cart-btn {
     border-color: #fecaca !important;
     background: #ffffff !important;
 }
+
+/* FINAL DARK MODE FIX - CART */
+
+body.dark-mode .cart-page .empty-cart {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .cart-page .empty-cart h2 {
+    color: #ffffff !important;
+}
+
+body.dark-mode .cart-page .empty-cart p {
+    color: #cbd5e1 !important;
+}
+
+body.dark-mode .cart-page .empty-cart .primary-btn {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+}

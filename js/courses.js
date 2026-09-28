@@ -92,17 +92,33 @@ const defaultCourses = [
 // =========================
 // LOAD ADMIN COURSES
 // =========================
+async function loadCourses() {
+  try {
+    const response = await fetch("http://localhost:5000/api/courses");
 
-function loadCourses() {
-  const savedCourses = JSON.parse(localStorage.getItem("hvacAdminCourses"));
+    const data = await response.json();
 
-  if (savedCourses && savedCourses.length > 0) {
-    allCourses = savedCourses;
-  } else {
-    allCourses = defaultCourses;
+    if (!response.ok) {
+      console.error("Courses Fetch Error:", data.message);
+
+      allCourses = [];
+      renderCourses();
+      return;
+    }
+
+    if (Array.isArray(data.courses)) {
+      allCourses = data.courses;
+    } else {
+      allCourses = [];
+    }
+
+    renderCourses();
+  } catch (error) {
+    console.error("Courses Backend Error:", error);
+
+    allCourses = [];
+    renderCourses();
   }
-
-  renderCourses();
 }
 
 // =========================
@@ -307,16 +323,14 @@ function setupCourseFilters() {
       filterCourses();
     };
   });
-   
-   filterButtons.forEach(function (button) {
 
+  filterButtons.forEach(function (button) {
     if (button.dataset.category === currentCategory) {
-        button.classList.add("active");
+      button.classList.add("active");
     } else {
-        button.classList.remove("active");
+      button.classList.remove("active");
     }
-
-});
+  });
   filterCourses();
 }
 

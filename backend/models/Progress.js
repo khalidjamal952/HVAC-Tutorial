@@ -29,6 +29,11 @@ const progressSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    videoPositions: {
+  type: Map,
+  of: Number,
+  default: {},
+},
   },
   {
     timestamps: true,

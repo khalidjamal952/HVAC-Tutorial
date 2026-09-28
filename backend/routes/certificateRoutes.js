@@ -1,5 +1,6 @@
 const express = require("express");
 const authMiddleware = require("../middleware/authMiddleware");
+const adminAuthMiddleware = require("../middleware/adminAuthMiddleware");
 const Certificate = require("../models/Certificate");
 
 const router = express.Router();
@@ -10,17 +11,21 @@ const router = express.Router();
 
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { certificateId, courseId, courseName, completionDate } = req.body;
+    
+    const { courseId, courseName, completionDate } = req.body;
 
-    if (!certificateId || !courseId || !courseName) {
+    
+if (!courseId || !courseName)  {
       return res.status(400).json({
         message: "Certificate details are required",
       });
     }
-
+  const certificateId = "HVAC-" + Date.now();
+  
     const existingCertificate = await Certificate.findOne({
-      certificateId: certificateId,
-    });
+  user: req.user.userId,
+  courseId: courseId,
+});
 
     if (existingCertificate) {
       return res.status(200).json({
@@ -51,9 +56,6 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
-// =========================================
-// GET MY CERTIFICATES
-// =========================================
 
 // =========================================
 // GET MY CERTIFICATES
@@ -82,6 +84,38 @@ router.get("/my", authMiddleware, async (req, res) => {
     });
   }
 });
+
+// =========================================
+// GET ALL CERTIFICATES FOR ADMIN
+// =========================================
+
+router.get(
+  "/admin/all",
+  adminAuthMiddleware,
+  async (req, res) => {
+    try {
+      const certificates = await Certificate.find()
+        .populate("user", "name email")
+        .sort({
+          completionDate: -1,
+        });
+
+      res.status(200).json({
+        message: "All certificates fetched successfully",
+        certificates: certificates,
+      });
+    } catch (error) {
+      console.error(
+        "Get All Certificates Error:",
+        error
+      );
+
+      res.status(500).json({
+        message: "Server error",
+      });
+    }
+  }
+);
 // =========================================
 // VERIFY CERTIFICATE
 // =========================================

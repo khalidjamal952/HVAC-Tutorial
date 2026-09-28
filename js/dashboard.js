@@ -98,18 +98,31 @@ async function initializeDashboard() {
   // GET USER COURSES
   // =========================================
 
+  // let myCourses = [];
+
+  // if (currentUser) {
+  //   orders.forEach(function (order) {
+  //     if (order.customer && order.customer.email === currentUser.email) {
+  //       if (Array.isArray(order.courses)) {
+  //         myCourses = myCourses.concat(order.courses);
+  //       }
+  //     }
+  //   });
+  // }
+
   let myCourses = [];
 
   if (currentUser) {
     orders.forEach(function (order) {
-      if (order.customer && order.customer.email === currentUser.email) {
-        if (Array.isArray(order.courses)) {
-          myCourses = myCourses.concat(order.courses);
-        }
+      // Only Paid orders should give course access
+      if (
+        ["Paid", "Completed", "Success", "Successful"].includes(order.status) &&
+        Array.isArray(order.courses)
+      ) {
+        myCourses = myCourses.concat(order.courses);
       }
     });
   }
-
   // =========================================
   // REMOVE DUPLICATE COURSES
   // =========================================
@@ -345,108 +358,117 @@ async function initializeDashboard() {
   // CERTIFICATE COUNT
   // =========================================
 
-  // =========================================
-  // CERTIFICATE COUNT
-  // =========================================
-
   const certificateCount = document.getElementById("certificateCount");
 
   if (certificateCount) {
-    const certificateKeys = Object.keys(localStorage).filter(function (key) {
-      return (
-        key.startsWith("hvacCertificate_") &&
-        !key.endsWith("_date") &&
-        !key.startsWith("hvacCertificate_undefined_")
-      );
-    });
+    let completedCourses = 0;
 
-    certificateCount.textContent = certificateKeys.length;
-  }
-
-// =========================================
-// DISPLAY MY COURSES
-// =========================================
-
-const myCoursesContainer =
-  document.getElementById("myCourses");
-
-if (myCoursesContainer && uniqueCourses.length > 0) {
-
-  myCoursesContainer.innerHTML = "";
-
-  // =========================================
-  // GET BACKEND PROGRESS FOR EACH COURSE
-  // =========================================
-
-  uniqueCourses.forEach(async function (course) {
-
-    const courseItem =
-      document.createElement("div");
-
-    courseItem.className =
-      "dashboard-course-item";
-
-    // Default progress
-    let progress = 0;
-
-    // =========================================
-    // GET COURSE PROGRESS
-    // =========================================
-
-    const token =
-      localStorage.getItem("hvacToken");
+    const token = localStorage.getItem("hvacToken");
 
     if (token) {
-
       try {
+        const certificateResults = await Promise.all(
+          uniqueCourses.map(async function (course) {
+            try {
+              const response = await fetch(
+                "http://localhost:5000/api/progress/" + course.id,
+                {
+                  method: "GET",
+                  headers: {
+                    Authorization: "Bearer " + token,
+                  },
+                },
+              );
 
-        const response = await fetch(
-          "http://localhost:5000/api/progress/" +
-          course.id,
-          {
-            method: "GET",
+              const data = await response.json();
 
-            headers: {
-              Authorization: "Bearer " + token
+              if (response.ok && data.progress) {
+                return Number(data.progress.progress) >= 100;
+              }
+
+              return false;
+            } catch (error) {
+              console.error("Certificate Count Error:", error);
+
+              return false;
             }
+          }),
+        );
+
+        certificateResults.forEach(function (isCompleted) {
+          if (isCompleted) {
+            completedCourses++;
           }
-        );
+        });
 
-        const data = await response.json();
-
-        if (
-          response.ok &&
-          data.progress
-        ) {
-
-          progress =
-            Number(
-              data.progress.progress
-            ) || 0;
-
-        }
-
+        certificateCount.textContent = completedCourses;
       } catch (error) {
+        console.error("Certificate Count Load Error:", error);
 
-        console.error(
-          "Course Progress Load Error:",
-          error
-        );
+        certificateCount.textContent = "0";
+      }
+    }
+  }
+  // =========================================
+  // DISPLAY MY COURSES
+  // =========================================
 
+  const myCoursesContainer = document.getElementById("myCourses");
+
+  if (myCoursesContainer && uniqueCourses.length > 0) {
+    myCoursesContainer.innerHTML = "";
+
+    // =========================================
+    // GET BACKEND PROGRESS FOR EACH COURSE
+    // =========================================
+
+    uniqueCourses.forEach(async function (course) {
+      const courseItem = document.createElement("div");
+
+      courseItem.className = "dashboard-course-item";
+
+      // Default progress
+      let progress = 0;
+
+      // =========================================
+      // GET COURSE PROGRESS
+      // =========================================
+
+      const token = localStorage.getItem("hvacToken");
+
+      if (token) {
+        try {
+          const response = await fetch(
+            "http://localhost:5000/api/progress/" + course.id,
+            {
+              method: "GET",
+
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            },
+          );
+
+          const data = await response.json();
+
+          if (response.ok && data.progress) {
+            progress = Number(data.progress.progress) || 0;
+          }
+        } catch (error) {
+          console.error("Course Progress Load Error:", error);
+        }
       }
 
-    }
+      // =========================================
+      // COURSE BUTTON
+      // =========================================
+      // =========================================
+      // COURSE BUTTON
+      // =========================================
+      let courseButton = "";
 
-    // =========================================
-    // COURSE BUTTON
-    // =========================================
-// =========================================
-// COURSE BUTTON
-// =========================================
-let courseButton = "";
-
-if (progress >= 100) {
-  courseButton = `
+      if (progress >= 100) {
+        courseButton = `
     <div class="dashboard-course-actions">
 
       <a
@@ -465,8 +487,8 @@ if (progress >= 100) {
 
     </div>
   `;
-} else {
-  courseButton = `
+      } else {
+        courseButton = `
     <a
       href="course-player.html?id=${course.id}"
       class="dashboard-btn"
@@ -474,13 +496,13 @@ if (progress >= 100) {
       📖 Continue Learning
     </a>
   `;
-}
+      }
 
-    // =========================================
-    // COURSE CARD
-    // =========================================
+      // =========================================
+      // COURSE CARD
+      // =========================================
 
-    courseItem.innerHTML = `
+      courseItem.innerHTML = `
 
       <div class="dashboard-course-info">
 
@@ -510,11 +532,9 @@ if (progress >= 100) {
 
     `;
 
-    myCoursesContainer.appendChild(courseItem);
-
-  });
-
-}
+      myCoursesContainer.appendChild(courseItem);
+    });
+  }
 }
 
 // =========================================

@@ -10,7 +10,13 @@ const router = express.Router();
 
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { courseId, completedLectures, progress, currentLecture } = req.body;
+    const {
+      courseId,
+      completedLectures,
+      progress,
+      currentLecture,
+      videoPositions,
+    } = req.body;
 
     if (!courseId) {
       return res.status(400).json({
@@ -30,6 +36,7 @@ router.post("/", authMiddleware, async (req, res) => {
         completedLectures: completedLectures || [],
         progress: progress || 0,
         currentLecture: currentLecture || 0,
+        videoPositions: videoPositions || {},
       },
 
       {

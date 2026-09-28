@@ -8,10 +8,11 @@
 
 const currentUser = JSON.parse(localStorage.getItem("hvacCurrentUser"));
 
-if (!currentUser) {
+// const token = localStorage.getItem("hvacToken");
+
+if (!currentUser || !token) {
   window.location.href = "login.html";
 }
-
 // =========================================
 // GET COURSE ID
 // =========================================
@@ -19,6 +20,47 @@ if (!currentUser) {
 const urlParams = new URLSearchParams(window.location.search);
 
 const courseId = urlParams.get("id") || "hvac-fundamentals";
+
+// =========================================
+// CHECK COURSE PURCHASE ACCESS
+// =========================================
+
+async function checkCourseAccess() {
+  const token = localStorage.getItem("hvacToken");
+
+  if (!token) {
+    window.location.replace("login.html");
+    return false;
+  }
+
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/orders/access/" + courseId,
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.access) {
+      alert("You have not purchased this course.");
+      window.location.replace("courses.html");
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Course Access Check Error:", error);
+
+    alert("Unable to verify course access.");
+    window.location.replace("courses.html");
+    return false;
+  }
+}
 
 // =========================================
 // COURSE DATA
@@ -34,13 +76,14 @@ const courses = {
       "Learn the basic concepts of HVAC systems, components and working principles.",
 
     lectures: [
-      {
-        title: "Introduction to HVAC",
-        duration: "10 min",
-        video: "../assets/videos/hvac-introduction.mp4",
-        description:
-          "Introduction to HVAC systems and the basic concepts you need to understand.",
-      },
+      // {
+      //   lectureId: "LECTURE_ID_YAHAN",
+      //   title: "Introduction to HVAC",
+      //   duration: "10 min",
+      //   video: "../assets/videos/hvac-introduction.mp4",
+      //   description:
+      //     "Introduction to HVAC systems and the basic concepts you need to understand.",
+      // },
 
       {
         title: "HVAC System Components",
@@ -368,269 +411,139 @@ lectureCount.textContent = course.lectures.length;
 // CURRENT LECTURE
 // =========================================
 
-const lecturePositionKey =
-  "hvacCurrentLecture_" + currentUser.id + "_" + courseId;
+let currentLectureIndex = 0;
 
-let currentLectureIndex =
-  parseInt(localStorage.getItem(lecturePositionKey)) || 0;
-
-// =========================================
-// PROGRESS STORAGE KEY
-// =========================================
-
-const progressKey = "hvacProgress_" + currentUser.id + "_" + courseId;
 // =========================================
 // SAVE PROGRESS TO BACKEND
 // =========================================
 
 async function saveProgressToBackend() {
+  const token = localStorage.getItem("hvacToken");
 
-    const token = localStorage.getItem("hvacToken");
+  if (!token) {
+    console.log("No authentication token found.");
+    return;
+  }
 
-    if (!token) {
-        console.log("No authentication token found.");
-        return;
+  try {
+    const response = await fetch("http://localhost:5000/api/progress", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+
+      body: JSON.stringify({
+        courseId: courseId,
+        completedLectures: completedLectures,
+        progress: Math.round(
+          (completedLectures.length / course.lectures.length) * 100,
+        ),
+        currentLecture: currentLectureIndex,
+        videoPositions: videoPositions,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Progress Save Failed:", data);
+      return;
     }
 
-    try {
-
-        const response = await fetch(
-            "http://localhost:5000/api/progress",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token
-                },
-
-                body: JSON.stringify({
-                    courseId: courseId,
-                    completedLectures: completedLectures,
-                    progress: Math.round(
-                        (completedLectures.length /
-                            course.lectures.length) * 100
-                    ),
-                    currentLecture: currentLectureIndex
-                })
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            console.error(
-                "Progress Save Failed:",
-                data
-            );
-            return;
-        }
-
-        console.log(
-            "Progress saved to MongoDB:",
-            data
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Progress Backend Error:",
-            error
-        );
-    }
+    console.log("Progress saved to MongoDB:", data);
+  } catch (error) {
+    console.error("Progress Backend Error:", error);
+  }
 }
-
 
 // =========================================
 // CREATE CERTIFICATE
 // =========================================
 
 async function createCertificate() {
+  const token = localStorage.getItem("hvacToken");
 
-    const token =
-        localStorage.getItem("hvacToken");
+  if (!token) {
+    console.log("No authentication token found.");
+    return;
+  }
 
-    if (!token) {
-        console.log("No authentication token found.");
-        return;
+  try {
+    const response = await fetch("http://localhost:5000/api/certificates", {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+
+      body: JSON.stringify({
+        courseId: courseId,
+        courseName: course.title,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Certificate Save Failed:", data);
+      return;
     }
 
-    const certificateKey =
-        "hvacCertificate_" +
-        currentUser.id +
-        "_" +
-        courseId;
-
-    let certificateId =
-        localStorage.getItem(certificateKey);
-
-    let completionDate =
-        localStorage.getItem(
-            certificateKey + "_date"
-        );
-
-    // Create certificate ID only if it does not exist
-    if (!certificateId) {
-
-        certificateId =
-            "HVAC-" + Date.now();
-
-        completionDate =
-            new Date().toISOString();
-
-        localStorage.setItem(
-            certificateKey,
-            certificateId
-        );
-
-        localStorage.setItem(
-            certificateKey + "_date",
-            completionDate
-        );
-    }
-
-    try {
-
-        const response =
-            await fetch(
-                "http://localhost:5000/api/certificates",
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "application/json",
-
-                        "Authorization":
-                            "Bearer " + token
-                    },
-
-                    body: JSON.stringify({
-                        certificateId:
-                            certificateId,
-
-                        courseId:
-                            courseId,
-
-                        courseName:
-                            course.title,
-
-                        completionDate:
-                            completionDate
-                    })
-                }
-            );
-
-        const data =
-            await response.json();
-
-        if (!response.ok) {
-
-            console.error(
-                "Certificate Save Failed:",
-                data
-            );
-
-            return;
-        }
-
-        console.log(
-            "Certificate saved to MongoDB:",
-            data
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Certificate Backend Error:",
-            error
-        );
-    }
+    console.log("Certificate saved to MongoDB:", data);
+  } catch (error) {
+    console.error("Certificate Backend Error:", error);
+  }
 }
 // =========================================
 // COMPLETED LECTURES
 // =========================================
 
-let completedLectures =
-  JSON.parse(localStorage.getItem(progressKey + "_lectures")) || [];
-
-  // =========================================
+let completedLectures = [];
+let videoPositions = {};
+// =========================================
 // LOAD PROGRESS FROM BACKEND
 // =========================================
 
 async function loadProgressFromBackend() {
+  const token = localStorage.getItem("hvacToken");
 
-    const token =
-        localStorage.getItem("hvacToken");
+  if (!token) {
+    return;
+  }
 
-    if (!token) {
-        return;
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/progress/" + courseId,
+      {
+        method: "GET",
+
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Progress Load Failed:", data);
+
+      return;
     }
+    if (data.progress) {
+      completedLectures = data.progress.completedLectures || [];
 
-    try {
+      currentLectureIndex = data.progress.currentLecture || 0;
+      videoPositions = data.progress.videoPositions || {};
 
-        const response = await fetch(
-            "http://localhost:5000/api/progress/" + courseId,
-            {
-                method: "GET",
-
-                headers: {
-                    "Authorization":
-                        "Bearer " + token
-                }
-            }
-        );
-
-        const data =
-            await response.json();
-
-        if (!response.ok) {
-
-            console.error(
-                "Progress Load Failed:",
-                data
-            );
-
-            return;
-        }
-
-        if (data.progress) {
-
-            completedLectures =
-                data.progress.completedLectures || [];
-
-            currentLectureIndex =
-                data.progress.currentLecture || 0;
-
-            // Keep localStorage updated too
-            localStorage.setItem(
-                progressKey + "_lectures",
-                JSON.stringify(completedLectures)
-            );
-
-            localStorage.setItem(
-                progressKey,
-                data.progress.progress || 0
-            );
-
-            localStorage.setItem(
-                lecturePositionKey,
-                currentLectureIndex
-            );
-
-            console.log(
-                "Progress loaded from MongoDB:",
-                data.progress
-            );
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Progress Load Error:",
-            error
-        );
+      console.log("Progress loaded from MongoDB:", data.progress);
     }
+  } catch (error) {
+    console.error("Progress Load Error:", error);
+  }
 }
 
 // =========================================
@@ -638,27 +551,154 @@ async function loadProgressFromBackend() {
 // =========================================
 
 function updateProgress() {
+  const total = course.lectures.length;
 
-    const total = course.lectures.length;
+  const completed = completedLectures.length;
 
-    const completed = completedLectures.length;
+  const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
 
-    const percentage =
-        total === 0
-            ? 0
-            : Math.round((completed / total) * 100);
+  courseProgress.textContent = percentage + "%";
 
-    courseProgress.textContent =
-        percentage + "%";
+  // Save progress to MongoDB
+  saveProgressToBackend();
+}
 
-    // Save progress locally
-    localStorage.setItem(
-        progressKey,
-        percentage
+// =========================================
+// LOAD LECTURES FROM BACKEND
+// =========================================
+
+// async function loadLecturesFromBackend() {
+//   const token = localStorage.getItem("hvacToken");
+
+//   if (!token) {
+//     console.log("No authentication token found.");
+//     return;
+//   }
+
+//   try {
+//     const response = await fetch(
+//       "http://localhost:5000/api/lectures/course/" + courseId,
+//       {
+//         method: "GET",
+//         headers: {
+//           Authorization: "Bearer " + token,
+//         },
+//       },
+//     );
+
+//     const data = await response.json();
+
+//     if (!response.ok) {
+//       console.error("Lecture Load Failed:", data);
+//       return;
+//     }
+
+//     if (data.lectures && data.lectures.length > 0) {
+//       course.lectures = data.lectures.map(function (lecture, index) {
+//         const oldLecture = course.lectures[index] || {};
+
+//         return {
+//           lectureId: lecture.lectureId,
+//           title: lecture.title,
+//           duration: oldLecture.duration || "",
+//           video: lecture.video,
+//           description: oldLecture.description || "",
+//         };
+//       });
+
+//       lectureCount.textContent = course.lectures.length;
+
+//       console.log("Lectures loaded from MongoDB:", course.lectures);
+//     }
+//     // Make sure current lecture index is valid
+//     if (currentLectureIndex >= course.lectures.length) {
+//       currentLectureIndex = 0;
+//     }
+
+//     // Remove completed lecture indexes that no longer exist
+//     completedLectures = completedLectures.filter(function (index) {
+//       return index < course.lectures.length;
+//     });
+//   } catch (error) {
+//     console.error("Lecture Backend Error:", error);
+//   }
+// }
+
+// =========================================
+// LOAD LECTURES FROM BACKEND
+// =========================================
+
+async function loadLecturesFromBackend() {
+  const token = localStorage.getItem("hvacToken");
+
+  if (!token) {
+    console.log("No authentication token found.");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/lectures/course/" + courseId,
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      },
     );
 
-    // Save progress to MongoDB
-    saveProgressToBackend();
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Lecture Load Failed:", data);
+      return;
+    }
+
+    // =========================================
+    // ALWAYS SYNC WITH MONGODB
+    // Even when there are 0 lectures
+    // =========================================
+
+    course.lectures = (data.lectures || []).map(function (lecture, index) {
+      const oldLecture = course.lectures[index] || {};
+
+      return {
+        lectureId: lecture.lectureId,
+        title: lecture.title,
+        duration: oldLecture.duration || "",
+        video: lecture.video,
+        description: oldLecture.description || "",
+      };
+    });
+
+    // Update lecture count
+    if (lectureCount) {
+      lectureCount.textContent = course.lectures.length;
+    }
+
+    console.log("Lectures loaded from MongoDB:", course.lectures);
+
+    // =========================================
+    // MAKE SURE CURRENT INDEX IS VALID
+    // =========================================
+
+    if (
+      course.lectures.length === 0 ||
+      currentLectureIndex >= course.lectures.length
+    ) {
+      currentLectureIndex = 0;
+    }
+
+    // =========================================
+    // REMOVE COMPLETED INDEXES THAT NO LONGER EXIST
+    // =========================================
+
+    completedLectures = completedLectures.filter(function (index) {
+      return index < course.lectures.length;
+    });
+  } catch (error) {
+    console.error("Lecture Backend Error:", error);
+  }
 }
 // =========================================
 // RENDER LECTURES
@@ -726,7 +766,27 @@ function renderLectures() {
 
 function loadLecture() {
   const lecture = course.lectures[currentLectureIndex];
-  localStorage.setItem(lecturePositionKey, currentLectureIndex);
+  // =========================================
+  // NO LECTURES AVAILABLE
+  // =========================================
+
+  if (!lecture) {
+    lectureTitle.textContent = "No lectures available";
+    lectureDescription.textContent =
+      "Lectures for this course have not been uploaded yet.";
+
+    videoSource.src = "";
+    lectureVideo.load();
+
+    if (completeLectureBtn) {
+      completeLectureBtn.disabled = true;
+    }
+
+    previousLecture.disabled = true;
+    nextLecture.disabled = true;
+
+    return;
+  }
 
   lectureTitle.textContent = lecture.title;
 
@@ -735,32 +795,44 @@ function loadLecture() {
   // =====================================
   // VIDEO
   // =====================================
-
   if (lecture.video) {
-    videoSource.src = lecture.video;
+    const token = localStorage.getItem("hvacToken");
 
-    lectureVideo.load();
-
-    lectureVideo.addEventListener(
-      "loadedmetadata",
-      function () {
-        const savedTime = parseFloat(
-          localStorage.getItem(
-            "hvacVideoTime_" +
-              currentUser.id +
-              "_" +
-              courseId +
-              "_" +
-              currentLectureIndex,
-          ),
-        );
-
-        if (savedTime && savedTime < lectureVideo.duration) {
-          lectureVideo.currentTime = savedTime;
-        }
+    fetch("http://localhost:5000/api/lectures/video/" + lecture.lectureId, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
       },
-      { once: true },
-    );
+    })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("Video request failed: " + response.status);
+        }
+
+        return response.blob();
+      })
+      .then(function (blob) {
+        const videoUrl = URL.createObjectURL(blob);
+
+        videoSource.src = videoUrl;
+
+        lectureVideo.load();
+
+        lectureVideo.addEventListener(
+          "loadedmetadata",
+          function () {
+            const savedTime = videoPositions[currentLectureIndex];
+
+            if (savedTime !== undefined && savedTime < lectureVideo.duration) {
+              lectureVideo.currentTime = savedTime;
+            }
+          },
+          { once: true },
+        );
+      })
+      .catch(function (error) {
+        console.error("Protected Video Load Error:", error);
+      });
   } else {
     videoSource.src = "";
     lectureVideo.load();
@@ -781,7 +853,7 @@ function loadLecture() {
 
     completeLectureBtn.classList.remove("completed");
   }
-  
+
   // =========================================
   // AUTO COMPLETE WHEN VIDEO ENDS
   // =========================================
@@ -805,39 +877,27 @@ function loadLecture() {
 // SAVE VIDEO POSITION
 // =========================================
 
-lectureVideo.addEventListener(
-    "timeupdate",
-    function () {
+lectureVideo.addEventListener("timeupdate", function () {
+  if (lectureVideo.duration && !lectureVideo.ended) {
+    videoPositions[currentLectureIndex] = lectureVideo.currentTime;
+  }
+});
+lectureVideo.addEventListener("pause", function () {
+  if (lectureVideo.duration && !lectureVideo.ended) {
+    videoPositions[currentLectureIndex] = lectureVideo.currentTime;
 
-        if (
-            lectureVideo.duration &&
-            !lectureVideo.ended
-        ) {
-
-            localStorage.setItem(
-                "hvacVideoTime_" +
-                currentUser.id +
-                "_" +
-                courseId +
-                "_" +
-                currentLectureIndex,
-                lectureVideo.currentTime
-            );
-
-        }
-
-    }
-);
-
+    saveProgressToBackend();
+  }
+});
 
 lectureVideo.addEventListener("ended", function () {
   if (!completedLectures.includes(currentLectureIndex)) {
     completedLectures.push(currentLectureIndex);
 
-    localStorage.setItem(
-      progressKey + "_lectures",
-      JSON.stringify(completedLectures),
-    );
+    // localStorage.setItem(
+    //   progressKey + "_lectures",
+    //   JSON.stringify(completedLectures),
+    // );
 
     updateProgress();
 
@@ -854,28 +914,18 @@ lectureVideo.addEventListener("ended", function () {
 completeLectureBtn.addEventListener("click", function () {
   if (!completedLectures.includes(currentLectureIndex)) {
     completedLectures.push(currentLectureIndex);
-
-    localStorage.setItem(
-      progressKey + "_lectures",
-      JSON.stringify(completedLectures),
-    );
   }
-updateProgress();
+  updateProgress();
 
-// =========================================
-// CREATE CERTIFICATE WHEN COURSE COMPLETES
-// =========================================
+  // =========================================
+  // CREATE CERTIFICATE WHEN COURSE COMPLETES
+  // =========================================
 
-if (
-    completedLectures.length ===
-    course.lectures.length
-) {
-
+  if (completedLectures.length === course.lectures.length) {
     createCertificate();
+  }
 
-}
-
-loadLecture();
+  loadLecture();
 });
 
 // =========================================
@@ -885,7 +935,7 @@ loadLecture();
 previousLecture.addEventListener("click", function () {
   if (currentLectureIndex > 0) {
     currentLectureIndex--;
-
+    saveProgressToBackend();
     loadLecture();
   }
 });
@@ -897,7 +947,7 @@ previousLecture.addEventListener("click", function () {
 nextLecture.addEventListener("click", function () {
   if (currentLectureIndex < course.lectures.length - 1) {
     currentLectureIndex++;
-
+    saveProgressToBackend();
     loadLecture();
   }
 });
@@ -907,14 +957,51 @@ nextLecture.addEventListener("click", function () {
 // =========================================
 
 async function initializeCoursePlayer() {
+  const hasAccess = await checkCourseAccess();
 
-    await loadProgressFromBackend();
+  if (!hasAccess) {
+    return;
+  }
 
-    updateProgress();
+  await loadProgressFromBackend();
+  await loadLecturesFromBackend();
 
-    renderLectures();
+  updateProgress();
 
-    loadLecture();
+  renderLectures();
+
+  loadLecture();
 }
 
 initializeCoursePlayer();
+
+// =========================================
+// LOGOUT
+// =========================================
+
+const logoutBtn = document.getElementById("logoutBtn");
+
+if (logoutBtn) {
+  logoutBtn.addEventListener("click", function (event) {
+    event.preventDefault();
+
+    localStorage.removeItem("hvacToken");
+    localStorage.removeItem("hvacCurrentUser");
+
+    // window.location.href = "login.html";
+    window.location.replace("login.html");
+  });
+}
+
+// =========================================
+// PREVENT BACK-BUTTON ACCESS AFTER LOGOUT
+// =========================================
+
+window.addEventListener("pageshow", function () {
+  const user = localStorage.getItem("hvacCurrentUser");
+  const authToken = localStorage.getItem("hvacToken");
+
+  if (!user || !authToken) {
+    window.location.replace("login.html");
+  }
+});

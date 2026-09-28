@@ -59,15 +59,31 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-    paymentMethod: {
-      type: String,
-      required: true,
-    },
+  paymentMethod: {
+  type: String,
+  required: true,
+},
 
-    status: {
-      type: String,
-      default: "Pending",
-    },
+// Razorpay Payment Details
+razorpayOrderId: {
+  type: String,
+  default: "",
+},
+
+razorpayPaymentId: {
+  type: String,
+  default: "",
+},
+
+razorpaySignature: {
+  type: String,
+  default: "",
+},
+
+status: {
+  type: String,
+  default: "Pending",
+},
   },
   {
     timestamps: true,
