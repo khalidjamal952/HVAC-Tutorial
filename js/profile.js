@@ -3,19 +3,7 @@
 // ========================================
 
 const currentUser = JSON.parse(localStorage.getItem("hvacCurrentUser"));
-if (currentUser && !currentUser.registeredAt) {
-  const users = JSON.parse(localStorage.getItem("hvacUsers")) || [];
 
-  const savedUser = users.find(function (user) {
-    return user.id === currentUser.id;
-  });
-
-  if (savedUser && savedUser.registeredAt) {
-    currentUser.registeredAt = savedUser.registeredAt;
-
-    localStorage.setItem("hvacCurrentUser", JSON.stringify(currentUser));
-  }
-}
 
 // If user is not logged in
 if (!currentUser) {

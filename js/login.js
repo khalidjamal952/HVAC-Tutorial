@@ -35,10 +35,7 @@ if (loginForm) {
       return;
     }
 
-    // =========================================
-    // GET USERS
-    // =========================================
-
+  
     // =========================================
     // LOGIN WITH BACKEND
     // =========================================
@@ -93,6 +90,12 @@ if (loginForm) {
 
       alert(`Welcome back, ${data.user.name}!`);
 
+      if (rememberMe) {
+        localStorage.setItem("hvacRememberMe", "true");
+      } else {
+        localStorage.removeItem("hvacRememberMe");
+      }
+
       // =========================================
       // REDIRECT AFTER LOGIN
       // =========================================
@@ -110,27 +113,7 @@ if (loginForm) {
 
       alert("Unable to connect to server. Please try again.");
     }
-    // =========================================
-    // REMEMBER ME
-    // =========================================
-
-    if (rememberMe) {
-      localStorage.setItem("hvacRememberMe", "true");
-    } else {
-      localStorage.removeItem("hvacRememberMe");
-    }
-
-    // // =========================================
-    // // SUCCESS
-    // // =========================================
-
-    // alert(`Welcome back, ${user.name}!`);
-
-    // // =========================================
-    // // DASHBOARD
-    // // =========================================
-
-    // window.location.href = "dashboard.html";
+  
   });
 }
 

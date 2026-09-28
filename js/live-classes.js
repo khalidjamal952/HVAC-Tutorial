@@ -19,9 +19,39 @@ const upcomingClassesEmpty = document.getElementById("upcomingClassesEmpty");
 const completedClassesEmpty = document.getElementById("completedClassesEmpty");
 
 // Get classes added by admin
-const liveClasses =
-  JSON.parse(localStorage.getItem("hvacAdminLiveClasses")) || [];
+let liveClasses = [];
 
+async function loadLiveClasses() {
+  const token = localStorage.getItem("hvacToken");
+
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:5000/api/live-classes", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Live Classes Fetch Error:", data.message);
+      return;
+    }
+
+    liveClasses = Array.isArray(data.liveClasses) ? data.liveClasses : [];
+
+   renderLiveClasses();
+  } catch (error) {
+    console.error("Student Live Classes Error:", error);
+  }
+}
+loadLiveClasses();
 // ========================================
 // GET CLASS STATUS
 // ========================================

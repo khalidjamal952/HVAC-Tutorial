@@ -15,85 +15,6 @@ if (!currentUser && !adminView) {
 }
 
 // =========================================
-// GET USER ORDERS
-// =========================================
-
-const orders = JSON.parse(localStorage.getItem("hvacOrders")) || [];
-
-let certificateUser = currentUser;
-
-if (adminView && adminUserId) {
-  const allUsers = JSON.parse(localStorage.getItem("hvacUsers")) || [];
-
-  const selectedUser = allUsers.find(function (user) {
-    return user.id === adminUserId;
-  });
-
-  if (selectedUser) {
-    certificateUser = selectedUser;
-  }
-}
-
-let myCourses = [];
-
-orders.forEach(function (order) {
-  if (
-    order.customer &&
-    certificateUser &&
-    order.customer.email === certificateUser.email &&
-    Array.isArray(order.courses)
-  ) {
-    myCourses = myCourses.concat(order.courses);
-  }
-});
-
-// =========================================
-// REMOVE DUPLICATE COURSES
-// =========================================
-
-const uniqueCourses = [];
-
-myCourses.forEach(function (course) {
-  const exists = uniqueCourses.some(function (item) {
-    return item.id === course.id;
-  });
-
-  if (!exists) {
-    uniqueCourses.push(course);
-  }
-});
-
-// =========================================
-// COURSE DETAILS
-// =========================================
-
-const courseDetails = {
-  "hvac-fundamentals": {
-    lessons: 25,
-  },
-
-  "air-conditioning": {
-    lessons: 20,
-  },
-
-  refrigeration: {
-    lessons: 30,
-  },
-
-  "hvac-electrical": {
-    lessons: 22,
-  },
-
-  "installation-service": {
-    lessons: 35,
-  },
-
-  troubleshooting: {
-    lessons: 28,
-  },
-};
-
-// =========================================
 // PAGE DETECTION
 // =========================================
 
@@ -111,185 +32,89 @@ const completionDate = document.getElementById("completionDate");
 
 const printCertificateBtn = document.getElementById("printCertificateBtn");
 
-// =========================================
 // CERTIFICATES LIST PAGE
-// LOAD PROGRESS FROM MONGODB
-// =========================================
 
 if (certificatesGrid && certificatesEmpty) {
-  function loadCompletedCourses() {
-    function loadCompletedCourses() {
-      certificatesGrid.innerHTML = "";
+  async function loadCompletedCourses() {
+    const token = localStorage.getItem("hvacToken");
 
-      // =========================================
-      // COURSE NAMES
-      // =========================================
+    if (!token) {
+      return;
+    }
 
-      const courseNames = {
-        "hvac-fundamentals": "HVAC Fundamentals",
-        "air-conditioning": "Air Conditioning",
-        refrigeration: "Refrigeration",
-        "hvac-electrical": "HVAC Electrical",
-        "installation-service": "Installation & Service",
-        troubleshooting: "HVAC Troubleshooting",
-      };
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/certificates/my",
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        },
+      );
 
-      // =========================================
-      // FIND CURRENT USER ID
-      // =========================================
+      const data = await response.json();
 
-      const userId = certificateUser?.id || null;
+      console.log("My Certificates from MongoDB:", data);
 
-      // =========================================
-      // FIND CERTIFICATES
-      // =========================================
-
-      let certificateKeys = [];
-
-      if (userId) {
-        const certificatePrefix = "hvacCertificate_" + userId + "_";
-
-        certificateKeys = Object.keys(localStorage).filter(function (key) {
-          return key.startsWith(certificatePrefix) && !key.endsWith("_date");
-        });
-      }
-
-      // =========================================
-      // LEGACY CERTIFICATE FALLBACK
-      // =========================================
-
-      if (certificateKeys.length === 0) {
-        certificateKeys = Object.keys(localStorage).filter(function (key) {
-          return (
-            key.startsWith("hvacCertificate_") &&
-            !key.endsWith("_date") &&
-            !key.startsWith("hvacCertificate_undefined_")
-          );
-        });
-      }
-
-      console.log("Certificate Keys:", certificateKeys);
-
-      // =========================================
-      // NO CERTIFICATES
-      // =========================================
-
-      if (certificateKeys.length === 0) {
-        certificatesGrid.style.display = "none";
-        certificatesEmpty.style.display = "block";
-
+      if (!response.ok) {
+        console.error("Certificate API Error:", data);
         return;
       }
 
-      // =========================================
-      // SHOW CERTIFICATES
-      // =========================================
+      const certificates = data.certificates || [];
 
-      certificatesGrid.style.display = "grid";
-      certificatesEmpty.style.display = "none";
+      if (certificates.length > 0) {
+        certificatesEmpty.style.display = "none";
+        certificatesGrid.style.display = "grid";
+        certificatesGrid.innerHTML = "";
 
-      certificateKeys.forEach(function (key) {
-        // =======================================
-        // EXTRACT COURSE ID
-        // =======================================
+        certificates.forEach(function (certificate) {
+          const certificateCard = document.createElement("article");
 
-        const parts = key.split("_");
-        const courseId = parts.slice(2).join("_");
+          certificateCard.className = "certificate-card";
 
-        // =======================================
-        // CERTIFICATE ID
-        // =======================================
+          certificateCard.innerHTML = `
+            <div class="certificate-icon">
+              🏆
+            </div>
 
-        const certId = localStorage.getItem(key);
+            <h2>
+              ${certificate.courseName}
+            </h2>
 
-        // =======================================
-        // COMPLETION DATE
-        // =======================================
+            <p>
+              Congratulations! You have successfully
+              completed this HVAC course.
+            </p>
 
-        const dateKey = key + "_date";
+            <p class="certificate-date">
+              Status: ${certificate.status}
+            </p>
 
-        const storedDate = localStorage.getItem(dateKey);
+            <div class="certificate-actions">
+              <a
+                href="certificate.html?id=${certificate.courseId}"
+                class="view-certificate-btn"
+              >
+                View Certificate
+              </a>
+            </div>
+          `;
 
-        let formattedDate = "Completed";
-
-        if (storedDate) {
-          const date = new Date(storedDate);
-
-          if (!isNaN(date.getTime())) {
-            formattedDate = date.toLocaleDateString("en-IN", {
-              day: "2-digit",
-              month: "long",
-              year: "numeric",
-            });
-          }
-        }
-
-        // =======================================
-        // COURSE NAME
-        // =======================================
-
-        const courseName =
-          courseNames[courseId] ||
-          courseId.replace(/-/g, " ").replace(/\b\w/g, function (letter) {
-            return letter.toUpperCase();
-          });
-
-        // =======================================
-        // CERTIFICATE CARD
-        // =======================================
-
-        const certificateCard = document.createElement("article");
-
-        certificateCard.className = "certificate-card";
-
-        certificateCard.innerHTML = `
-
-      <div class="certificate-icon">
-        🏆
-      </div>
-
-      <h2>
-        ${courseName}
-      </h2>
-
-      <p>
-        Congratulations! You have successfully
-        completed this HVAC course.
-      </p>
-
-      <p class="certificate-date">
-        <strong>Certificate ID:</strong>
-        ${certId || "--"}
-      </p>
-
-      <p class="certificate-date">
-        <strong>Completed:</strong>
-        ${formattedDate}
-      </p>
-
-      <div class="certificate-actions">
-
-        <a
-          href="certificate.html?id=${encodeURIComponent(courseId)}"
-          class="view-certificate-btn"
-        >
-          View Certificate
-        </a>
-
-      </div>
-
-    `;
-
-        certificatesGrid.appendChild(certificateCard);
-      });
+          certificatesGrid.appendChild(certificateCard);
+        });
+      } else {
+        certificatesGrid.style.display = "none";
+        certificatesEmpty.style.display = "block";
+      }
+    } catch (error) {
+      console.error("Certificate Loading Error:", error);
     }
-
-    loadCompletedCourses();
   }
 
   loadCompletedCourses();
 }
-
 // =========================================
 // LOAD CERTIFICATE FROM MONGODB
 // =========================================
@@ -365,96 +190,67 @@ async function loadCertificateFromBackend(courseId) {
 // =========================================
 
 if (studentName && courseName && certificateId && completionDate) {
+  const urlParams = new URLSearchParams(window.location.search);
 
-  const urlParams =
-    new URLSearchParams(window.location.search);
+  const courseId = urlParams.get("id");
 
-  const courseId =
-    urlParams.get("id");
-
-  const isAdmin =
-    urlParams.get("admin") === "true";
+  const isAdmin = urlParams.get("admin") === "true";
 
   // =========================================
   // ADMIN CERTIFICATE VIEW
   // =========================================
 
   if (isAdmin) {
+    const adminStudentName = urlParams.get("studentName");
 
-    const adminStudentName =
-      urlParams.get("studentName");
+    const adminCourseName = urlParams.get("courseName");
 
-    const adminCourseName =
-      urlParams.get("courseName");
+    const adminCertificateId = urlParams.get("certificateId");
 
-    const adminCertificateId =
-      urlParams.get("certificateId");
-
-    const adminIssueDate =
-      urlParams.get("issueDate");
+    const adminIssueDate = urlParams.get("issueDate");
 
     // Student Name
-    studentName.textContent =
-      adminStudentName || "--";
+    studentName.textContent = adminStudentName || "--";
 
     // Course Name
-    courseName.textContent =
-      adminCourseName || "--";
+    courseName.textContent = adminCourseName || "--";
 
     // Certificate ID
-    certificateId.textContent =
-      adminCertificateId || "--";
+    certificateId.textContent = adminCertificateId || "--";
 
     // Completion / Issue Date
     if (adminIssueDate) {
-
-      completionDate.textContent =
-        new Date(adminIssueDate).toLocaleDateString(
-          "en-IN",
-          {
-            day: "2-digit",
-            month: "long",
-            year: "numeric"
-          }
-        );
-
+      completionDate.textContent = new Date(adminIssueDate).toLocaleDateString(
+        "en-IN",
+        {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+        },
+      );
     } else {
-
       completionDate.textContent = "--";
-
     }
 
-    console.log(
-      "Admin Certificate Loaded:",
-      {
-        studentName: adminStudentName,
-        courseName: adminCourseName,
-        certificateId: adminCertificateId,
-        issueDate: adminIssueDate
-      }
-    );
-
+    console.log("Admin Certificate Loaded:", {
+      studentName: adminStudentName,
+      courseName: adminCourseName,
+      certificateId: adminCertificateId,
+      issueDate: adminIssueDate,
+    });
   }
 
   // =========================================
   // NORMAL STUDENT CERTIFICATE VIEW
   // =========================================
-
   else {
-
     if (!courseId) {
-
       alert("Certificate course not found.");
 
-      window.location.href =
-        "dashboard.html";
-
+      window.location.href = "dashboard.html";
     } else {
-
       loadCertificateFromBackend(courseId);
-
     }
-
   }
 }
 // =========================================
@@ -484,7 +280,7 @@ if (logoutBtn) {
     }
 
     localStorage.removeItem("hvacCurrentUser");
-
+    localStorage.removeItem("hvacToken");
     window.location.href = "login.html";
   });
 }

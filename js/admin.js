@@ -58,11 +58,7 @@ if (adminLoginForm) {
       // Save admin JWT token
       localStorage.setItem("hvacAdminToken", data.token);
 
-      // Keep admin login flag
-      localStorage.setItem("hvacAdminLoggedIn", "true");
-
-      // Save basic admin information
-      localStorage.setItem("hvacAdmin", JSON.stringify(data.admin));
+  
 
       alert("Admin login successful!");
 
@@ -185,8 +181,51 @@ const studentTotal = document.getElementById("studentTotal");
 
 const studentSearch = document.getElementById("studentSearch");
 
+// =========================================
+// STUDENT MANAGEMENT - BACKEND
+// =========================================
+
 if (studentsTableBody) {
-  let students = JSON.parse(localStorage.getItem("hvacUsers")) || [];
+  let students = [];
+
+  // =====================================
+  // LOAD STUDENTS FROM BACKEND
+  // =====================================
+
+  async function loadStudents() {
+    const adminToken = localStorage.getItem("hvacAdminToken");
+
+    if (!adminToken) {
+      console.error("Admin token not found.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/user/admin/students",
+        {
+          method: "GET",
+          headers: {
+            Authorization: "Bearer " + adminToken,
+          },
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("Students Fetch Error:", data.message);
+        return;
+      }
+
+      students = Array.isArray(data.students) ? data.students : [];
+
+      updateStudentCount();
+      displayStudents(students);
+    } catch (error) {
+      console.error("Backend Students Error:", error);
+    }
+  }
 
   // =====================================
   // DISPLAY STUDENTS
@@ -197,7 +236,6 @@ if (studentsTableBody) {
 
     if (studentList.length === 0) {
       studentsEmpty.style.display = "block";
-
       return;
     }
 
@@ -206,59 +244,58 @@ if (studentsTableBody) {
     studentList.forEach(function (student) {
       const row = document.createElement("tr");
 
-      const registeredDate = student.registeredAt
-        ? new Date(student.registeredAt).toLocaleDateString("en-IN", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-          })
-        : "--";
+      const registeredDate =
+        student.registeredAt || student.createdAt
+          ? new Date(
+              student.registeredAt || student.createdAt,
+            ).toLocaleDateString("en-IN", {
+              day: "2-digit",
+              month: "short",
+              year: "numeric",
+            })
+          : "--";
 
       row.innerHTML = `
+        <td class="student-name-cell">
+          ${student.name || "--"}
+        </td>
 
-                <td class="student-name-cell">
-                    ${student.name || "--"}
-                </td>
+        <td class="student-email-cell">
+          ${student.email || "--"}
+        </td>
 
-                <td class="student-email-cell">
-                    ${student.email || "--"}
-                </td>
+        <td>
+          ${student.phone || "--"}
+        </td>
 
-                <td>
-                    ${student.phone || "--"}
-                </td>
+        <td>
+          ${registeredDate}
+        </td>
 
-                <td>
-                    ${registeredDate}
-                </td>
-
-                <td>
-
-                    <button
-                        type="button"
-                        class="student-action-btn"
-                        data-student-id="${student.id}"
-                    >
-                        Delete
-                    </button>
-
-                </td>
-
-            `;
+        <td>
+          <button
+            type="button"
+            class="student-action-btn"
+            data-student-id="${student._id || student.id}"
+          >
+            Delete
+          </button>
+        </td>
+      `;
 
       studentsTableBody.appendChild(row);
     });
 
-    // =================================
+    // =====================================
     // DELETE STUDENT
-    // =================================
+    // =====================================
 
     const deleteButtons = studentsTableBody.querySelectorAll(
       ".student-action-btn",
     );
 
     deleteButtons.forEach(function (button) {
-      button.addEventListener("click", function () {
+      button.addEventListener("click", async function () {
         const studentId = button.dataset.studentId;
 
         const confirmDelete = confirm(
@@ -269,15 +306,34 @@ if (studentsTableBody) {
           return;
         }
 
-        students = students.filter(function (student) {
-          return student.id !== studentId;
-        });
+        const adminToken = localStorage.getItem("hvacAdminToken");
 
-        localStorage.setItem("hvacUsers", JSON.stringify(students));
+        try {
+          const response = await fetch(
+            "http://localhost:5000/api/user/admin/students/" + studentId,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: "Bearer " + adminToken,
+              },
+            },
+          );
 
-        updateStudentCount();
+          const data = await response.json();
 
-        displayStudents(students);
+          if (!response.ok) {
+            alert(data.message || "Unable to delete student.");
+            return;
+          }
+
+          alert("Student deleted successfully!");
+
+          await loadStudents();
+        } catch (error) {
+          console.error("Delete Student Error:", error);
+
+          alert("Server error while deleting student.");
+        }
       });
     });
   }
@@ -316,11 +372,8 @@ if (studentsTableBody) {
   // INITIAL LOAD
   // =====================================
 
-  updateStudentCount();
-
-  displayStudents(students);
+  loadStudents();
 }
-
 // =========================================
 // ADMIN COURSE MANAGEMENT
 // =========================================
@@ -1078,7 +1131,7 @@ const lectureTitle = document.getElementById("lectureTitle");
 
 const lectureVideo = document.getElementById("lectureVideo");
 
-const ADMIN_LECTURES_KEY = "hvacAdminLectures";
+
 
 let allLectures = [];
 
@@ -1375,59 +1428,51 @@ if (lectureForm) {
     }
 
     const adminToken = localStorage.getItem("hvacAdminToken");
-       // =========================
-// EDIT EXISTING LECTURE
-// =========================
+    // =========================
+    // EDIT EXISTING LECTURE
+    // =========================
 
-if (editingLectureId) {
-  try {
-    const response = await fetch(
-      "http://localhost:5000/api/lectures/" + editingLectureId,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + adminToken,
-        },
-        body: JSON.stringify({
-          courseId: courseId,
-          number: number,
-          title: title,
-        }),
+    if (editingLectureId) {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/lectures/" + editingLectureId,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + adminToken,
+            },
+            body: JSON.stringify({
+              courseId: courseId,
+              number: number,
+              title: title,
+            }),
+          },
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.message || "Failed to update lecture.");
+          return;
+        }
+
+        alert("Lecture updated successfully!");
+
+        closeLectureModalWindow();
+        lectureForm.reset();
+
+        await loadAdminLectures();
+
+        return;
+      } catch (error) {
+        console.error("Edit Lecture Error:", error);
+
+        alert("Unable to update lecture. Please check the server.");
+
+        return;
       }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      alert(
-        data.message ||
-          "Failed to update lecture."
-      );
-      return;
     }
-
-    alert("Lecture updated successfully!");
-
-    closeLectureModalWindow();
-    lectureForm.reset();
-
-    await loadAdminLectures();
-
-    return;
-  } catch (error) {
-    console.error(
-      "Edit Lecture Error:",
-      error
-    );
-
-    alert(
-      "Unable to update lecture. Please check the server."
-    );
-
-    return;
-  }
-}
     if (!adminToken) {
       alert("Admin authentication required. Please login again.");
       return;
@@ -1557,7 +1602,6 @@ if (cancelLectureBtn) {
 if (lectureTableBody) {
   loadAdminLectures();
 }
-
 // =========================
 // LIVE CLASS MANAGEMENT
 // =========================
@@ -1596,59 +1640,88 @@ const liveClassLink = document.getElementById("liveClassLink");
 
 const liveClassDescription = document.getElementById("liveClassDescription");
 
-const ADMIN_LIVE_CLASSES_KEY = "hvacAdminLiveClasses";
-
 let allLiveClasses = [];
 
 let editingLiveClassId = null;
 
 // =========================
-// GET COURSES
-// =========================
-
-function getLiveClassCourses() {
-  return JSON.parse(localStorage.getItem("hvacAdminCourses")) || [];
-}
-
-// =========================
 // LOAD LIVE CLASSES
 // =========================
 
-function loadAdminLiveClasses() {
-  allLiveClasses =
-    JSON.parse(localStorage.getItem(ADMIN_LIVE_CLASSES_KEY)) || [];
+async function loadAdminLiveClasses() {
+  const adminToken = localStorage.getItem("hvacAdminToken");
 
-  populateLiveClassCourses();
+  if (!adminToken) {
+    console.error("Admin token not found.");
+    return;
+  }
 
-  renderAdminLiveClasses();
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/live-classes/admin",
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + adminToken,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Live Classes Fetch Error:", data.message);
+      return;
+    }
+
+    allLiveClasses = Array.isArray(data.liveClasses) ? data.liveClasses : [];
+
+    await populateLiveClassCourses();
+
+    renderAdminLiveClasses();
+  } catch (error) {
+    console.error("Load Admin Live Classes Error:", error);
+  }
 }
 
 // =========================
 // COURSE DROPDOWN
 // =========================
 
-function populateLiveClassCourses() {
+async function populateLiveClassCourses() {
   if (!liveClassCourse) {
     return;
   }
 
-  const courses = getLiveClassCourses();
+  try {
+    const response = await fetch("http://localhost:5000/api/courses");
 
-  liveClassCourse.innerHTML = `
-        <option value="">
-            Select Course
-        </option>
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Live Class Courses Error:", data.message);
+      return;
+    }
+
+    const courses = Array.isArray(data.courses) ? data.courses : [];
+
+    liveClassCourse.innerHTML = `
+      <option value="">
+        Select Course
+      </option>
     `;
 
-  courses.forEach(function (course) {
-    const option = document.createElement("option");
+    courses.forEach(function (course) {
+      const option = document.createElement("option");
 
-    option.value = course.id;
+      option.value = course.id;
+      option.textContent = course.title;
 
-    option.textContent = course.title;
-
-    liveClassCourse.appendChild(option);
-  });
+      liveClassCourse.appendChild(option);
+    });
+  } catch (error) {
+    console.error("Populate Live Class Courses Error:", error);
+  }
 }
 
 // =========================
@@ -1681,7 +1754,7 @@ function getLiveClassStatus(date, time) {
 // RENDER LIVE CLASSES
 // =========================
 
-function renderAdminLiveClasses() {
+async function renderAdminLiveClasses() {
   if (!liveClassTableBody) {
     return;
   }
@@ -1692,7 +1765,19 @@ function renderAdminLiveClasses() {
     ? liveClassSearch.value.toLowerCase().trim()
     : "";
 
-  const courses = getLiveClassCourses();
+  let courses = [];
+
+  try {
+    const response = await fetch("http://localhost:5000/api/courses");
+
+    const data = await response.json();
+
+    if (response.ok && Array.isArray(data.courses)) {
+      courses = data.courses;
+    }
+  } catch (error) {
+    console.error("Render Live Class Courses Error:", error);
+  }
 
   const filteredClasses = allLiveClasses.filter(function (liveClass) {
     const course = courses.find(function (item) {
@@ -1736,79 +1821,74 @@ function renderAdminLiveClasses() {
     const status = getLiveClassStatus(liveClass.date, liveClass.time);
 
     let statusText = "Upcoming";
-
     let statusClass = "live-class-upcoming";
 
     if (status === "live") {
       statusText = "Live Now";
-
       statusClass = "live-class-live";
     } else if (status === "completed") {
       statusText = "Completed";
-
       statusClass = "live-class-completed";
     }
 
     row.innerHTML = `
+      <td>
+        <strong>
+          ${liveClass.title}
+        </strong>
+      </td>
 
-            <td>
-                <strong>
-                    ${liveClass.title}
-                </strong>
-            </td>
+      <td>
+        ${courseName}
+      </td>
 
-            <td>
-                ${courseName}
-            </td>
+      <td>
+        ${liveClass.date}
+      </td>
 
-            <td>
-                ${liveClass.date}
-            </td>
+      <td>
+        ${liveClass.time}
+      </td>
 
-            <td>
-                ${liveClass.time}
-            </td>
+      <td>
+        ${liveClass.instructor}
+      </td>
 
-            <td>
-                ${liveClass.instructor}
-            </td>
+      <td>
+        <span class="live-class-status ${statusClass}">
+          ${statusText}
+        </span>
+      </td>
 
-            <td>
-                <span class="live-class-status ${statusClass}">
-                    ${statusText}
-                </span>
-            </td>
+      <td>
+        <div class="course-action-group">
 
-            <td>
+          <button
+            type="button"
+            class="student-action-btn live-class-edit-btn"
+            data-id="${liveClass._id}"
+          >
+            Edit
+          </button>
 
-                <div class="course-action-group">
+          <button
+            type="button"
+            class="student-action-btn live-class-delete-btn"
+            data-id="${liveClass._id}"
+          >
+            Delete
+          </button>
 
-                    <button
-                        type="button"
-                        class="student-action-btn live-class-edit-btn"
-                        data-id="${liveClass.id}"
-                    >
-                        Edit
-                    </button>
-
-                    <button
-                        type="button"
-                        class="student-action-btn live-class-delete-btn"
-                        data-id="${liveClass.id}"
-                    >
-                        Delete
-                    </button>
-
-                </div>
-
-            </td>
-
-        `;
+        </div>
+      </td>
+    `;
 
     liveClassTableBody.appendChild(row);
   });
 
+  // =========================
   // EDIT
+  // =========================
 
   liveClassTableBody
     .querySelectorAll(".live-class-edit-btn")
@@ -1818,7 +1898,9 @@ function renderAdminLiveClasses() {
       });
     });
 
+  // =========================
   // DELETE
+  // =========================
 
   liveClassTableBody
     .querySelectorAll(".live-class-delete-btn")
@@ -1857,7 +1939,7 @@ function openLiveClassAdd() {
 
 function openLiveClassEdit(id) {
   const liveClass = allLiveClasses.find(function (item) {
-    return item.id === id;
+    return item._id === id;
   });
 
   if (!liveClass) {
@@ -1902,7 +1984,7 @@ function closeLiveClassModalWindow() {
 // =========================
 
 if (liveClassForm) {
-  liveClassForm.addEventListener("submit", function (event) {
+  liveClassForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     const title = liveClassTitle.value.trim();
@@ -1921,60 +2003,96 @@ if (liveClassForm) {
 
     if (!title || !courseId || !date || !time || !instructor || !link) {
       alert("Please fill all required fields.");
-
       return;
     }
 
-    if (editingLiveClassId) {
-      const index = allLiveClasses.findIndex(function (item) {
-        return item.id === editingLiveClassId;
-      });
+    const adminToken = localStorage.getItem("hvacAdminToken");
 
-      if (index !== -1) {
-        allLiveClasses[index] = {
-          ...allLiveClasses[index],
-
-          title,
-          courseId,
-          date,
-          time,
-          instructor,
-          link,
-          description,
-        };
-      }
-    } else {
-      const newLiveClass = {
-        id: "LIVE" + Date.now(),
-
-        title,
-        courseId,
-        date,
-        time,
-        instructor,
-        link,
-        description,
-
-        createdAt: new Date().toISOString(),
-      };
-
-      allLiveClasses.push(newLiveClass);
+    if (!adminToken) {
+      alert("Admin authentication required. Please login again.");
+      return;
     }
 
-    localStorage.setItem(
-      ADMIN_LIVE_CLASSES_KEY,
-      JSON.stringify(allLiveClasses),
-    );
+    try {
+      // =========================
+      // EDIT
+      // =========================
 
-    closeLiveClassModalWindow();
+      if (editingLiveClassId) {
+        const response = await fetch(
+          "http://localhost:5000/api/live-classes/admin/" + editingLiveClassId,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + adminToken,
+            },
+            body: JSON.stringify({
+              title: title,
+              courseId: courseId,
+              date: date,
+              time: time,
+              instructor: instructor,
+              link: link,
+              description: description,
+            }),
+          },
+        );
 
-    renderAdminLiveClasses();
+        const data = await response.json();
 
-    alert(
-      editingLiveClassId
-        ? "Live class updated successfully!"
-        : "Live class added successfully!",
-    );
+        if (!response.ok) {
+          alert(data.message || "Unable to update live class.");
+          return;
+        }
+
+        alert("Live class updated successfully!");
+      }
+
+      // =========================
+      // ADD
+      // =========================
+      else {
+        const response = await fetch(
+          "http://localhost:5000/api/live-classes/admin",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + adminToken,
+            },
+            body: JSON.stringify({
+              title: title,
+              courseId: courseId,
+              date: date,
+              time: time,
+              instructor: instructor,
+              link: link,
+              description: description,
+            }),
+          },
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.message || "Unable to add live class.");
+          return;
+        }
+
+        alert("Live class added successfully!");
+      }
+
+      closeLiveClassModalWindow();
+
+      liveClassForm.reset();
+
+      await loadAdminLiveClasses();
+    } catch (error) {
+      console.error("Save Live Class Error:", error);
+
+      alert("Server error while saving live class.");
+    }
   });
 }
 
@@ -1982,7 +2100,7 @@ if (liveClassForm) {
 // DELETE LIVE CLASS
 // =========================
 
-function deleteLiveClass(id) {
+async function deleteLiveClass(id) {
   const confirmDelete = confirm(
     "Are you sure you want to delete this live class?",
   );
@@ -1991,15 +2109,39 @@ function deleteLiveClass(id) {
     return;
   }
 
-  allLiveClasses = allLiveClasses.filter(function (liveClass) {
-    return liveClass.id !== id;
-  });
+  const adminToken = localStorage.getItem("hvacAdminToken");
 
-  localStorage.setItem(ADMIN_LIVE_CLASSES_KEY, JSON.stringify(allLiveClasses));
+  if (!adminToken) {
+    alert("Admin authentication required. Please login again.");
+    return;
+  }
 
-  renderAdminLiveClasses();
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/live-classes/admin/" + id,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + adminToken,
+        },
+      },
+    );
 
-  alert("Live class deleted successfully!");
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Unable to delete live class.");
+      return;
+    }
+
+    alert("Live class deleted successfully!");
+
+    await loadAdminLiveClasses();
+  } catch (error) {
+    console.error("Delete Live Class Error:", error);
+
+    alert("Server error while deleting live class.");
+  }
 }
 
 // =========================
@@ -2261,9 +2403,8 @@ if (adminLogoutBtn) {
 
     // Remove admin authentication data
     localStorage.removeItem("hvacAdminToken");
-    localStorage.removeItem("hvacAdminLoggedIn");
-    localStorage.removeItem("hvacAdmin");
-
+   
+   
     // Redirect to admin login
     window.location.href = "admin-login.html";
   });
@@ -2306,10 +2447,44 @@ if (document.getElementById("adminCourseCount")) {
   }
 
   loadAdminCourseCount();
-  // TOTAL STUDENTS
-  const students = JSON.parse(localStorage.getItem("hvacUsers")) || [];
 
-  adminStudentCount.textContent = students.length;
+
+ // TOTAL STUDENTS FROM BACKEND
+
+const studentsAdminToken =
+  localStorage.getItem("hvacAdminToken");
+
+if (adminStudentCount && studentsAdminToken) {
+  fetch(
+    "http://localhost:5000/api/user/admin/students",
+    {
+      method: "GET",
+      headers: {
+        Authorization:
+          "Bearer " + studentsAdminToken,
+      },
+    }
+  )
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      if (Array.isArray(data.students)) {
+        adminStudentCount.textContent =
+          data.students.length;
+      } else {
+        adminStudentCount.textContent = "0";
+      }
+    })
+    .catch(function (error) {
+      console.error(
+        "Students Count Fetch Error:",
+        error
+      );
+
+      adminStudentCount.textContent = "0";
+    });
+}
 
   // TOTAL ORDERS FROM BACKEND
 

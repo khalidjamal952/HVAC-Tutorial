@@ -9,8 +9,7 @@
 const currentUser = JSON.parse(localStorage.getItem("hvacCurrentUser"));
 
 // const token = localStorage.getItem("hvacToken");
-
-if (!currentUser || !token) {
+if (!currentUser || !localStorage.getItem("hvacToken")) {
   window.location.href = "login.html";
 }
 // =========================================

@@ -1,5 +1,6 @@
 const express = require("express");
 const authMiddleware = require("../middleware/authMiddleware");
+const adminAuthMiddleware = require("../middleware/adminAuthMiddleware");
 const User = require("../models/User");
 
 const router = express.Router();
@@ -75,4 +76,67 @@ router.put("/profile", authMiddleware, async (req, res) => {
     });
   }
 });
+// =========================================
+// GET ALL STUDENTS - ADMIN
+// =========================================
+
+router.get(
+  "/admin/students",
+  adminAuthMiddleware,
+  async (req, res) => {
+    try {
+      const students = await User.find()
+        .select("-password")
+        .sort({
+          createdAt: -1,
+        });
+
+      res.status(200).json({
+        message: "Students fetched successfully",
+        students: students,
+      });
+    } catch (error) {
+      console.error("Admin Students Error:", error);
+
+      res.status(500).json({
+        message: "Server error",
+      });
+    }
+  }
+);
+
+// =========================================
+// DELETE STUDENT - ADMIN
+// =========================================
+
+router.delete(
+  "/admin/students/:id",
+  adminAuthMiddleware,
+  async (req, res) => {
+    try {
+      const student = await User.findByIdAndDelete(
+        req.params.id
+      );
+
+      if (!student) {
+        return res.status(404).json({
+          message: "Student not found.",
+        });
+      }
+
+      res.status(200).json({
+        message: "Student deleted successfully.",
+      });
+    } catch (error) {
+      console.error(
+        "Delete Student Error:",
+        error
+      );
+
+      res.status(500).json({
+        message: "Unable to delete student.",
+      });
+    }
+  }
+);
 module.exports = router;

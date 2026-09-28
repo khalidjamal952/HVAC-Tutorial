@@ -3,35 +3,86 @@
 // =========================================
 
 const successOrderId = document.getElementById("successOrderId");
-
 const successPayment = document.getElementById("successPayment");
-
 const successTotal = document.getElementById("successTotal");
 
 // =========================================
-// GET ORDERS
+// LAST ORDER
 // =========================================
 
-const orders = JSON.parse(localStorage.getItem("hvacOrders")) || [];
+let lastOrder = null;
 
 // =========================================
-// GET LAST ORDER
+// LOAD LAST ORDER FROM BACKEND
 // =========================================
 
-const lastOrder = orders.length > 0 ? orders[orders.length - 1] : null;
+async function loadLastOrder() {
+  const token = localStorage.getItem("hvacToken");
+
+  if (!token) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:5000/api/orders", {
+      method: "GET",
+
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Orders Fetch Error:", data.message);
+      return;
+    }
+
+    const orders = data.orders || [];
+
+    // Backend sends latest order first
+    if (orders.length > 0) {
+      lastOrder = orders[0];
+      displayOrder();
+    } else {
+      console.log("No orders found.");
+    }
+  } catch (error) {
+    console.error("Backend Orders Error:", error);
+  }
+}
 
 // =========================================
 // DISPLAY ORDER
 // =========================================
 
-if (lastOrder) {
-  if (successOrderId) {
-    successOrderId.textContent = lastOrder.orderId;
+function displayOrder() {
+  if (!lastOrder) {
+    return;
   }
 
-  if (successTotal) {
-    successTotal.textContent = `₹${lastOrder.total}`;
+  // =========================================
+  // ORDER ID
+  // =========================================
+
+  if (successOrderId) {
+    successOrderId.textContent =
+      lastOrder.razorpayOrderId || lastOrder._id || "N/A";
   }
+
+  // =========================================
+  // TOTAL
+  // =========================================
+
+  if (successTotal) {
+    successTotal.textContent = `₹${lastOrder.total || 0}`;
+  }
+
+  // =========================================
+  // PAYMENT METHOD
+  // =========================================
 
   if (successPayment) {
     let paymentName = "Online Payment";
@@ -49,3 +100,9 @@ if (lastOrder) {
     successPayment.textContent = paymentName;
   }
 }
+
+// =========================================
+// INITIAL LOAD
+// =========================================
+
+loadLastOrder();

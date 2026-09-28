@@ -81,32 +81,7 @@ if (registerForm) {
       return;
     }
 
-    // =========================================
-    // GET EXISTING USERS
-    // =========================================
-
-    // let users = JSON.parse(localStorage.getItem("hvacUsers")) || [];
-
-    // =========================================
-    // CHECK EXISTING EMAIL
-    // =========================================
-
-    // const existingUser = users.find((user) => user.email === email);
-
-    // if (existingUser) {
-    //   alert("An account with this email already exists.");
-
-    //   return;
-    // }
-
-    // =========================================
-    // CREATE USER
-    // =========================================
-
- // =========================================
-// REGISTER USER WITH BACKEND
-// =========================================
-
+   
 try {
 
     const response = await fetch(
@@ -150,17 +125,7 @@ try {
         "Unable to connect to server. Please try again."
     );
 }
-    // =========================================
-    // SUCCESS
-    // =========================================
-
-    alert("Account created successfully!");
-
-    // =========================================
-    // LOGIN PAGE
-    // =========================================
-
-    window.location.href = "login.html";
+   
   });
 }
 
