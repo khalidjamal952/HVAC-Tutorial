@@ -4,7 +4,6 @@
 
 const currentUser = JSON.parse(localStorage.getItem("hvacCurrentUser"));
 
-
 // If user is not logged in
 if (!currentUser) {
   window.location.href = "login.html";
@@ -216,6 +215,7 @@ if (logoutBtn) {
     event.preventDefault();
 
     localStorage.removeItem("hvacCurrentUser");
+    localStorage.removeItem("hvacToken");
 
     window.location.href = "login.html";
   });

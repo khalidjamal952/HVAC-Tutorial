@@ -86,10 +86,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const passwordMatch = await bcrypt.compare(
-      password,
-      admin.password
-    );
+    const passwordMatch = await bcrypt.compare(password, admin.password);
 
     if (!passwordMatch) {
       return res.status(401).json({
@@ -106,7 +103,7 @@ router.post("/login", async (req, res) => {
       process.env.JWT_SECRET,
       {
         expiresIn: "7d",
-      }
+      },
     );
 
     res.status(200).json({
@@ -133,9 +130,7 @@ router.post("/login", async (req, res) => {
 // ==========================================
 router.get("/me", adminAuthMiddleware, async (req, res) => {
   try {
-    const admin = await Admin.findById(req.admin.adminId).select(
-      "-password"
-    );
+    const admin = await Admin.findById(req.admin.adminId).select("-password");
 
     if (!admin) {
       return res.status(404).json({
@@ -189,14 +184,12 @@ router.post("/forgot-password", async (req, res) => {
 
     // Token expires in 15 minutes
     admin.resetPasswordToken = resetToken;
-    admin.resetPasswordExpires = new Date(
-      Date.now() + 15 * 60 * 1000
-    );
+    admin.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
 
     await admin.save();
 
     const resetUrl =
-      "http://localhost:5500/pages/admin-reset-password.html?token=" +
+      "http://127.0.0.1:5500/frontend/pages/admin-reset-password.html?token=" +
       resetToken;
 
     // Development testing only
@@ -206,15 +199,11 @@ router.post("/forgot-password", async (req, res) => {
     console.log("=================================");
 
     res.status(200).json({
-      message:
-        "Password reset link generated successfully.",
+      message: "Password reset link generated successfully.",
       resetUrl: resetUrl,
     });
   } catch (error) {
-    console.error(
-      "Admin Forgot Password Error:",
-      error
-    );
+    console.error("Admin Forgot Password Error:", error);
 
     res.status(500).json({
       message: "Server error.",
@@ -232,43 +221,37 @@ router.post("/reset-password", async (req, res) => {
 
     if (!token || !password) {
       return res.status(400).json({
-        message:
-          "Reset token and new password are required.",
+        message: "Reset token and new password are required.",
       });
     }
 
     if (password.length < 8) {
       return res.status(400).json({
-        message:
-          "Password must be at least 8 characters long.",
+        message: "Password must be at least 8 characters long.",
       });
     }
 
     if (!/[A-Z]/.test(password)) {
       return res.status(400).json({
-        message:
-          "Password must contain at least one uppercase letter.",
+        message: "Password must contain at least one uppercase letter.",
       });
     }
 
     if (!/[a-z]/.test(password)) {
       return res.status(400).json({
-        message:
-          "Password must contain at least one lowercase letter.",
+        message: "Password must contain at least one lowercase letter.",
       });
     }
 
     if (!/[0-9]/.test(password)) {
       return res.status(400).json({
-        message:
-          "Password must contain at least one number.",
+        message: "Password must contain at least one number.",
       });
     }
 
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
       return res.status(400).json({
-        message:
-          "Password must contain at least one special character.",
+        message: "Password must contain at least one special character.",
       });
     }
 
@@ -281,15 +264,11 @@ router.post("/reset-password", async (req, res) => {
 
     if (!admin) {
       return res.status(400).json({
-        message:
-          "Invalid or expired password reset link.",
+        message: "Invalid or expired password reset link.",
       });
     }
 
-    const hashedPassword = await bcrypt.hash(
-      password,
-      12
-    );
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     admin.password = hashedPassword;
 
@@ -299,14 +278,10 @@ router.post("/reset-password", async (req, res) => {
     await admin.save();
 
     res.status(200).json({
-      message:
-        "Admin password reset successfully.",
+      message: "Admin password reset successfully.",
     });
   } catch (error) {
-    console.error(
-      "Admin Reset Password Error:",
-      error
-    );
+    console.error("Admin Reset Password Error:", error);
 
     res.status(500).json({
       message: "Server error.",

@@ -173,19 +173,19 @@ router.post(
 
       const thumbnailFile = req.files.thumbnail ? req.files.thumbnail[0] : null;
 
-   const lecture = await Lecture.create({
-  lectureId: "LECTURE" + Date.now(),
-  courseId: courseId,
-  number: Number(number),
-  title: title.trim(),
-  description: description ? description.trim() : "",
+      const lecture = await Lecture.create({
+        lectureId: "LECTURE" + Date.now(),
+        courseId: courseId,
+        number: Number(number),
+        title: title.trim(),
+        description: description ? description.trim() : "",
 
-  video: "/assets/videos/" + videoFile.filename,
+        video: "/assets/videos/" + videoFile.filename,
 
-  thumbnail: thumbnailFile
-    ? "/assets/thumbnails/" + thumbnailFile.filename
-    : "",
-});
+        thumbnail: thumbnailFile
+          ? "/assets/thumbnails/" + thumbnailFile.filename
+          : "",
+      });
       res.status(201).json({
         message: "Lecture added successfully",
         lecture: lecture,
@@ -382,23 +382,23 @@ router.delete("/:id", adminAuthMiddleware, async (req, res) => {
       }
     }
 
-// =========================
-// DELETE THUMBNAIL FILE
-// =========================
+    // =========================
+    // DELETE THUMBNAIL FILE
+    // =========================
 
-if (lecture.thumbnail) {
-  const thumbnailFileName = path.basename(lecture.thumbnail);
+    if (lecture.thumbnail) {
+      const thumbnailFileName = path.basename(lecture.thumbnail);
 
-  const thumbnailFilePath = path.join(
-    thumbnailDirectory,
-    thumbnailFileName
-  );
+      const thumbnailFilePath = path.join(
+        thumbnailDirectory,
+        thumbnailFileName,
+      );
 
-  if (fs.existsSync(thumbnailFilePath)) {
-    fs.unlinkSync(thumbnailFilePath);
-    console.log("Thumbnail file deleted:", thumbnailFileName);
-  }
-}
+      if (fs.existsSync(thumbnailFilePath)) {
+        fs.unlinkSync(thumbnailFilePath);
+        console.log("Thumbnail file deleted:", thumbnailFileName);
+      }
+    }
     // =========================
     // DELETE MONGODB RECORD
     // =========================

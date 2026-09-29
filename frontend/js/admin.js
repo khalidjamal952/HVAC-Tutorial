@@ -8,8 +8,9 @@ const adminPage =
   window.location.pathname.includes("admin-students.html") ||
   window.location.pathname.includes("admin-orders.html") ||
   window.location.pathname.includes("admin-live-classes.html") ||
-  window.location.pathname.includes("admin-certificates.html");
-window.location.pathname.includes("admin-coupons.html");
+  window.location.pathname.includes("admin-certificates.html") ||
+  window.location.pathname.includes("admin-coupons.html");
+
 const adminToken = localStorage.getItem("hvacAdminToken");
 
 if (adminPage && !adminToken) {
@@ -1488,8 +1489,8 @@ if (lectureForm) {
     formData.append("description", description);
     formData.append("video", videoFile);
     if (thumbnailFile) {
-  formData.append("thumbnail", thumbnailFile);
-}
+      formData.append("thumbnail", thumbnailFile);
+    }
 
     try {
       const response = await fetch("http://localhost:5000/api/lectures", {

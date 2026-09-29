@@ -136,7 +136,8 @@ router.post("/forgot-password", async (req, res) => {
     await user.save();
 
     const resetUrl =
-      "http://localhost:5500/pages/reset-password.html?token=" + resetToken;
+      "http://127.0.0.1:5500/frontend/pages/reset-password.html?token=" +
+      resetToken;
 
     // Development testing only
     console.log("=================================");
