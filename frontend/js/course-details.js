@@ -99,7 +99,9 @@ const courseId = urlParams.get("id");
 let course = null;
 
 async function loadCourseDetails() {
-  const response = await fetch("http://localhost:5000/api/courses");
+  const response = await fetch(
+    "https://hvac-tutorial.onrender.com/api/courses",
+  );
 
   const data = await response.json();
 

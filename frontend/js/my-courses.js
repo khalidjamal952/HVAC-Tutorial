@@ -35,12 +35,15 @@ async function loadPurchasedCourses() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/orders", {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/orders",
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
       },
-    });
+    );
 
     const data = await response.json();
 
@@ -176,7 +179,7 @@ if (uniqueCourses.length > 0 && myCoursesGrid) {
     if (token) {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/progress/" + course.id,
+          "https://hvac-tutorial.onrender.com/api/progress/" + course.id,
           {
             method: "GET",
 

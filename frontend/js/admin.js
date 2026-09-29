@@ -38,16 +38,19 @@ if (adminLoginForm) {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/admin/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "https://hvac-tutorial.onrender.com/api/admin/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
         },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
+      );
 
       const data = await response.json();
 
@@ -136,17 +139,20 @@ if (adminSetupForm) {
     // ================================
 
     try {
-      const response = await fetch("http://localhost:5000/api/admin/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "https://hvac-tutorial.onrender.com/api/admin/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            password: password,
+          }),
         },
-        body: JSON.stringify({
-          name: name,
-          email: email,
-          password: password,
-        }),
-      });
+      );
 
       const data = await response.json();
 
@@ -201,7 +207,7 @@ if (studentsTableBody) {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/user/admin/students",
+        "https://hvac-tutorial.onrender.com/api/user/admin/students",
         {
           method: "GET",
           headers: {
@@ -309,7 +315,8 @@ if (studentsTableBody) {
 
         try {
           const response = await fetch(
-            "http://localhost:5000/api/user/admin/students/" + studentId,
+            "https://hvac-tutorial.onrender.com/api/user/admin/students/" +
+              studentId,
             {
               method: "DELETE",
               headers: {
@@ -489,7 +496,9 @@ if (adminCoursesTableBody) {
 
   async function loadAdminCourses() {
     try {
-      const response = await fetch("http://localhost:5000/api/courses");
+      const response = await fetch(
+        "https://hvac-tutorial.onrender.com/api/courses",
+      );
 
       const data = await response.json();
 
@@ -648,7 +657,7 @@ if (adminCoursesTableBody) {
 
         try {
           const response = await fetch(
-            "http://localhost:5000/api/courses/admin/" + courseId,
+            "https://hvac-tutorial.onrender.com/api/courses/admin/" + courseId,
             {
               method: "DELETE",
               headers: {
@@ -813,7 +822,7 @@ if (adminCoursesTableBody) {
 
         if (editingId) {
           const response = await fetch(
-            "http://localhost:5000/api/courses/admin/" + editingId,
+            "https://hvac-tutorial.onrender.com/api/courses/admin/" + editingId,
             {
               method: "PUT",
               headers: {
@@ -860,7 +869,7 @@ if (adminCoursesTableBody) {
           };
 
           const response = await fetch(
-            "http://localhost:5000/api/courses/admin",
+            "https://hvac-tutorial.onrender.com/api/courses/admin",
             {
               method: "POST",
               headers: {
@@ -918,12 +927,15 @@ async function loadAdminOrders() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/orders/admin/all", {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/orders/admin/all",
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
       },
-    });
+    );
 
     const data = await response.json();
 
@@ -1137,7 +1149,7 @@ document.addEventListener("click", async function (event) {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/orders/admin/" + orderId,
+      "https://hvac-tutorial.onrender.com/api/orders/admin/" + orderId,
       {
         method: "DELETE",
         headers: {
@@ -1216,12 +1228,15 @@ async function loadAdminLectures() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/lectures/admin", {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + adminToken,
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/lectures/admin",
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + adminToken,
+        },
       },
-    });
+    );
 
     const data = await response.json();
 
@@ -1250,7 +1265,9 @@ async function populateLectureCourses() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/courses");
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/courses",
+    );
 
     const data = await response.json();
 
@@ -1293,7 +1310,9 @@ async function renderAdminLectures() {
   let courses = [];
 
   try {
-    const response = await fetch("http://localhost:5000/api/courses");
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/courses",
+    );
 
     const data = await response.json();
 
@@ -1501,7 +1520,7 @@ if (lectureForm) {
     if (editingLectureId) {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/lectures/" + editingLectureId,
+          "https://hvac-tutorial.onrender.com/api/lectures/" + editingLectureId,
           {
             method: "PUT",
             headers: {
@@ -1557,13 +1576,16 @@ if (lectureForm) {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/lectures", {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + adminToken,
+      const response = await fetch(
+        "https://hvac-tutorial.onrender.com/api/lectures",
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + adminToken,
+          },
+          body: formData,
         },
-        body: formData,
-      });
+      );
 
       const data = await response.json();
 
@@ -1608,12 +1630,15 @@ async function deleteLecture(id) {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/lectures/" + id, {
-      method: "DELETE",
-      headers: {
-        Authorization: "Bearer " + adminToken,
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/lectures/" + id,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + adminToken,
+        },
       },
-    });
+    );
 
     const data = await response.json();
 
@@ -1729,7 +1754,7 @@ async function loadAdminLiveClasses() {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/live-classes/admin",
+      "https://hvac-tutorial.onrender.com/api/live-classes/admin",
       {
         method: "GET",
         headers: {
@@ -1765,7 +1790,9 @@ async function populateLiveClassCourses() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/courses");
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/courses",
+    );
 
     const data = await response.json();
 
@@ -1839,7 +1866,9 @@ async function renderAdminLiveClasses() {
   let courses = [];
 
   try {
-    const response = await fetch("http://localhost:5000/api/courses");
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/courses",
+    );
 
     const data = await response.json();
 
@@ -2091,7 +2120,8 @@ if (liveClassForm) {
 
       if (editingLiveClassId) {
         const response = await fetch(
-          "http://localhost:5000/api/live-classes/admin/" + editingLiveClassId,
+          "https://hvac-tutorial.onrender.com/api/live-classes/admin/" +
+            editingLiveClassId,
           {
             method: "PUT",
             headers: {
@@ -2125,7 +2155,7 @@ if (liveClassForm) {
       // =========================
       else {
         const response = await fetch(
-          "http://localhost:5000/api/live-classes/admin",
+          "https://hvac-tutorial.onrender.com/api/live-classes/admin",
           {
             method: "POST",
             headers: {
@@ -2189,7 +2219,7 @@ async function deleteLiveClass(id) {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/live-classes/admin/" + id,
+      "https://hvac-tutorial.onrender.com/api/live-classes/admin/" + id,
       {
         method: "DELETE",
         headers: {
@@ -2286,7 +2316,7 @@ async function loadAdminCertificates() {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/certificates/admin/all",
+      "https://hvac-tutorial.onrender.com/api/certificates/admin/all",
       {
         method: "GET",
         headers: {
@@ -2307,7 +2337,7 @@ async function loadAdminCertificates() {
       allCertificates = data.certificates.map(function (certificate) {
         return {
           certificateId: certificate.certificateId,
-             _id: certificate._id,
+          _id: certificate._id,
           studentName: certificate.user?.name || "N/A",
 
           studentEmail: certificate.user?.email || "N/A",
@@ -2498,7 +2528,8 @@ document.addEventListener("click", async function (event) {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/certificates/admin/" + certificateId,
+      "https://hvac-tutorial.onrender.com/api/certificates/admin/" +
+        certificateId,
       {
         method: "DELETE",
         headers: {
@@ -2558,7 +2589,9 @@ if (document.getElementById("adminCourseCount")) {
   // TOTAL COURSES
   async function loadAdminCourseCount() {
     try {
-      const response = await fetch("http://localhost:5000/api/courses");
+      const response = await fetch(
+        "https://hvac-tutorial.onrender.com/api/courses",
+      );
 
       const data = await response.json();
 
@@ -2584,7 +2617,7 @@ if (document.getElementById("adminCourseCount")) {
   const studentsAdminToken = localStorage.getItem("hvacAdminToken");
 
   if (adminStudentCount && studentsAdminToken) {
-    fetch("http://localhost:5000/api/user/admin/students", {
+    fetch("https://hvac-tutorial.onrender.com/api/user/admin/students", {
       method: "GET",
       headers: {
         Authorization: "Bearer " + studentsAdminToken,
@@ -2612,7 +2645,7 @@ if (document.getElementById("adminCourseCount")) {
   const adminToken = localStorage.getItem("hvacAdminToken");
 
   if (adminOrderCount && adminToken) {
-    fetch("http://localhost:5000/api/orders/admin/all", {
+    fetch("https://hvac-tutorial.onrender.com/api/orders/admin/all", {
       method: "GET",
       headers: {
         Authorization: "Bearer " + adminToken,
@@ -2644,7 +2677,7 @@ if (document.getElementById("adminCourseCount")) {
   const adminRevenue = document.getElementById("adminRevenue");
 
   if (adminRevenue && adminToken) {
-    fetch("http://localhost:5000/api/orders/admin/revenue", {
+    fetch("https://hvac-tutorial.onrender.com/api/orders/admin/revenue", {
       method: "GET",
       headers: {
         Authorization: "Bearer " + adminToken,
@@ -2669,7 +2702,7 @@ if (document.getElementById("adminCourseCount")) {
   // const adminToken = localStorage.getItem("hvacAdminToken");
 
   if (adminCertificateCount && adminToken) {
-    fetch("http://localhost:5000/api/certificates/admin/all", {
+    fetch("https://hvac-tutorial.onrender.com/api/certificates/admin/all", {
       method: "GET",
       headers: {
         Authorization: "Bearer " + adminToken,
@@ -2821,7 +2854,7 @@ if (adminForgotPasswordForm) {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/admin/forgot-password",
+        "https://hvac-tutorial.onrender.com/api/admin/forgot-password",
         {
           method: "POST",
           headers: {
@@ -2918,7 +2951,7 @@ if (adminResetPasswordForm) {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/admin/reset-password",
+        "https://hvac-tutorial.onrender.com/api/admin/reset-password",
         {
           method: "POST",
           headers: {

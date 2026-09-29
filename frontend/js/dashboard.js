@@ -11,13 +11,16 @@ async function loadCurrentUserFromBackend() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/user/profile", {
-      method: "GET",
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/user/profile",
+      {
+        method: "GET",
 
-      headers: {
-        Authorization: "Bearer " + token,
+        headers: {
+          Authorization: "Bearer " + token,
+        },
       },
-    });
+    );
 
     const data = await response.json();
 
@@ -75,13 +78,16 @@ async function initializeDashboard() {
   try {
     const token = localStorage.getItem("hvacToken");
 
-    const response = await fetch("http://localhost:5000/api/orders", {
-      method: "GET",
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/orders",
+      {
+        method: "GET",
 
-      headers: {
-        Authorization: "Bearer " + token,
+        headers: {
+          Authorization: "Bearer " + token,
+        },
       },
-    });
+    );
 
     const data = await response.json();
 
@@ -131,7 +137,9 @@ async function initializeDashboard() {
   let activeCourseIds = [];
 
   try {
-    const response = await fetch("http://localhost:5000/api/courses");
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/courses",
+    );
 
     const data = await response.json();
 
@@ -243,7 +251,7 @@ async function initializeDashboard() {
           uniqueCourses.map(async function (course) {
             try {
               const response = await fetch(
-                "http://localhost:5000/api/progress/" + course.id,
+                "https://hvac-tutorial.onrender.com/api/progress/" + course.id,
                 {
                   method: "GET",
 
@@ -341,7 +349,7 @@ async function initializeDashboard() {
           uniqueCourses.map(async function (course) {
             try {
               const response = await fetch(
-                "http://localhost:5000/api/progress/" + course.id,
+                "https://hvac-tutorial.onrender.com/api/progress/" + course.id,
                 {
                   method: "GET",
 
@@ -394,7 +402,7 @@ async function initializeDashboard() {
           uniqueCourses.map(async function (course) {
             try {
               const response = await fetch(
-                "http://localhost:5000/api/progress/" + course.id,
+                "https://hvac-tutorial.onrender.com/api/progress/" + course.id,
                 {
                   method: "GET",
                   headers: {
@@ -462,7 +470,7 @@ async function initializeDashboard() {
       if (token) {
         try {
           const response = await fetch(
-            "http://localhost:5000/api/progress/" + course.id,
+            "https://hvac-tutorial.onrender.com/api/progress/" + course.id,
             {
               method: "GET",
 

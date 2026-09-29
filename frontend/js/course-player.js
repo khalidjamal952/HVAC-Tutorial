@@ -34,7 +34,7 @@ async function checkCourseAccess() {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/orders/access/" + courseId,
+      "https://hvac-tutorial.onrender.com/api/orders/access/" + courseId,
       {
         method: "GET",
         headers: {
@@ -364,7 +364,9 @@ let course = courses[courseId] || null;
 
 async function loadCourseFromBackend() {
   try {
-    const response = await fetch("http://localhost:5000/api/courses");
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/courses",
+    );
 
     const data = await response.json();
 
@@ -475,24 +477,27 @@ async function saveProgressToBackend() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/progress", {
-      method: "POST",
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/progress",
+      {
+        method: "POST",
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+
+        body: JSON.stringify({
+          courseId: courseId,
+          completedLectures: completedLectures,
+          progress: Math.round(
+            (completedLectures.length / course.lectures.length) * 100,
+          ),
+          currentLecture: currentLectureIndex,
+          videoPositions: videoPositions,
+        }),
       },
-
-      body: JSON.stringify({
-        courseId: courseId,
-        completedLectures: completedLectures,
-        progress: Math.round(
-          (completedLectures.length / course.lectures.length) * 100,
-        ),
-        currentLecture: currentLectureIndex,
-        videoPositions: videoPositions,
-      }),
-    });
+    );
 
     const data = await response.json();
 
@@ -520,19 +525,22 @@ async function createCertificate() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/certificates", {
-      method: "POST",
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/certificates",
+      {
+        method: "POST",
 
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+
+        body: JSON.stringify({
+          courseId: courseId,
+          courseName: course.title,
+        }),
       },
-
-      body: JSON.stringify({
-        courseId: courseId,
-        courseName: course.title,
-      }),
-    });
+    );
 
     const data = await response.json();
 
@@ -565,7 +573,7 @@ async function loadProgressFromBackend() {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/progress/" + courseId,
+      "https://hvac-tutorial.onrender.com/api/progress/" + courseId,
       {
         method: "GET",
 
@@ -640,7 +648,7 @@ async function loadLecturesFromBackend() {
     // =========================================
 
     const response = await fetch(
-      "http://localhost:5000/api/lectures/course/" + courseId,
+      "https://hvac-tutorial.onrender.com/api/lectures/course/" + courseId,
       {
         method: "GET",
         headers: {
@@ -748,7 +756,7 @@ function renderLectures() {
     lecture.thumbnail
       ? `
         <img
-          src="http://localhost:5000${lecture.thumbnail}"
+          src="https://hvac-tutorial.onrender.com${lecture.thumbnail}"
           alt="${lecture.title}"
           class="lecture-thumbnail"
         />
@@ -830,31 +838,30 @@ function loadLecture() {
 
   lectureDescription.textContent = lecture.description || "";
   const videoThumbnailOverlay = document.getElementById(
-  "videoThumbnailOverlay"
-);
+    "videoThumbnailOverlay",
+  );
 
-const videoThumbnailImage = document.getElementById(
-  "videoThumbnailImage"
-);
+  const videoThumbnailImage = document.getElementById("videoThumbnailImage");
 
-if (lecture.thumbnail) {
-  videoThumbnailImage.src =
-    "http://localhost:5000" + lecture.thumbnail;
-
-  videoThumbnailOverlay.style.display = "flex";
-} else {
-  videoThumbnailImage.src = "";
-  videoThumbnailOverlay.style.display = "none";
-}
   if (lecture.thumbnail) {
-  lectureVideo.poster = "http://localhost:5000" + lecture.thumbnail;
-} else {
-  lectureVideo.removeAttribute("poster");
-}
-videoThumbnailOverlay.onclick = function () {
-  videoThumbnailOverlay.style.display = "none";
-  lectureVideo.play();
-};
+    videoThumbnailImage.src =
+      "https://hvac-tutorial.onrender.com" + lecture.thumbnail;
+
+    videoThumbnailOverlay.style.display = "flex";
+  } else {
+    videoThumbnailImage.src = "";
+    videoThumbnailOverlay.style.display = "none";
+  }
+  if (lecture.thumbnail) {
+    lectureVideo.poster =
+      "https://hvac-tutorial.onrender.com" + lecture.thumbnail;
+  } else {
+    lectureVideo.removeAttribute("poster");
+  }
+  videoThumbnailOverlay.onclick = function () {
+    videoThumbnailOverlay.style.display = "none";
+    lectureVideo.play();
+  };
 
   // =========================================
   // VIDEO
@@ -867,12 +874,16 @@ videoThumbnailOverlay.onclick = function () {
     videoSource.src = "";
     lectureVideo.load();
 
-    fetch("http://localhost:5000/api/lectures/video/" + lecture.lectureId, {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
+    fetch(
+      "https://hvac-tutorial.onrender.com/api/lectures/video/" +
+        lecture.lectureId,
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
       },
-    })
+    )
       .then(function (response) {
         if (!response.ok) {
           throw new Error("Video request failed: " + response.status);

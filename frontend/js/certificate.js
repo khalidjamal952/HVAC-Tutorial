@@ -44,7 +44,7 @@ if (certificatesGrid && certificatesEmpty) {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/certificates/my",
+        "https://hvac-tutorial.onrender.com/api/certificates/my",
         {
           method: "GET",
           headers: {
@@ -75,7 +75,8 @@ if (certificatesGrid && certificatesEmpty) {
         certificates.map(async function (certificate) {
           try {
             const progressResponse = await fetch(
-              "http://localhost:5000/api/progress/" + certificate.courseId,
+              "https://hvac-tutorial.onrender.com/api/progress/" +
+                certificate.courseId,
               {
                 method: "GET",
                 headers: {
@@ -166,13 +167,16 @@ async function loadCertificateFromBackend(courseId) {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/certificates/my", {
-      method: "GET",
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/certificates/my",
+      {
+        method: "GET",
 
-      headers: {
-        Authorization: "Bearer " + token,
+        headers: {
+          Authorization: "Bearer " + token,
+        },
       },
-    });
+    );
 
     const data = await response.json();
 
@@ -366,7 +370,7 @@ if (verificationForm) {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/certificates/verify/" +
+        "https://hvac-tutorial.onrender.com/api/certificates/verify/" +
           encodeURIComponent(enteredCertificateId),
       );
 

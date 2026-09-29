@@ -30,12 +30,15 @@ async function loadLiveClasses() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/live-classes", {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
+    const response = await fetch(
+      "https://hvac-tutorial.onrender.com/api/live-classes",
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
       },
-    });
+    );
 
     const data = await response.json();
 
@@ -46,7 +49,7 @@ async function loadLiveClasses() {
 
     liveClasses = Array.isArray(data.liveClasses) ? data.liveClasses : [];
 
-   renderLiveClasses();
+    renderLiveClasses();
   } catch (error) {
     console.error("Student Live Classes Error:", error);
   }

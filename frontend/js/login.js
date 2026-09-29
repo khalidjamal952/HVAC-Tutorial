@@ -35,24 +35,26 @@ if (loginForm) {
       return;
     }
 
-  
     // =========================================
     // LOGIN WITH BACKEND
     // =========================================
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
+      const response = await fetch(
+        "https://hvac-tutorial.onrender.com/api/auth/login",
+        {
+          method: "POST",
 
-        headers: {
-          "Content-Type": "application/json",
+          headers: {
+            "Content-Type": "application/json",
+          },
+
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
         },
-
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
+      );
 
       const data = await response.json();
 
@@ -113,7 +115,6 @@ if (loginForm) {
 
       alert("Unable to connect to server. Please try again.");
     }
-  
   });
 }
 

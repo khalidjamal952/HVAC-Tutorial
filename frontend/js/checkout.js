@@ -176,7 +176,7 @@ if (checkoutForm) {
       const firstCourse = cart[0];
 
       const orderResponse = await fetch(
-        "http://localhost:5000/api/razorpay/create-order",
+        "https://hvac-tutorial.onrender.com/api/razorpay/create-order",
         {
           method: "POST",
           headers: {
@@ -238,7 +238,7 @@ if (checkoutForm) {
 
           try {
             const verifyResponse = await fetch(
-              "http://localhost:5000/api/orders/razorpay/verify-payment",
+              "https://hvac-tutorial.onrender.com/api/orders/razorpay/verify-payment",
               {
                 method: "POST",
                 headers: {
@@ -363,7 +363,7 @@ if (applyCouponBtn) {
       applyCouponBtn.textContent = "Checking...";
 
       const response = await fetch(
-        "http://localhost:5000/api/coupons/validate",
+        "https://hvac-tutorial.onrender.com/api/coupons/validate",
         {
           method: "POST",
 

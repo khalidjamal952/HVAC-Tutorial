@@ -9,7 +9,7 @@ const registerForm = document.getElementById("registerForm");
 // =========================================
 
 if (registerForm) {
-  registerForm.addEventListener("submit", async function  (event) {
+  registerForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     // =========================================
@@ -81,51 +81,44 @@ if (registerForm) {
       return;
     }
 
-   
-try {
-
-    const response = await fetch(
-        "http://localhost:5000/api/auth/register",
+    try {
+      const response = await fetch(
+        "https://hvac-tutorial.onrender.com/api/auth/register",
         {
-            method: "POST",
+          method: "POST",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-            body: JSON.stringify({
-                name: name,
-                email: email,
-                phone: phone,
-                password: password
-            })
-        }
-    );
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            phone: phone,
+            password: password,
+          }),
+        },
+      );
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
+      if (!response.ok) {
         alert(data.message || "Registration failed.");
         return;
+      }
+
+      // =========================================
+      // SUCCESS
+      // =========================================
+
+      alert("Account created successfully!");
+
+      window.location.href = "login.html";
+    } catch (error) {
+      console.error("Registration Error:", error);
+
+      alert("Unable to connect to server. Please try again.");
     }
-
-    // =========================================
-    // SUCCESS
-    // =========================================
-
-    alert("Account created successfully!");
-
-    window.location.href = "login.html";
-
-} catch (error) {
-
-    console.error("Registration Error:", error);
-
-    alert(
-        "Unable to connect to server. Please try again."
-    );
-}
-   
   });
 }
 
