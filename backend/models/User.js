@@ -15,28 +15,49 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-phone: {
-  type: String,
-  required: true,
-},
-city: {
-  type: String,
-  trim: true,
-  default: "",
-},
-password: {
-  type: String,
-  required: true,
-},
-resetPasswordToken: {
-  type: String,
-  default: "",
-},
+    phone: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    city: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    otp: {
+      type: String,
+      default: "",
+    },
 
-resetPasswordExpires: {
-  type: Date,
-  default: null,
-},
+    otpExpires: {
+      type: Date,
+      default: null,
+    },
+
+    otpVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    activeSessionId: {
+      type: String,
+      default: "",
+    },
+    resetPasswordToken: {
+      type: String,
+      default: "",
+    },
+
+    resetPasswordExpires: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

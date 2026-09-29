@@ -2351,3 +2351,23 @@ body.dark-mode .admin-table div {
   outline: none;
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
 }
+.admin-create-account {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.admin-create-account p {
+  margin: 0;
+  color: #666;
+}
+
+.admin-create-account a {
+  color: #007bff;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.admin-create-account a:hover {
+  text-decoration: underline;
+}

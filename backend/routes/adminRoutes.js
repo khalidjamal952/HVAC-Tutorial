@@ -36,6 +36,14 @@ router.post("/register", async (req, res) => {
       });
     }
 
+    const adminCount = await Admin.countDocuments();
+
+    if (adminCount > 0) {
+      return res.status(403).json({
+        message:
+          "Admin account already exists. Admin registration is disabled.",
+      });
+    }
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const admin = await Admin.create({

@@ -2,6 +2,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 const jwt = require("jsonwebtoken");
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
 const User = require("../models/User");
 
 const router = express.Router();
@@ -78,9 +79,21 @@ router.post("/login", async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const sessionId = crypto.randomUUID();
+
+    user.activeSessionId = sessionId;
+    await user.save();
+
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        sessionId: sessionId,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
     res.status(200).json({
       message: "Login successful",
       token: token,
