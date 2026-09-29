@@ -297,29 +297,70 @@ router.get("/video/:lectureId", authMiddleware, async (req, res) => {
 });
 // =========================
 // GET COURSE LECTURES
+// PURCHASE REQUIRED
 // =========================
 
 router.get("/course/:courseId", authMiddleware, async (req, res) => {
   try {
+
+    const courseId = req.params.courseId;
+
+    // ========================================
+    // CHECK COURSE PURCHASE ACCESS
+    // ========================================
+
+    const order = await Order.findOne({
+      user: req.user.userId,
+
+      status: {
+        $in: ["Paid", "Completed", "Success", "Successful"],
+      },
+
+      "courses.id": courseId,
+    });
+
+    // ========================================
+    // ACCESS DENIED
+    // ========================================
+
+    if (!order) {
+      return res.status(403).json({
+        message: "You have not purchased this course.",
+        access: false,
+      });
+    }
+
+    // ========================================
+    // GET COURSE LECTURES
+    // ========================================
+
     const lectures = await Lecture.find({
-      courseId: req.params.courseId,
+      courseId: courseId,
     }).sort({
       number: 1,
     });
 
+    // ========================================
+    // ACCESS GRANTED
+    // ========================================
+
     res.status(200).json({
       message: "Course lectures fetched successfully",
+      access: true,
       lectures: lectures,
     });
+
   } catch (error) {
+
     console.error("Get Course Lectures Error:", error);
 
     res.status(500).json({
       message: "Server error",
+      access: false,
     });
+
   }
 });
-
 // =========================
 // EDIT LECTURE - ADMIN
 // =========================

@@ -2262,31 +2262,92 @@ body.dark-mode .admin-table div {
 ========================= */
 
 .admin-danger-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-    padding: 8px 14px;
+  padding: 8px 14px;
 
-    border: 1px solid #dc3545;
-    border-radius: 6px;
+  border: 1px solid #dc3545;
+  border-radius: 6px;
 
-    background: #fff;
-    color: #dc3545;
+  background: #fff;
+  color: #dc3545;
 
-    font-size: 13px;
-    font-weight: 600;
+  font-size: 13px;
+  font-weight: 600;
 
-    cursor: pointer;
+  cursor: pointer;
 
-    transition: all 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .admin-danger-btn:hover {
-    background: #dc3545;
-    color: #fff;
+  background: #dc3545;
+  color: #fff;
 }
 
 .edit-coupon-btn {
-    margin-right: 6px;
+  margin-right: 6px;
+}
+
+/* ==========================================
+   ORDER DELETE BUTTON
+========================================== */
+
+.order-delete-btn {
+  background: #dc2626;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.order-delete-btn:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+.order-delete-btn:active {
+  transform: translateY(0);
+}
+
+.order-delete-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+}
+/* ==========================================
+   CERTIFICATE ACTION BUTTONS
+========================================== */
+
+.certificate-delete-btn {
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: all 0.2s ease;
+}
+
+.certificate-delete-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
+.certificate-delete-btn:active {
+  transform: scale(0.97);
+}
+
+.certificate-delete-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
 }

@@ -64,43 +64,82 @@ if (certificatesGrid && certificatesEmpty) {
 
       const certificates = data.certificates || [];
 
-      if (certificates.length > 0) {
+      // =========================================
+      // CHECK ACTUAL COURSE PROGRESS
+      // SHOW ONLY 100% COMPLETED COURSES
+      // =========================================
+
+      const completedCertificates = [];
+
+      await Promise.all(
+        certificates.map(async function (certificate) {
+          try {
+            const progressResponse = await fetch(
+              "http://localhost:5000/api/progress/" + certificate.courseId,
+              {
+                method: "GET",
+                headers: {
+                  Authorization: "Bearer " + token,
+                },
+              },
+            );
+
+            const progressData = await progressResponse.json();
+
+            if (
+              progressResponse.ok &&
+              progressData.progress &&
+              Number(progressData.progress.progress) >= 100
+            ) {
+              completedCertificates.push(certificate);
+            }
+          } catch (error) {
+            console.error("Certificate Progress Check Error:", error);
+          }
+        }),
+      );
+
+      // =========================================
+      // DISPLAY ONLY COMPLETED CERTIFICATES
+      // =========================================
+
+      if (completedCertificates.length > 0) {
         certificatesEmpty.style.display = "none";
         certificatesGrid.style.display = "grid";
         certificatesGrid.innerHTML = "";
 
-        certificates.forEach(function (certificate) {
+        completedCertificates.forEach(function (certificate) {
           const certificateCard = document.createElement("article");
 
           certificateCard.className = "certificate-card";
 
           certificateCard.innerHTML = `
-            <div class="certificate-icon">
-              🏆
-            </div>
+      <div class="certificate-icon">
+        🏆
+      </div>
 
-            <h2>
-              ${certificate.courseName}
-            </h2>
+      <h2>
+        ${certificate.courseName}
+      </h2>
 
-            <p>
-              Congratulations! You have successfully
-              completed this HVAC course.
-            </p>
+      <p>
+        Congratulations! You have successfully
+        completed this HVAC course.
+      </p>
 
-            <p class="certificate-date">
-              Status: ${certificate.status}
-            </p>
+      <p class="certificate-date">
+        Status: Completed
+      </p>
 
-            <div class="certificate-actions">
-              <a
-                href="certificate.html?id=${certificate.courseId}"
-                class="view-certificate-btn"
-              >
-                View Certificate
-              </a>
-            </div>
-          `;
+      <div class="certificate-actions">
+        <a
+          href="certificate.html?id=${certificate.courseId}"
+          class="view-certificate-btn"
+        >
+          View Certificate
+        </a>
+      </div>
+    `;
 
           certificatesGrid.appendChild(certificateCard);
         });

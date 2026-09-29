@@ -280,108 +280,108 @@
 ========================================= */
 
 body.dark-mode .my-courses-page {
-    background: #0f172a !important;
-    color: #e5e7eb !important;
+  background: #0f172a !important;
+  color: #e5e7eb !important;
 }
 
 body.dark-mode .my-courses-header {
-    color: #e5e7eb !important;
+  color: #e5e7eb !important;
 }
 
 body.dark-mode .my-courses-label {
-    color: #60a5fa !important;
+  color: #60a5fa !important;
 }
 
 body.dark-mode .my-courses-header h1 {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 body.dark-mode .my-courses-header p {
-    color: #cbd5e1 !important;
+  color: #cbd5e1 !important;
 }
 
 /* Course Cards */
 body.dark-mode .my-course-card {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    color: #e5e7eb !important;
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
 }
 
 body.dark-mode .my-course-card h3 {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 body.dark-mode .my-course-card p {
-    color: #cbd5e1 !important;
+  color: #cbd5e1 !important;
 }
 
 body.dark-mode .my-course-card .course-category {
-    color: #60a5fa !important;
+  color: #60a5fa !important;
 }
 
 body.dark-mode .my-course-card .course-meta {
-    color: #94a3b8 !important;
+  color: #94a3b8 !important;
 }
 
 body.dark-mode .my-course-card .progress-text {
-    color: #cbd5e1 !important;
+  color: #cbd5e1 !important;
 }
 
 body.dark-mode .my-course-card .progress-percent {
-    color: #60a5fa !important;
+  color: #60a5fa !important;
 }
 
 /* Course image/icon area */
 body.dark-mode .my-course-card .my-course-image {
-    background: #334155 !important;
+  background: #334155 !important;
 }
 
 /* Progress bar */
 body.dark-mode .my-course-card .progress-bar {
-    background: #334155 !important;
+  background: #334155 !important;
 }
 
 body.dark-mode .my-course-card .progress-fill {
-    background: #2563eb !important;
+  background: #2563eb !important;
 }
 
 /* Footer */
 body.dark-mode .my-course-footer {
-    border-color: #334155 !important;
+  border-color: #334155 !important;
 }
 
 body.dark-mode .my-course-footer .course-meta {
-    color: #94a3b8 !important;
+  color: #94a3b8 !important;
 }
 
 /* Continue / Certificate button */
 body.dark-mode .my-course-card .continue-course-btn {
-    background: #2563eb !important;
-    color: #ffffff !important;
-    border-color: #2563eb !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border-color: #2563eb !important;
 }
 
 body.dark-mode .my-course-card .continue-course-btn:hover {
-    background: #1d4ed8 !important;
+  background: #1d4ed8 !important;
 }
 
 /* Empty State */
 body.dark-mode .my-courses-empty {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    color: #e5e7eb !important;
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
 }
 
 body.dark-mode .my-courses-empty h2 {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 body.dark-mode .my-courses-empty p {
-    color: #cbd5e1 !important;
+  color: #cbd5e1 !important;
 }
 
 body.dark-mode .my-courses-empty-icon {
-    background: #334155 !important;
+  background: #334155 !important;
 }
 
 /* =========================================
@@ -389,35 +389,35 @@ body.dark-mode .my-courses-empty-icon {
 ========================================= */
 
 body.dark-mode .my-course-footer {
-    color: #cbd5e1 !important;
+  color: #cbd5e1 !important;
 }
 
 body.dark-mode .my-course-footer .course-meta {
-    color: #cbd5e1 !important;
+  color: #cbd5e1 !important;
 }
 
 body.dark-mode .my-course-card .continue-course-btn {
-    background: #2563eb !important;
-    color: #ffffff !important;
-    border: 1px solid #2563eb !important;
-    font-weight: 700 !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+  border: 1px solid #2563eb !important;
+  font-weight: 700 !important;
 }
 
 body.dark-mode .my-course-card .continue-course-btn:hover {
-    background: #1d4ed8 !important;
-    color: #ffffff !important;
-    border-color: #1d4ed8 !important;
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
+  border-color: #1d4ed8 !important;
 }
 
 /* MY COURSES CATEGORY BADGES - DARK MODE */
 
 body.dark-mode .my-course-card .course-category,
 body.dark-mode .my-course-card span.course-category {
-    background: #334155 !important;
-    color: #ffffff !important;
-    border: 1px solid #475569 !important;
-    opacity: 1 !important;
-    text-shadow: none !important;
+  background: #334155 !important;
+  color: #ffffff !important;
+  border: 1px solid #475569 !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
 }
 
 /* =========================================
@@ -425,8 +425,55 @@ body.dark-mode .my-course-card span.course-category {
 ========================================= */
 
 body.dark-mode .my-course-category {
-    background: #334155 !important;
-    color: #ffffff !important;
-    border: 1px solid #475569 !important;
-    opacity: 1 !important;
+  background: #334155 !important;
+  color: #ffffff !important;
+  border: 1px solid #475569 !important;
+  opacity: 1 !important;
+}
+/* ==========================================
+   MY COURSE FOOTER ALIGNMENT
+========================================== */
+
+.my-course-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.course-meta {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.my-course-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.my-course-actions .continue-course-btn {
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Make both buttons compact */
+.my-course-actions .continue-course-btn {
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .my-course-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .my-course-actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
 }

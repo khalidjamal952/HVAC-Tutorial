@@ -1076,11 +1076,20 @@ function renderAdminOrders() {
                 ${formattedDate}
             </td>
 
-            <td>
-                <span class="student-status">
-                    ${status}
-                </span>
-            </td>
+              <td>
+                  <span class="student-status">
+                      ${status}
+                  </span>
+              </td>
+              <td>
+    <button
+        type="button"
+        class="order-delete-btn"
+        data-order-id="${orderId}"
+    >
+        Delete
+    </button>
+</td>
 
         `;
 
@@ -1098,6 +1107,61 @@ if (ordersTableBody) {
   loadAdminOrders();
 }
 
+// ==========================================
+// DELETE ORDER
+// ==========================================
+
+document.addEventListener("click", async function (event) {
+  if (!event.target.classList.contains("order-delete-btn")) {
+    return;
+  }
+
+  const orderId = event.target.dataset.orderId;
+
+  if (!orderId) {
+    return;
+  }
+
+  const confirmDelete = confirm("Are you sure you want to delete this order?");
+
+  if (!confirmDelete) {
+    return;
+  }
+
+  const token = localStorage.getItem("hvacAdminToken");
+
+  if (!token) {
+    alert("Admin authentication required.");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/orders/admin/" + orderId,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Unable to delete order.");
+      return;
+    }
+
+    alert("Order deleted successfully.");
+
+    loadAdminOrders();
+  } catch (error) {
+    console.error("Delete Order Error:", error);
+
+    alert("Server error while deleting order.");
+  }
+});
 // =========================
 // LECTURE MANAGEMENT
 // =========================
@@ -2243,7 +2307,7 @@ async function loadAdminCertificates() {
       allCertificates = data.certificates.map(function (certificate) {
         return {
           certificateId: certificate.certificateId,
-
+             _id: certificate._id,
           studentName: certificate.user?.name || "N/A",
 
           studentEmail: certificate.user?.email || "N/A",
@@ -2355,20 +2419,28 @@ function renderAdminCertificates() {
                     </span>
 
                 </td>
+<td>
 
-                <td>
+    <div class="course-action-group">
 
-                    <div class="course-action-group">
-     <a
-    href="certificate.html?id=${certificate.courseId}&certificateId=${encodeURIComponent(certificate.certificateId)}&studentName=${encodeURIComponent(certificate.studentName)}&studentEmail=${encodeURIComponent(certificate.studentEmail)}&courseName=${encodeURIComponent(certificate.courseName)}&issueDate=${encodeURIComponent(certificate.issueDate || "")}&admin=true"
-    class="admin-view-btn"
->
-    View
-</a>
+        <a
+            href="certificate.html?id=${certificate.courseId}&certificateId=${encodeURIComponent(certificate.certificateId)}&studentName=${encodeURIComponent(certificate.studentName)}&studentEmail=${encodeURIComponent(certificate.studentEmail)}&courseName=${encodeURIComponent(certificate.courseName)}&issueDate=${encodeURIComponent(certificate.issueDate || "")}&admin=true"
+            class="admin-view-btn"
+        >
+            View
+        </a>
 
-                    </div>
+        <button
+            type="button"
+            class="certificate-delete-btn"
+            data-certificate-id="${certificate._id}"
+        >
+            Delete
+        </button>
 
-                </td>
+    </div>
+
+</td>
 
             `;
 
@@ -2394,10 +2466,63 @@ if (certificatesTableBody) {
   loadAdminCertificates();
 }
 
-// =========================================
-// ADMIN LOGOUT
-// =========================================
+// ==========================================
+// DELETE CERTIFICATE
+// ==========================================
 
+document.addEventListener("click", async function (event) {
+  if (!event.target.classList.contains("certificate-delete-btn")) {
+    return;
+  }
+
+  const certificateId = event.target.dataset.certificateId;
+
+  if (!certificateId) {
+    return;
+  }
+
+  const confirmDelete = confirm(
+    "Are you sure you want to delete this certificate?",
+  );
+
+  if (!confirmDelete) {
+    return;
+  }
+
+  const token = localStorage.getItem("hvacAdminToken");
+
+  if (!token) {
+    alert("Admin authentication required.");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/certificates/admin/" + certificateId,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Unable to delete certificate.");
+      return;
+    }
+
+    alert("Certificate deleted successfully.");
+
+    loadAdminCertificates();
+  } catch (error) {
+    console.error("Delete Certificate Error:", error);
+
+    alert("Server error while deleting certificate.");
+  }
+});
 // =========================================
 // ADMIN LOGOUT
 // =========================================

@@ -1,21 +1,22 @@
 // =========================================
 // AUTH GUARD
 // =========================================
-
 const token = localStorage.getItem("hvacToken");
 
-if (!token) {
+function checkAuthentication() {
+  const currentToken = localStorage.getItem("hvacToken");
 
-    // Save the current page
-    const currentPage =
-        window.location.pathname +
-        window.location.search;
+  if (!currentToken) {
+    const currentPage = window.location.pathname + window.location.search;
 
-    localStorage.setItem(
-        "hvacRedirectAfterLogin",
-        currentPage
-    );
+    localStorage.setItem("hvacRedirectAfterLogin", currentPage);
 
-    // Redirect to login
-    window.location.href = "login.html";
+    window.location.replace("login.html");
+  }
 }
+
+checkAuthentication();
+
+window.addEventListener("pageshow", function () {
+  checkAuthentication();
+});

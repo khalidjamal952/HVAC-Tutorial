@@ -35,43 +35,30 @@ async function loadPurchasedCourses() {
   }
 
   try {
-    const response = await fetch(
-      "http://localhost:5000/api/orders",
-      {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      }
-    );
+    const response = await fetch("http://localhost:5000/api/orders", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
 
     const data = await response.json();
 
     if (!response.ok) {
-      console.error(
-        "Orders Fetch Error:",
-        data.message
-      );
+      console.error("Orders Fetch Error:", data.message);
       return;
     }
 
     if (Array.isArray(data.orders)) {
       data.orders.forEach(function (order) {
         // Only Paid orders unlock courses
-        if (
-          order.status === "Paid" &&
-          Array.isArray(order.courses)
-        ) {
-          purchasedCourses =
-            purchasedCourses.concat(order.courses);
+        if (order.status === "Paid" && Array.isArray(order.courses)) {
+          purchasedCourses = purchasedCourses.concat(order.courses);
         }
       });
     }
   } catch (error) {
-    console.error(
-      "My Courses Orders Error:",
-      error
-    );
+    console.error("My Courses Orders Error:", error);
   }
 }
 
@@ -272,21 +259,32 @@ if (uniqueCourses.length > 0 && myCoursesGrid) {
     ${
       savedProgress >= 100
         ? `
-                <a
-                    href="certificate.html?id=${course.id}"
-                    class="continue-course-btn"
-                >
-                    🏆 View Certificate
-                </a>
-              `
+        <div class="my-course-actions">
+
+            <a
+                href="course-player.html?id=${course.id}"
+                class="continue-course-btn"
+            >
+                ▶ Watch Lectures
+            </a>
+
+            <a
+                href="certificate.html?id=${course.id}"
+                class="continue-course-btn certificate-btn"
+            >
+                🏆 View Certificate
+            </a>
+
+        </div>
+      `
         : `
-                <a
-                    href="course-player.html?id=${course.id}"
-                    class="continue-course-btn"
-                >
-                    Continue
-                </a>
-              `
+        <a
+            href="course-player.html?id=${course.id}"
+            class="continue-course-btn"
+        >
+            ▶ Continue Learning
+        </a>
+      `
     }
 
                </div>  

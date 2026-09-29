@@ -151,6 +151,34 @@ router.get("/admin/all", adminAuthMiddleware, async (req, res) => {
     });
   }
 });
+
+// =========================================
+// DELETE CERTIFICATE - ADMIN
+// =========================================
+
+router.delete("/admin/:id", adminAuthMiddleware, async (req, res) => {
+  try {
+    const certificate = await Certificate.findById(req.params.id);
+
+    if (!certificate) {
+      return res.status(404).json({
+        message: "Certificate not found.",
+      });
+    }
+
+    await Certificate.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      message: "Certificate deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Delete Certificate Error:", error);
+
+    res.status(500).json({
+      message: "Unable to delete certificate.",
+    });
+  }
+});
 // =========================================
 // VERIFY CERTIFICATE
 // =========================================

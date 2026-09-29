@@ -296,6 +296,34 @@ router.get("/admin/revenue", adminAuthMiddleware, async (req, res) => {
 });
 
 // =========================================
+// DELETE ORDER - ADMIN
+// =========================================
+
+router.delete("/admin/:id", adminAuthMiddleware, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found.",
+      });
+    }
+
+    await Order.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      message: "Order deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Delete Order Error:", error);
+
+    res.status(500).json({
+      message: "Unable to delete order.",
+    });
+  }
+});
+
+// =========================================
 // GET LOGGED-IN USER ORDERS
 // =========================================
 
