@@ -94,14 +94,23 @@
 
           <div class="video-section">
             <div class="video-container">
-              <video id="lectureVideo" controls
-               controlsList="nodownload noremoteplayback"
+              <video
+                id="lectureVideo"
+                controls
+                controlsList="nodownload noremoteplayback"
                 disablePictureInPicture
-               preload="metadata">
+                preload="metadata"
+              >
                 <source id="videoSource" src="" type="video/mp4" />
 
                 Your browser does not support HTML5 video.
               </video>
+
+              <div id="videoThumbnailOverlay" class="video-thumbnail-overlay">
+                <img id="videoThumbnailImage" src="" alt="Lecture Thumbnail" />
+
+                <div class="video-thumbnail-play">▶</div>
+              </div>
             </div>
 
             <!-- Current Lecture -->

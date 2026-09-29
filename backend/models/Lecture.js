@@ -30,6 +30,10 @@ const lectureSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    thumbnail: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

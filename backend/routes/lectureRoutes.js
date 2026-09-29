@@ -23,18 +23,38 @@ if (!fs.existsSync(videoDirectory)) {
 }
 
 // =========================
-// MULTER STORAGE
+// THUMBNAIL UPLOAD DIRECTORY
 // =========================
 
+const thumbnailDirectory = path.join(__dirname, "../../assets/thumbnails");
+
+if (!fs.existsSync(thumbnailDirectory)) {
+  fs.mkdirSync(thumbnailDirectory, {
+    recursive: true,
+  });
+}
+// =========================
+// MULTER STORAGE
+// =========================
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, videoDirectory);
+    if (file.fieldname === "thumbnail") {
+      cb(null, thumbnailDirectory);
+    } else {
+      cb(null, videoDirectory);
+    }
   },
 
   filename: function (req, file, cb) {
     const extension = path.extname(file.originalname);
 
-    const fileName = "lecture-" + Date.now() + extension;
+    let prefix = "lecture-";
+
+    if (file.fieldname === "thumbnail") {
+      prefix = "thumbnail-";
+    }
+
+    const fileName = prefix + Date.now() + extension;
 
     cb(null, fileName);
   },
@@ -43,25 +63,47 @@ const storage = multer.diskStorage({
 // =========================
 // VIDEO FILE FILTER
 // =========================
-
 const fileFilter = function (req, file, cb) {
-  const allowedTypes = [
-    "video/mp4",
-    "video/webm",
-    "video/ogg",
-    "video/quicktime",
-  ];
+  // VIDEO
+  if (file.fieldname === "video") {
+    const allowedVideoTypes = [
+      "video/mp4",
+      "video/webm",
+      "video/ogg",
+      "video/quicktime",
+    ];
 
-  if (allowedTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(
+    if (allowedVideoTypes.includes(file.mimetype)) {
+      return cb(null, true);
+    }
+
+    return cb(
       new Error("Only MP4, WebM, OGG and MOV video files are allowed."),
       false,
     );
   }
-};
 
+  // THUMBNAIL
+  if (file.fieldname === "thumbnail") {
+    const allowedImageTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+    ];
+
+    if (allowedImageTypes.includes(file.mimetype)) {
+      return cb(null, true);
+    }
+
+    return cb(
+      new Error("Only JPG, JPEG, PNG and WEBP thumbnail files are allowed."),
+      false,
+    );
+  }
+
+  cb(new Error("Invalid file field."), false);
+};
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
@@ -101,11 +143,19 @@ router.get("/admin", adminAuthMiddleware, async (req, res) => {
 router.post(
   "/",
   adminAuthMiddleware,
-  upload.single("video"),
+  upload.fields([
+    {
+      name: "video",
+      maxCount: 1,
+    },
+    {
+      name: "thumbnail",
+      maxCount: 1,
+    },
+  ]),
   async (req, res) => {
     try {
       const { courseId, number, title, description } = req.body;
-      
 
       if (!courseId || !number || !title) {
         return res.status(400).json({
@@ -113,21 +163,29 @@ router.post(
         });
       }
 
-      if (!req.file) {
+      if (!req.files || !req.files.video) {
         return res.status(400).json({
           message: "Video file is required.",
         });
       }
 
-      const lecture = await Lecture.create({
-        lectureId: "LECTURE" + Date.now(),
-        courseId: courseId,
-        number: Number(number),
-        title: title.trim(),
-        description: description ? description.trim() : "",
-        video: "/assets/videos/" + req.file.filename,
-      });
+      const videoFile = req.files.video[0];
 
+      const thumbnailFile = req.files.thumbnail ? req.files.thumbnail[0] : null;
+
+   const lecture = await Lecture.create({
+  lectureId: "LECTURE" + Date.now(),
+  courseId: courseId,
+  number: Number(number),
+  title: title.trim(),
+  description: description ? description.trim() : "",
+
+  video: "/assets/videos/" + videoFile.filename,
+
+  thumbnail: thumbnailFile
+    ? "/assets/thumbnails/" + thumbnailFile.filename
+    : "",
+});
       res.status(201).json({
         message: "Lecture added successfully",
         lecture: lecture,
@@ -324,6 +382,23 @@ router.delete("/:id", adminAuthMiddleware, async (req, res) => {
       }
     }
 
+// =========================
+// DELETE THUMBNAIL FILE
+// =========================
+
+if (lecture.thumbnail) {
+  const thumbnailFileName = path.basename(lecture.thumbnail);
+
+  const thumbnailFilePath = path.join(
+    thumbnailDirectory,
+    thumbnailFileName
+  );
+
+  if (fs.existsSync(thumbnailFilePath)) {
+    fs.unlinkSync(thumbnailFilePath);
+    console.log("Thumbnail file deleted:", thumbnailFileName);
+  }
+}
     // =========================
     // DELETE MONGODB RECORD
     // =========================

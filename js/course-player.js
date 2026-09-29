@@ -669,6 +669,7 @@ async function loadLecturesFromBackend() {
         duration: lecture.duration || "",
         video: lecture.video || "",
         description: lecture.description || "",
+        thumbnail: lecture.thumbnail || "",
       };
     });
 
@@ -743,32 +744,42 @@ function renderLectures() {
     }
 
     lectureItem.innerHTML = `
+  ${
+    lecture.thumbnail
+      ? `
+        <img
+          src="http://localhost:5000${lecture.thumbnail}"
+          alt="${lecture.title}"
+          class="lecture-thumbnail"
+        />
+      `
+      : `
+        <div class="lecture-thumbnail lecture-thumbnail-placeholder">
+          🎥
+        </div>
+      `
+  }
 
-                <div class="lecture-number">
+  <div class="lecture-number">
+    ${completedLectures.includes(index) ? "✓" : index + 1}
+  </div>
 
-                    ${completedLectures.includes(index) ? "✓" : index + 1}
+  <div class="lecture-info">
+    <strong>
+      ${lecture.title}
+    </strong>
 
-                </div>
+    <span>
+      ${lecture.duration}
+    </span>
+  </div>
 
-                <div class="lecture-info">
-
-                    <strong>
-                        ${lecture.title}
-                    </strong>
-
-                    <span>
-                        ${lecture.duration}
-                    </span>
-
-                </div>
-
-                ${
-                  completedLectures.includes(index)
-                    ? `<span class="lecture-status">✓</span>`
-                    : ""
-                }
-
-            `;
+  ${
+    completedLectures.includes(index)
+      ? `<span class="lecture-status">✓</span>`
+      : ""
+  }
+`;
 
     lectureItem.addEventListener("click", function () {
       currentLectureIndex = index;
@@ -818,6 +829,32 @@ function loadLecture() {
   lectureTitle.textContent = lecture.title;
 
   lectureDescription.textContent = lecture.description || "";
+  const videoThumbnailOverlay = document.getElementById(
+  "videoThumbnailOverlay"
+);
+
+const videoThumbnailImage = document.getElementById(
+  "videoThumbnailImage"
+);
+
+if (lecture.thumbnail) {
+  videoThumbnailImage.src =
+    "http://localhost:5000" + lecture.thumbnail;
+
+  videoThumbnailOverlay.style.display = "flex";
+} else {
+  videoThumbnailImage.src = "";
+  videoThumbnailOverlay.style.display = "none";
+}
+  if (lecture.thumbnail) {
+  lectureVideo.poster = "http://localhost:5000" + lecture.thumbnail;
+} else {
+  lectureVideo.removeAttribute("poster");
+}
+videoThumbnailOverlay.onclick = function () {
+  videoThumbnailOverlay.style.display = "none";
+  lectureVideo.play();
+};
 
   // =========================================
   // VIDEO

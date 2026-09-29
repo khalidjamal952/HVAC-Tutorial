@@ -1128,6 +1128,7 @@ const lectureNumber = document.getElementById("lectureNumber");
 const lectureTitle = document.getElementById("lectureTitle");
 
 const lectureVideo = document.getElementById("lectureVideo");
+const lectureThumbnail = document.getElementById("lectureThumbnail");
 const lectureDescription = document.getElementById("lectureDescription");
 
 let allLectures = [];
@@ -1420,6 +1421,7 @@ if (lectureForm) {
     const title = lectureTitle.value.trim();
     const description = lectureDescription.value.trim();
     const videoFile = lectureVideo.files[0];
+    const thumbnailFile = lectureThumbnail.files[0];
 
     if (!courseId || !number || !title) {
       alert("Please fill all lecture details.");
@@ -1485,6 +1487,9 @@ if (lectureForm) {
     formData.append("title", title);
     formData.append("description", description);
     formData.append("video", videoFile);
+    if (thumbnailFile) {
+  formData.append("thumbnail", thumbnailFile);
+}
 
     try {
       const response = await fetch("http://localhost:5000/api/lectures", {
