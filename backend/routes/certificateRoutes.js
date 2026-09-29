@@ -2,6 +2,8 @@ const express = require("express");
 const authMiddleware = require("../middleware/authMiddleware");
 const adminAuthMiddleware = require("../middleware/adminAuthMiddleware");
 const Certificate = require("../models/Certificate");
+const Progress = require("../models/Progress");
+const Lecture = require("../models/Lecture");
 
 const router = express.Router();
 
@@ -11,21 +13,38 @@ const router = express.Router();
 
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    
     const { courseId, courseName, completionDate } = req.body;
 
-    
-if (!courseId || !courseName)  {
+    if (!courseId || !courseName) {
       return res.status(400).json({
         message: "Certificate details are required",
       });
     }
-  const certificateId = "HVAC-" + Date.now();
+
+    const progress = await Progress.findOne({
+      user: req.user.userId,
+      courseId: courseId,
+    });
+
+    const totalLectures = await Lecture.countDocuments({
+      courseId: courseId,
+    });
+
+    const completedLectures = progress ? progress.completedLectures.length : 0;
+
   
+    if (!progress || totalLectures === 0 || completedLectures < totalLectures) {
+      return res.status(400).json({
+        message: "Complete the course before generating a certificate.",
+      });
+    }
+
+    const certificateId = "HVAC-" + Date.now();
+
     const existingCertificate = await Certificate.findOne({
-  user: req.user.userId,
-  courseId: courseId,
-});
+      user: req.user.userId,
+      courseId: courseId,
+    });
 
     if (existingCertificate) {
       return res.status(200).json({
@@ -56,7 +75,6 @@ if (!courseId || !courseName)  {
   }
 });
 
-
 // =========================================
 // GET MY CERTIFICATES
 // =========================================
@@ -75,7 +93,6 @@ router.get("/my", authMiddleware, async (req, res) => {
     res.status(200).json({
       certificates: certificates,
     });
-
   } catch (error) {
     console.error("Get My Certificates Error:", error);
 
@@ -84,38 +101,56 @@ router.get("/my", authMiddleware, async (req, res) => {
     });
   }
 });
-
 // =========================================
 // GET ALL CERTIFICATES FOR ADMIN
+// ONLY COMPLETED COURSES
 // =========================================
 
-router.get(
-  "/admin/all",
-  adminAuthMiddleware,
-  async (req, res) => {
-    try {
-      const certificates = await Certificate.find()
-        .populate("user", "name email")
-        .sort({
-          completionDate: -1,
-        });
+router.get("/admin/all", adminAuthMiddleware, async (req, res) => {
+  try {
+    // Get only completed course progress
+    const completedProgress = await Progress.find({
+      progress: 100,
+    }).select("user courseId");
 
-      res.status(200).json({
-        message: "All certificates fetched successfully",
-        certificates: certificates,
-      });
-    } catch (error) {
-      console.error(
-        "Get All Certificates Error:",
-        error
-      );
+    // Create unique user + course keys
+    const completedCourseKeys = new Set();
 
-      res.status(500).json({
-        message: "Server error",
+    completedProgress.forEach(function (item) {
+      completedCourseKeys.add(String(item.user) + "_" + String(item.courseId));
+    });
+
+    // Get certificates
+    const allCertificates = await Certificate.find()
+      .populate("user", "name email")
+      .sort({
+        completionDate: -1,
       });
-    }
+
+    // Keep only certificates of completed courses
+    const certificates = allCertificates.filter(function (certificate) {
+      if (!certificate.user) {
+        return false;
+      }
+
+      const key =
+        String(certificate.user._id) + "_" + String(certificate.courseId);
+
+      return completedCourseKeys.has(key);
+    });
+
+    res.status(200).json({
+      message: "Completed course certificates fetched successfully",
+      certificates: certificates,
+    });
+  } catch (error) {
+    console.error("Get All Certificates Error:", error);
+
+    res.status(500).json({
+      message: "Server error",
+    });
   }
-);
+});
 // =========================================
 // VERIFY CERTIFICATE
 // =========================================

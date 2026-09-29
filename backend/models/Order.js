@@ -53,37 +53,53 @@ const orderSchema = new mongoose.Schema(
         },
       },
     ],
+    originalTotal: {
+      type: Number,
+      default: 0,
+    },
+
+    discount: {
+      type: Number,
+      default: 0,
+    },
 
     total: {
       type: Number,
       required: true,
     },
 
-  paymentMethod: {
-  type: String,
-  required: true,
-},
+    couponCode: {
+      type: String,
+      default: "",
+      trim: true,
+      uppercase: true,
+    },
 
-// Razorpay Payment Details
-razorpayOrderId: {
-  type: String,
-  default: "",
-},
+    paymentMethod: {
+      type: String,
+      required: true,
+    },
 
-razorpayPaymentId: {
-  type: String,
-  default: "",
-},
+    // Razorpay Payment Details
+    razorpayOrderId: {
+      type: String,
+      default: "",
+    },
 
-razorpaySignature: {
-  type: String,
-  default: "",
-},
+    razorpayPaymentId: {
+      type: String,
+      default: "",
+    },
 
-status: {
-  type: String,
-  default: "Pending",
-},
+    razorpaySignature: {
+      type: String,
+      default: "",
+    },
+
+    status: {
+      type: String,
+      default: "Pending",
+    },
   },
   {
     timestamps: true,

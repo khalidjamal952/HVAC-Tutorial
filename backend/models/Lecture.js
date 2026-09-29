@@ -22,7 +22,10 @@ const lectureSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
+    description: {
+      type: String,
+      default: "",
+    },
     video: {
       type: String,
       default: "",
@@ -30,7 +33,7 @@ const lectureSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Lecture = mongoose.model("Lecture", lectureSchema);

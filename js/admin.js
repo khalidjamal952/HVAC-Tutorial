@@ -9,7 +9,7 @@ const adminPage =
   window.location.pathname.includes("admin-orders.html") ||
   window.location.pathname.includes("admin-live-classes.html") ||
   window.location.pathname.includes("admin-certificates.html");
-
+window.location.pathname.includes("admin-coupons.html");
 const adminToken = localStorage.getItem("hvacAdminToken");
 
 if (adminPage && !adminToken) {
@@ -57,8 +57,6 @@ if (adminLoginForm) {
 
       // Save admin JWT token
       localStorage.setItem("hvacAdminToken", data.token);
-
-  
 
       alert("Admin login successful!");
 
@@ -1130,8 +1128,7 @@ const lectureNumber = document.getElementById("lectureNumber");
 const lectureTitle = document.getElementById("lectureTitle");
 
 const lectureVideo = document.getElementById("lectureVideo");
-
-
+const lectureDescription = document.getElementById("lectureDescription");
 
 let allLectures = [];
 
@@ -1391,6 +1388,7 @@ function openLectureEdit(id) {
   lectureNumber.value = lecture.number;
 
   lectureTitle.value = lecture.title;
+  lectureDescription.value = lecture.description || "";
 
   // lectureVideo.value = lecture.video;
   lectureVideo.value = "";
@@ -1420,6 +1418,7 @@ if (lectureForm) {
     const courseId = lectureCourse.value;
     const number = lectureNumber.value;
     const title = lectureTitle.value.trim();
+    const description = lectureDescription.value.trim();
     const videoFile = lectureVideo.files[0];
 
     if (!courseId || !number || !title) {
@@ -1446,6 +1445,7 @@ if (lectureForm) {
               courseId: courseId,
               number: number,
               title: title,
+              description: description,
             }),
           },
         );
@@ -1483,6 +1483,7 @@ if (lectureForm) {
     formData.append("courseId", courseId);
     formData.append("number", number);
     formData.append("title", title);
+    formData.append("description", description);
     formData.append("video", videoFile);
 
     try {
@@ -2403,8 +2404,7 @@ if (adminLogoutBtn) {
 
     // Remove admin authentication data
     localStorage.removeItem("hvacAdminToken");
-   
-   
+
     // Redirect to admin login
     window.location.href = "admin-login.html";
   });
@@ -2448,43 +2448,33 @@ if (document.getElementById("adminCourseCount")) {
 
   loadAdminCourseCount();
 
+  // TOTAL STUDENTS FROM BACKEND
 
- // TOTAL STUDENTS FROM BACKEND
+  const studentsAdminToken = localStorage.getItem("hvacAdminToken");
 
-const studentsAdminToken =
-  localStorage.getItem("hvacAdminToken");
-
-if (adminStudentCount && studentsAdminToken) {
-  fetch(
-    "http://localhost:5000/api/user/admin/students",
-    {
+  if (adminStudentCount && studentsAdminToken) {
+    fetch("http://localhost:5000/api/user/admin/students", {
       method: "GET",
       headers: {
-        Authorization:
-          "Bearer " + studentsAdminToken,
+        Authorization: "Bearer " + studentsAdminToken,
       },
-    }
-  )
-    .then(function (response) {
-      return response.json();
     })
-    .then(function (data) {
-      if (Array.isArray(data.students)) {
-        adminStudentCount.textContent =
-          data.students.length;
-      } else {
-        adminStudentCount.textContent = "0";
-      }
-    })
-    .catch(function (error) {
-      console.error(
-        "Students Count Fetch Error:",
-        error
-      );
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        if (Array.isArray(data.students)) {
+          adminStudentCount.textContent = data.students.length;
+        } else {
+          adminStudentCount.textContent = "0";
+        }
+      })
+      .catch(function (error) {
+        console.error("Students Count Fetch Error:", error);
 
-      adminStudentCount.textContent = "0";
-    });
-}
+        adminStudentCount.textContent = "0";
+      });
+  }
 
   // TOTAL ORDERS FROM BACKEND
 

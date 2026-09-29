@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Coupon Management - HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+
+  <body>
+    <!-- =========================
+         ADMIN NAVBAR
+    ========================== -->
+    <nav class="admin-navbar">
+      <div class="admin-nav-container">
+        <a href="admin.html" class="admin-logo">
+          HVAC <span>Tutorial</span>
+          <small>Admin</small>
+        </a>
+
+        <div class="admin-nav-menu">
+          <a href="admin.html">Dashboard</a>
+
+          <a href="courses.html">Website</a>
+
+          <button class="theme-toggle" id="themeToggle" type="button">
+            🌙
+          </button>
+
+          <a href="#" id="adminLogoutBtn"> Logout </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- =========================
+         COUPON MANAGEMENT
+    ========================== -->
+    <main class="admin-dashboard-page">
+      <div class="container">
+        <!-- PAGE HEADER -->
+        <div class="admin-dashboard-header">
+          <span class="admin-page-label"> ADMIN PANEL </span>
+
+          <h1>Coupon Management</h1>
+
+          <p>Create, edit, search and manage discount coupons.</p>
+        </div>
+
+        <!-- =========================
+             COUPON SECTION
+        ========================== -->
+        <section class="admin-management-section">
+          <!-- TOOLBAR -->
+          <div class="course-admin-toolbar">
+            <div>
+              <h2>All Coupons</h2>
+
+              <p id="adminCouponTotal">Total Coupons: 0</p>
+            </div>
+
+            <button type="button" id="addCouponBtn" class="admin-primary-btn">
+              + Add New Coupon
+            </button>
+          </div>
+
+          <!-- SEARCH -->
+          <div class="course-admin-search">
+            <input
+              type="text"
+              id="adminCouponSearch"
+              placeholder="Search coupons by code..."
+            />
+          </div>
+
+          <!-- COUPON TABLE -->
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Discount</th>
+                  <th>Min Order</th>
+                  <th>Expiry</th>
+                  <th>Usage</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+
+              <tbody id="adminCouponsTableBody"></tbody>
+            </table>
+          </div>
+
+          <!-- EMPTY STATE -->
+          <div class="admin-empty-state" id="adminCouponsEmpty">
+            <div class="admin-empty-icon">🎟️</div>
+
+            <h3>No Coupons Found</h3>
+
+            <p>Create a coupon or change your search.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- =========================
+         ADD / EDIT COUPON MODAL
+    ========================== -->
+    <div class="admin-modal" id="couponModal">
+      <div class="admin-modal-content">
+        <!-- MODAL HEADER -->
+        <div class="admin-modal-header">
+          <div>
+            <span class="admin-page-label"> COUPON </span>
+
+            <h2 id="couponModalTitle">Add New Coupon</h2>
+          </div>
+
+          <button type="button" id="closeCouponModal" class="admin-modal-close">
+            ×
+          </button>
+        </div>
+
+        <!-- COUPON FORM -->
+        <form id="couponForm">
+          <div class="admin-form-grid">
+            <!-- COUPON CODE -->
+            <div class="admin-form-group">
+              <label for="couponCode"> Coupon Code </label>
+
+              <input
+                type="text"
+                id="couponCode"
+                placeholder="SAVE20"
+                required
+              />
+            </div>
+
+            <!-- DISCOUNT TYPE -->
+            <div class="admin-form-group">
+              <label for="couponDiscountType"> Discount Type </label>
+
+              <select id="couponDiscountType" required>
+                <option value="">Select Type</option>
+
+                <option value="percentage">Percentage (%)</option>
+
+                <option value="fixed">Fixed Amount (₹)</option>
+              </select>
+            </div>
+
+            <!-- DISCOUNT VALUE -->
+            <div class="admin-form-group">
+              <label for="couponDiscountValue"> Discount Value </label>
+
+              <input
+                type="number"
+                id="couponDiscountValue"
+                min="0"
+                placeholder="20"
+                required
+              />
+            </div>
+
+            <!-- MINIMUM ORDER -->
+            <div class="admin-form-group">
+              <label for="couponMinOrder"> Minimum Order Amount </label>
+
+              <input
+                type="number"
+                id="couponMinOrder"
+                min="0"
+                placeholder="500"
+              />
+            </div>
+
+            <!-- MAXIMUM DISCOUNT -->
+            <div class="admin-form-group">
+              <label for="couponMaxDiscount"> Maximum Discount </label>
+
+              <input
+                type="number"
+                id="couponMaxDiscount"
+                min="0"
+                placeholder="200"
+              />
+            </div>
+
+            <!-- START DATE -->
+            <div class="admin-form-group">
+              <label for="couponStartDate"> Start Date </label>
+
+              <input type="date" id="couponStartDate" />
+            </div>
+
+            <!-- EXPIRY DATE -->
+            <div class="admin-form-group">
+              <label for="couponExpiryDate"> Expiry Date </label>
+
+              <input type="date" id="couponExpiryDate" required />
+            </div>
+
+            <!-- TOTAL USAGE LIMIT -->
+            <div class="admin-form-group">
+              <label for="couponUsageLimit"> Total Usage Limit </label>
+
+              <input
+                type="number"
+                id="couponUsageLimit"
+                min="0"
+                placeholder="100"
+              />
+            </div>
+
+            <!-- PER USER LIMIT -->
+            <div class="admin-form-group">
+              <label for="couponPerUserLimit"> Per Student Limit </label>
+
+              <input
+                type="number"
+                id="couponPerUserLimit"
+                min="1"
+                value="1"
+                required
+              />
+            </div>
+
+            <!-- APPLICABLE COURSE -->
+            <div class="admin-form-group">
+              <label for="couponCourse"> Applicable Course </label>
+
+              <select id="couponCourse">
+                <option value="">All Courses</option>
+              </select>
+            </div>
+
+            <!-- STATUS -->
+            <div class="admin-form-group">
+              <label for="couponActive"> Status </label>
+
+              <select id="couponActive">
+                <option value="true">Active</option>
+
+                <option value="false">Inactive</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- MODAL ACTIONS -->
+          <div class="admin-modal-actions">
+            <button
+              type="button"
+              id="cancelCouponBtn"
+              class="admin-secondary-btn"
+            >
+              Cancel
+            </button>
+
+            <button type="submit" class="admin-primary-btn">Save Coupon</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+    <footer class="footer admin-footer">
+      <div class="footer-container container">
+        <!-- BRAND -->
+        <div class="footer-brand">
+          <h3>HVAC <span>Tutorial</span></h3>
+
+          <p>Admin panel for managing the HVAC Tutorial learning platform.</p>
+        </div>
+
+        <!-- ADMIN LINKS -->
+        <div class="footer-links">
+          <h4>Admin</h4>
+
+          <a href="admin.html"> Dashboard </a>
+
+          <a href="admin-courses.html"> Courses </a>
+
+          <a href="admin-lectures.html"> Lectures </a>
+
+          <a href="admin-students.html"> Students </a>
+
+          <a href="admin-orders.html"> Orders </a>
+
+          <a href="admin-coupons.html"> Coupons </a>
+        </div>
+
+        <!-- PLATFORM LINKS -->
+        <div class="footer-links">
+          <h4>Platform</h4>
+
+          <a href="courses.html"> View Website </a>
+
+          <a href="live-classes.html"> Live Classes </a>
+
+          <a href="certificate.html"> Certificates </a>
+
+          <a href="#" id="adminFooterLogout"> Logout </a>
+        </div>
+      </div>
+
+      <!-- FOOTER BOTTOM -->
+      <div class="footer-bottom">
+        <p>
+          ©
+          <span id="currentYear"></span>
+          HVAC Tutorial. All rights reserved.
+        </p>
+      </div>
+    </footer>
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+    <script src="../js/main.js"></script>
+
+    <script src="../js/admin.js"></script>
+
+    <script src="../js/coupon.js"></script>
+  </body>
+</html>

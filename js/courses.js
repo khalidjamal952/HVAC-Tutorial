@@ -112,6 +112,53 @@ async function loadCourses() {
       allCourses = [];
     }
 
+    // LOAD COUPONS
+    try {
+      const token = localStorage.getItem("hvacToken");
+
+      allCourses = await Promise.all(
+        allCourses.map(async function (course) {
+          try {
+            const couponResponse = await fetch(
+              `http://localhost:5000/api/coupons/available/${course.id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              },
+            );
+
+            if (!couponResponse.ok) {
+              return {
+                ...course,
+                coupon: null,
+              };
+            }
+
+            const couponData = await couponResponse.json();
+
+            const coupon =
+              Array.isArray(couponData.coupons) && couponData.coupons.length > 0
+                ? couponData.coupons[0]
+                : null;
+
+            return {
+              ...course,
+              coupon: coupon,
+            };
+          } catch (error) {
+            console.error(`Coupon Error for ${course.id}:`, error);
+
+            return {
+              ...course,
+              coupon: null,
+            };
+          }
+        }),
+      );
+    } catch (couponError) {
+      console.error("Coupon Fetch Error:", couponError);
+    }
     renderCourses();
   } catch (error) {
     console.error("Courses Backend Error:", error);
@@ -120,10 +167,6 @@ async function loadCourses() {
     renderCourses();
   }
 }
-
-// =========================
-// RENDER COURSES
-// =========================
 
 // =========================
 // RENDER COURSES
@@ -206,7 +249,23 @@ function renderCourses() {
                     </span>
 
                 </div>
-
+                         ${
+                           course.coupon
+                             ? `
+    <div class="course-coupon">
+        🎟️ Coupon Available
+        <strong>${course.coupon.code}</strong>
+        <span>
+    Save ${
+      course.coupon.discountType === "percentage"
+        ? course.coupon.discountValue + "%"
+        : "₹" + course.coupon.discountValue
+    }
+</span>
+    </div>
+`
+                             : ""
+                         }
                 <div class="course-price">
 
     <div>

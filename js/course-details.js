@@ -96,73 +96,78 @@ const urlParams = new URLSearchParams(window.location.search);
 
 const courseId = urlParams.get("id");
 
-const course = courses[courseId];
+let course = null;
 
-// =========================================
-// LOAD COURSE DETAILS
-// =========================================
+async function loadCourseDetails() {
+  const response = await fetch("http://localhost:5000/api/courses");
 
-if (course) {
-  document.title = `${course.title} | HVAC Tutorial`;
+  const data = await response.json();
 
-  const title = document.getElementById("courseTitle");
-  const description = document.getElementById("courseDescription");
-  const category = document.querySelector(".course-details-category");
-  const icon = document.querySelector(".course-details-icon");
-
-  if (title) {
-    title.textContent = course.title;
+  if (!response.ok || !Array.isArray(data.courses)) {
+    alert("Unable to load courses.");
+    return;
   }
 
-  if (description) {
-    description.textContent = course.description;
+  course = data.courses.find(function (item) {
+    return item.id === courseId;
+  });
+
+  if (!course) {
+    alert("Course not found.");
+    window.location.href = "courses.html";
+    return;
   }
 
-  if (category) {
-    category.textContent = course.category;
-  }
+  // =========================================
+  // LOAD COURSE DETAILS
+  // =========================================
+  if (course) {
+    document.title = `${course.title} | HVAC Tutorial`;
 
-  if (icon) {
-    icon.textContent = course.icon;
-  }
+    const title = document.getElementById("courseTitle");
 
-  // Course Stats
+    const description = document.getElementById("courseDescription");
 
-  const stats = document.querySelectorAll(".course-details-stats div");
+    const category = document.querySelector(".course-details-category");
 
-  if (stats.length >= 4) {
-    stats[0].querySelector("strong").textContent = `⭐ ${course.rating}`;
+    if (title) {
+      title.textContent = course.title;
+    }
 
-    stats[1].querySelector("strong").textContent = `👨‍🎓 ${course.students}`;
+    if (description) {
+      description.textContent = course.description || "";
+    }
 
-    stats[2].querySelector("strong").textContent = `📚 ${course.lessons}`;
+    if (category) {
+      category.textContent = course.category || "";
+    }
 
-    stats[3].querySelector("strong").textContent = `⏱️ ${course.hours}`;
-  }
+    // Course Stats
+    const stats = document.querySelectorAll(".course-details-stats div");
 
-  // Price
+    if (stats.length >= 4) {
+      stats[1].querySelector("strong").textContent =
+        `👨‍🎓 ${course.students || 0}`;
 
-  const price = document.querySelector(".course-price-large strong");
+      stats[2].querySelector("strong").textContent =
+        `📚 ${course.lessons || 0}`;
 
-  const oldPrice = document.querySelector(".course-price-large del");
+      stats[3].querySelector("strong").textContent =
+        `⏱️ ${course.duration || ""}`;
+    }
 
-  if (price) {
-    price.textContent = course.price;
-  }
+    // Price
+    const price = document.querySelector(".course-price-large strong");
 
-  if (oldPrice) {
-    oldPrice.textContent = course.oldPrice;
-  }
-}
+    const oldPrice = document.querySelector(".course-price-large del");
 
-// =========================================
-// INVALID COURSE
-// =========================================
-else {
-  const title = document.getElementById("courseTitle");
+    if (price) {
+      price.textContent = `₹${course.price}`;
+    }
 
-  if (title) {
-    title.textContent = "Course Not Found";
+    if (oldPrice) {
+      oldPrice.textContent = `₹${course.originalPrice}`;
+    }
   }
 }
 
@@ -221,3 +226,5 @@ if (cartBtn) {
     alert(`${course.title} has been added to your cart.`);
   });
 }
+
+loadCourseDetails();

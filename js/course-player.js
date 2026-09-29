@@ -356,14 +356,47 @@ const courses = {
 // =========================================
 // CHECK COURSE
 // =========================================
+let course = courses[courseId] || null;
 
-const course = courses[courseId];
+// =========================================
+// LOAD COURSE FROM BACKEND
+// =========================================
 
-if (!course) {
-  alert("Course not found");
-  window.location.href = "my-courses.html";
+async function loadCourseFromBackend() {
+  try {
+    const response = await fetch("http://localhost:5000/api/courses");
+
+    const data = await response.json();
+
+    if (!response.ok || !Array.isArray(data.courses)) {
+      alert("Unable to load course.");
+      return false;
+    }
+
+    const backendCourse = data.courses.find(function (item) {
+      return item.id === courseId;
+    });
+
+    if (!backendCourse) {
+      alert("Course not found");
+      window.location.href = "my-courses.html";
+      return false;
+    }
+
+    // Use MongoDB course data
+    course = backendCourse;
+
+    // Lectures will be loaded separately
+    course.lectures = [];
+
+    return true;
+  } catch (error) {
+    console.error("Course Backend Error:", error);
+
+    alert("Unable to load course.");
+    return false;
+  }
 }
-
 // =========================================
 // GET HTML ELEMENTS
 // =========================================
@@ -398,19 +431,36 @@ const nextLecture = document.getElementById("nextLecture");
 // COURSE INFORMATION
 // =========================================
 
-courseTitle.textContent = course.title;
+if (course) {
+  courseTitle.textContent = course.title || "";
 
-courseCategory.textContent = course.category;
+  courseCategory.textContent = course.category || "";
 
-courseDescription.textContent = course.description;
+  courseDescription.textContent = course.description || "";
 
-lectureCount.textContent = course.lectures.length;
+  lectureCount.textContent = Array.isArray(course.lectures)
+    ? course.lectures.length
+    : 0;
+} else {
+  courseTitle.textContent = "Loading course...";
+
+  courseCategory.textContent = "";
+
+  courseDescription.textContent = "Loading course information...";
+
+  lectureCount.textContent = "0";
+}
 
 // =========================================
 // CURRENT LECTURE
 // =========================================
 
 let currentLectureIndex = 0;
+// =========================================
+// PROGRESS STORAGE KEY
+// =========================================
+
+const progressKey = "hvacProgress_" + currentUser.id + "_" + courseId;
 
 // =========================================
 // SAVE PROGRESS TO BACKEND
@@ -557,85 +607,38 @@ function updateProgress() {
   const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
 
   courseProgress.textContent = percentage + "%";
-
-  // Save progress to MongoDB
-  saveProgressToBackend();
 }
 
 // =========================================
 // LOAD LECTURES FROM BACKEND
 // =========================================
 
-// async function loadLecturesFromBackend() {
-//   const token = localStorage.getItem("hvacToken");
-
-//   if (!token) {
-//     console.log("No authentication token found.");
-//     return;
-//   }
-
-//   try {
-//     const response = await fetch(
-//       "http://localhost:5000/api/lectures/course/" + courseId,
-//       {
-//         method: "GET",
-//         headers: {
-//           Authorization: "Bearer " + token,
-//         },
-//       },
-//     );
-
-//     const data = await response.json();
-
-//     if (!response.ok) {
-//       console.error("Lecture Load Failed:", data);
-//       return;
-//     }
-
-//     if (data.lectures && data.lectures.length > 0) {
-//       course.lectures = data.lectures.map(function (lecture, index) {
-//         const oldLecture = course.lectures[index] || {};
-
-//         return {
-//           lectureId: lecture.lectureId,
-//           title: lecture.title,
-//           duration: oldLecture.duration || "",
-//           video: lecture.video,
-//           description: oldLecture.description || "",
-//         };
-//       });
-
-//       lectureCount.textContent = course.lectures.length;
-
-//       console.log("Lectures loaded from MongoDB:", course.lectures);
-//     }
-//     // Make sure current lecture index is valid
-//     if (currentLectureIndex >= course.lectures.length) {
-//       currentLectureIndex = 0;
-//     }
-
-//     // Remove completed lecture indexes that no longer exist
-//     completedLectures = completedLectures.filter(function (index) {
-//       return index < course.lectures.length;
-//     });
-//   } catch (error) {
-//     console.error("Lecture Backend Error:", error);
-//   }
-// }
-
-// =========================================
-// LOAD LECTURES FROM BACKEND
-// =========================================
-
 async function loadLecturesFromBackend() {
-  const token = localStorage.getItem("hvacToken");
-
-  if (!token) {
-    console.log("No authentication token found.");
-    return;
-  }
-
   try {
+    // =========================================
+    // MAKE SURE COURSE IS LOADED
+    // =========================================
+
+    if (!course) {
+      const courseLoaded = await loadCourseFromBackend();
+
+      if (!courseLoaded || !course) {
+        console.error("Course is still not loaded.");
+        return false;
+      }
+    }
+
+    const token = localStorage.getItem("hvacToken");
+
+    if (!token) {
+      console.log("No authentication token found.");
+      return false;
+    }
+
+    // =========================================
+    // FETCH COURSE LECTURES
+    // =========================================
+
     const response = await fetch(
       "http://localhost:5000/api/lectures/course/" + courseId,
       {
@@ -650,35 +653,47 @@ async function loadLecturesFromBackend() {
 
     if (!response.ok) {
       console.error("Lecture Load Failed:", data);
-      return;
+      return false;
     }
 
     // =========================================
-    // ALWAYS SYNC WITH MONGODB
-    // Even when there are 0 lectures
+    // SYNC LECTURES
     // =========================================
 
-    course.lectures = (data.lectures || []).map(function (lecture, index) {
-      const oldLecture = course.lectures[index] || {};
+    const backendLectures = Array.isArray(data.lectures) ? data.lectures : [];
 
+    course.lectures = backendLectures.map(function (lecture) {
       return {
         lectureId: lecture.lectureId,
-        title: lecture.title,
-        duration: oldLecture.duration || "",
-        video: lecture.video,
-        description: oldLecture.description || "",
+        title: lecture.title || "Untitled Lecture",
+        duration: lecture.duration || "",
+        video: lecture.video || "",
+        description: lecture.description || "",
       };
     });
 
-    // Update lecture count
+    // =========================================
+    // UPDATE COURSE UI
+    // =========================================
+
+    if (courseTitle) {
+      courseTitle.textContent = course.title || "";
+    }
+
+    if (courseCategory) {
+      courseCategory.textContent = course.category || "";
+    }
+
+    if (courseDescription) {
+      courseDescription.textContent = course.description || "";
+    }
+
     if (lectureCount) {
       lectureCount.textContent = course.lectures.length;
     }
 
-    console.log("Lectures loaded from MongoDB:", course.lectures);
-
     // =========================================
-    // MAKE SURE CURRENT INDEX IS VALID
+    // VALIDATE CURRENT INDEX
     // =========================================
 
     if (
@@ -689,14 +704,20 @@ async function loadLecturesFromBackend() {
     }
 
     // =========================================
-    // REMOVE COMPLETED INDEXES THAT NO LONGER EXIST
+    // REMOVE INVALID COMPLETED LECTURES
     // =========================================
 
     completedLectures = completedLectures.filter(function (index) {
       return index < course.lectures.length;
     });
+
+    console.log("Lectures loaded from MongoDB:", course.lectures);
+
+    return true;
   } catch (error) {
     console.error("Lecture Backend Error:", error);
+
+    return false;
   }
 }
 // =========================================
@@ -765,16 +786,19 @@ function renderLectures() {
 
 function loadLecture() {
   const lecture = course.lectures[currentLectureIndex];
+
   // =========================================
-  // NO LECTURES AVAILABLE
+  // NO LECTURE AVAILABLE
   // =========================================
 
   if (!lecture) {
     lectureTitle.textContent = "No lectures available";
+
     lectureDescription.textContent =
       "Lectures for this course have not been uploaded yet.";
 
     videoSource.src = "";
+
     lectureVideo.load();
 
     if (completeLectureBtn) {
@@ -787,15 +811,24 @@ function loadLecture() {
     return;
   }
 
+  // =========================================
+  // LECTURE INFORMATION
+  // =========================================
+
   lectureTitle.textContent = lecture.title;
 
-  lectureDescription.textContent = lecture.description;
+  lectureDescription.textContent = lecture.description || "";
 
-  // =====================================
+  // =========================================
   // VIDEO
-  // =====================================
+  // =========================================
+
   if (lecture.video) {
     const token = localStorage.getItem("hvacToken");
+
+    // Clear previous video
+    videoSource.src = "";
+    lectureVideo.load();
 
     fetch("http://localhost:5000/api/lectures/video/" + lecture.lectureId, {
       method: "GET",
@@ -830,44 +863,42 @@ function loadLecture() {
         );
       })
       .catch(function (error) {
-        console.error("Protected Video Load Error:", error);
+        console.error("Video Load Error:", error);
       });
   } else {
     videoSource.src = "";
     lectureVideo.load();
   }
 
-  // =====================================
+  // =========================================
   // COMPLETION BUTTON
-  // =====================================
+  // =========================================
 
-  const isCompleted = completedLectures.includes(currentLectureIndex);
-
-  if (isCompleted) {
+  if (completedLectures.includes(currentLectureIndex)) {
     completeLectureBtn.textContent = "✓ Completed";
 
     completeLectureBtn.classList.add("completed");
+
+    completeLectureBtn.disabled = false;
   } else {
     completeLectureBtn.textContent = "✓ Mark as Completed";
 
     completeLectureBtn.classList.remove("completed");
+
+    completeLectureBtn.disabled = false;
   }
 
   // =========================================
-  // AUTO COMPLETE WHEN VIDEO ENDS
-  // =========================================
-
-  // =====================================
   // NAVIGATION
-  // =====================================
+  // =========================================
 
   previousLecture.disabled = currentLectureIndex === 0;
 
   nextLecture.disabled = currentLectureIndex === course.lectures.length - 1;
 
-  // =====================================
-  // REFRESH LIST
-  // =====================================
+  // =========================================
+  // REFRESH LECTURE LIST
+  // =========================================
 
   renderLectures();
 }
@@ -889,16 +920,12 @@ lectureVideo.addEventListener("pause", function () {
   }
 });
 
-lectureVideo.addEventListener("ended", function () {
+lectureVideo.addEventListener("ended", async function () {
   if (!completedLectures.includes(currentLectureIndex)) {
     completedLectures.push(currentLectureIndex);
 
-    // localStorage.setItem(
-    //   progressKey + "_lectures",
-    //   JSON.stringify(completedLectures),
-    // );
-
     updateProgress();
+    await saveProgressToBackend();
 
     if (currentLectureIndex < course.lectures.length - 1) {
       currentLectureIndex++;
@@ -910,23 +937,28 @@ lectureVideo.addEventListener("ended", function () {
 // MARK LECTURE COMPLETED
 // =========================================
 
-completeLectureBtn.addEventListener("click", function () {
+completeLectureBtn.addEventListener("click", async function () {
   if (!completedLectures.includes(currentLectureIndex)) {
     completedLectures.push(currentLectureIndex);
+
+    localStorage.setItem(
+      progressKey + "_lectures",
+      JSON.stringify(completedLectures),
+    );
   }
-  updateProgress();
 
-  // =========================================
-  // CREATE CERTIFICATE WHEN COURSE COMPLETES
-  // =========================================
+  // Save progress FIRST
+  await saveProgressToBackend();
 
+  // Create certificate ONLY AFTER progress is saved
   if (completedLectures.length === course.lectures.length) {
-    createCertificate();
+    await createCertificate();
   }
+
+  updateProgress();
 
   loadLecture();
 });
-
 // =========================================
 // PREVIOUS LECTURE
 // =========================================
@@ -956,6 +988,12 @@ nextLecture.addEventListener("click", function () {
 // =========================================
 
 async function initializeCoursePlayer() {
+  const courseLoaded = await loadCourseFromBackend();
+
+  if (!courseLoaded) {
+    return;
+  }
+
   const hasAccess = await checkCourseAccess();
 
   if (!hasAccess) {
@@ -966,12 +1004,9 @@ async function initializeCoursePlayer() {
   await loadLecturesFromBackend();
 
   updateProgress();
-
   renderLectures();
-
   loadLecture();
 }
-
 initializeCoursePlayer();
 
 // =========================================

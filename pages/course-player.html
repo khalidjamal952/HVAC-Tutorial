@@ -94,7 +94,10 @@
 
           <div class="video-section">
             <div class="video-container">
-              <video id="lectureVideo" controls preload="metadata">
+              <video id="lectureVideo" controls
+               controlsList="nodownload noremoteplayback"
+                disablePictureInPicture
+               preload="metadata">
                 <source id="videoSource" src="" type="video/mp4" />
 
                 Your browser does not support HTML5 video.

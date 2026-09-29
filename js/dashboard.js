@@ -123,6 +123,26 @@ async function initializeDashboard() {
       }
     });
   }
+
+  // =========================================
+  // GET CURRENT COURSES FROM BACKEND
+  // =========================================
+
+  let activeCourseIds = [];
+
+  try {
+    const response = await fetch("http://localhost:5000/api/courses");
+
+    const data = await response.json();
+
+    if (response.ok && Array.isArray(data.courses)) {
+      activeCourseIds = data.courses.map(function (course) {
+        return course.id;
+      });
+    }
+  } catch (error) {
+    console.error("Current Courses Fetch Error:", error);
+  }
   // =========================================
   // REMOVE DUPLICATE COURSES
   // =========================================
@@ -130,6 +150,10 @@ async function initializeDashboard() {
   const uniqueCourses = [];
 
   myCourses.forEach(function (course) {
+    if (!activeCourseIds.includes(course.id)) {
+      return;
+    }
+
     const alreadyExists = uniqueCourses.some(function (item) {
       return item.id === course.id;
     });
@@ -138,7 +162,6 @@ async function initializeDashboard() {
       uniqueCourses.push(course);
     }
   });
-
   // =========================================
   // UPDATE COURSE COUNT
   // =========================================
@@ -565,3 +588,15 @@ if (logoutBtn) {
 // START DASHBOARD
 // =========================================
 initializeDashboard();
+// =========================================
+// PREVENT BACK-BUTTON ACCESS AFTER LOGOUT
+// =========================================
+
+window.addEventListener("pageshow", function () {
+  const user = localStorage.getItem("hvacCurrentUser");
+  const authToken = localStorage.getItem("hvacToken");
+
+  if (!user || !authToken) {
+    window.location.replace("login.html");
+  }
+});

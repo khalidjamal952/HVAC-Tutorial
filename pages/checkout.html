@@ -178,22 +178,40 @@
               <!-- Items will load here -->
             </div>
 
+            <!-- SUBTOTAL -->
             <div class="checkout-summary-row">
-              <span> Subtotal </span>
-
-              <strong id="checkoutSubtotal"> ₹0 </strong>
+              <span>Subtotal</span>
+              <strong id="checkoutSubtotal">₹0</strong>
             </div>
 
-            <div class="checkout-summary-row">
-              <span> Discount </span>
+            <!-- COUPON SECTION -->
+            <div class="checkout-coupon-section">
+              <h3>Have a Coupon?</h3>
 
-              <strong class="discount"> ₹0 </strong>
+              <div class="checkout-coupon-box">
+                <input
+                  type="text"
+                  id="couponCode"
+                  placeholder="Enter coupon code"
+                  autocomplete="off"
+                />
+
+                <button type="button" id="applyCouponBtn">Apply</button>
+              </div>
+
+              <p id="couponMessage" class="coupon-message"></p>
             </div>
 
+            <!-- DISCOUNT -->
+            <div class="checkout-summary-row">
+              <span>Discount</span>
+              <strong id="checkoutDiscount">₹0</strong>
+            </div>
+
+            <!-- TOTAL -->
             <div class="checkout-total">
-              <span> Total </span>
-
-              <strong id="checkoutTotal"> ₹0 </strong>
+              <span>Total</span>
+              <strong id="checkoutTotal">₹0</strong>
             </div>
           </aside>
         </div>

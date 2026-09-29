@@ -10,6 +10,17 @@ const checkoutSubtotal = document.getElementById("checkoutSubtotal");
 
 const checkoutTotal = document.getElementById("checkoutTotal");
 
+const couponCodeInput = document.getElementById("couponCode");
+
+const applyCouponBtn = document.getElementById("applyCouponBtn");
+
+const couponMessage = document.getElementById("couponMessage");
+
+const checkoutDiscount = document.getElementById("checkoutDiscount");
+
+let appliedCoupon = null;
+let currentSubtotal = 0;
+
 // =========================================
 // GET CART
 // =========================================
@@ -44,9 +55,17 @@ function displayCheckout() {
             </p>
         `;
 
-    checkoutSubtotal.textContent = "₹0";
-    checkoutTotal.textContent = "₹0";
+    currentSubtotal = total;
 
+    const discount = appliedCoupon ? Number(appliedCoupon.discount || 0) : 0;
+
+    const finalTotal = Math.max(total - discount, 0);
+
+    checkoutSubtotal.textContent = `₹${total}`;
+
+    checkoutDiscount.textContent = `₹${discount}`;
+
+    checkoutTotal.textContent = `₹${finalTotal}`;
     return;
   }
 
@@ -74,11 +93,18 @@ function displayCheckout() {
     checkoutItems.appendChild(item);
   });
 
+  currentSubtotal = total;
+
+  const discount = appliedCoupon ? Number(appliedCoupon.discount || 0) : 0;
+
+  const finalTotal = Math.max(total - discount, 0);
+
   checkoutSubtotal.textContent = `₹${total}`;
 
-  checkoutTotal.textContent = `₹${total}`;
-}
+  checkoutDiscount.textContent = `₹${discount}`;
 
+  checkoutTotal.textContent = `₹${finalTotal}`;
+}
 
 // =========================================
 // FORM SUBMIT - RAZORPAY
@@ -129,6 +155,9 @@ if (checkoutForm) {
     cart.forEach(function (course) {
       total += getCheckoutPrice(course.price);
     });
+    const discount = appliedCoupon ? Number(appliedCoupon.discount || 0) : 0;
+
+    const finalTotal = Math.max(total - discount, 0);
 
     // GET TOKEN
     const token = localStorage.getItem("hvacToken");
@@ -155,9 +184,13 @@ if (checkoutForm) {
             Authorization: "Bearer " + token,
           },
           body: JSON.stringify({
-            amount: total,
+            amount: finalTotal,
             courseId: firstCourse.id,
             courseName: firstCourse.title,
+            couponCode: appliedCoupon ? appliedCoupon.coupon.code : "",
+            courseIds: cart.map(function (course) {
+              return course.id;
+            }),
           }),
         },
       );
@@ -212,6 +245,7 @@ if (checkoutForm) {
                   "Content-Type": "application/json",
                   Authorization: "Bearer " + token,
                 },
+
                 body: JSON.stringify({
                   razorpay_order_id: paymentResponse.razorpay_order_id,
 
@@ -287,3 +321,108 @@ if (checkoutForm) {
 // =========================================
 
 displayCheckout();
+
+// =========================================
+// APPLY COUPON
+// =========================================
+
+if (applyCouponBtn) {
+  applyCouponBtn.addEventListener("click", async function () {
+    const code = couponCodeInput.value.trim();
+
+    if (!code) {
+      couponMessage.textContent = "Please enter a coupon code.";
+
+      return;
+    }
+
+    const token = localStorage.getItem("hvacToken");
+
+    if (!token) {
+      alert("Please login before applying a coupon.");
+
+      window.location.href = "login.html";
+
+      return;
+    }
+
+    const cart = getCheckoutCart();
+
+    if (cart.length === 0) {
+      couponMessage.textContent = "Your cart is empty.";
+
+      return;
+    }
+
+    const subtotal = cart.reduce(function (sum, course) {
+      return sum + getCheckoutPrice(course.price);
+    }, 0);
+
+    try {
+      applyCouponBtn.disabled = true;
+      applyCouponBtn.textContent = "Checking...";
+
+      const response = await fetch(
+        "http://localhost:5000/api/coupons/validate",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json",
+
+            Authorization: "Bearer " + token,
+          },
+
+          body: JSON.stringify({
+            code: code,
+
+            amount: subtotal,
+
+            courseIds: cart.map(function (course) {
+              return course.id;
+            }),
+          }),
+        },
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.valid) {
+        appliedCoupon = null;
+
+        checkoutDiscount.textContent = "₹0";
+
+        checkoutTotal.textContent = `₹${subtotal}`;
+
+        couponMessage.textContent = data.message || "Invalid coupon.";
+
+        applyCouponBtn.disabled = false;
+
+        applyCouponBtn.textContent = "Apply";
+
+        return;
+      }
+
+      appliedCoupon = data;
+
+      currentSubtotal = subtotal;
+
+      checkoutDiscount.textContent = `₹${data.discount}`;
+
+      checkoutTotal.textContent = `₹${data.finalAmount}`;
+
+      couponMessage.textContent =
+        data.message || "Coupon applied successfully.";
+
+      applyCouponBtn.textContent = "Applied";
+    } catch (error) {
+      console.error("Apply Coupon Error:", error);
+
+      couponMessage.textContent = "Unable to connect to the server.";
+
+      applyCouponBtn.disabled = false;
+
+      applyCouponBtn.textContent = "Apply";
+    }
+  });
+}

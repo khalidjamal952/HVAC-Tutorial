@@ -29,19 +29,26 @@ const progressSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
     videoPositions: {
-  type: Map,
-  of: Number,
-  default: {},
-},
+      type: Map,
+      of: Number,
+      default: {},
+    },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
-progressSchema.index({ user: 1, courseId: 1 }, { unique: true });
+progressSchema.index(
+  { user: 1, courseId: 1 },
+  { unique: true }
+);
 
-const Progress = mongoose.model("Progress", progressSchema);
+const Progress = mongoose.model(
+  "Progress",
+  progressSchema
+);
 
 module.exports = Progress;
