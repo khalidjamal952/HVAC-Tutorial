@@ -170,9 +170,6 @@ document.addEventListener("DOMContentLoaded", async function () {
   // ==========================================
   // LOGIN → LOGOUT
   // ==========================================
-  // ==========================================
-  // LOGIN → LOGOUT
-  // ==========================================
 
   const navLinks = navMenu.querySelectorAll("a");
 
@@ -187,8 +184,23 @@ document.addEventListener("DOMContentLoaded", async function () {
       link.textContent = "Logout";
       link.href = "#";
 
-      link.addEventListener("click", function (event) {
+      link.addEventListener("click", async function (event) {
         event.preventDefault();
+
+        const token = localStorage.getItem("hvacToken");
+
+        try {
+          if (token) {
+            await fetch("https://hvac-tutorial.onrender.com/api/auth/logout", {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + token,
+              },
+            });
+          }
+        } catch (error) {
+          console.error("Logout Error:", error);
+        }
 
         localStorage.removeItem("hvacToken");
         localStorage.removeItem("hvacCurrentUser");

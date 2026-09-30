@@ -78,7 +78,13 @@ router.post("/login", async (req, res) => {
         message: "Invalid email or password",
       });
     }
-
+    // BLOCK LOGIN IF ACCOUNT IS ALREADY ACTIVE ON ANOTHER DEVICE
+    if (user.activeSessionId) {
+      return res.status(409).json({
+        message:
+          "This account is already logged in on another device. Please logout from the other device first.",
+      });
+    }
     const sessionId = crypto.randomUUID();
 
     user.activeSessionId = sessionId;
@@ -245,6 +251,35 @@ router.post("/reset-password", async (req, res) => {
 
     res.status(500).json({
       message: "Server error.",
+    });
+  }
+});
+
+// ==========================================
+// STUDENT LOGOUT
+// ==========================================
+router.post("/logout", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    // Clear active device session
+    user.activeSessionId = null;
+    await user.save();
+
+    res.status(200).json({
+      message: "Logout successful",
+    });
+  } catch (error) {
+    console.error("Logout Error:", error);
+
+    res.status(500).json({
+      message: "Server error",
     });
   }
 });
