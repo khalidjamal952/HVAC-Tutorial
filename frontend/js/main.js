@@ -114,7 +114,18 @@ document.addEventListener("DOMContentLoaded", async function () {
       );
 
       const data = await response.json();
+         if (response.status === 401) {
+  localStorage.removeItem("hvacToken");
+  localStorage.removeItem("hvacCurrentUser");
+  localStorage.removeItem("hvacRememberMe");
+  localStorage.removeItem("hvacRedirectAfterLogin");
 
+  window.location.href = window.location.pathname.includes("/pages/")
+    ? "login.html"
+    : "pages/login.html";
+
+  return;
+}
       if (response.ok && Array.isArray(data.orders)) {
         hasPurchasedCourse = data.orders.some(function (order) {
           return (

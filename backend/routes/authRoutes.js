@@ -78,13 +78,7 @@ router.post("/login", async (req, res) => {
         message: "Invalid email or password",
       });
     }
-    // BLOCK LOGIN IF ACCOUNT IS ALREADY ACTIVE ON ANOTHER DEVICE
-    if (user.activeSessionId) {
-      return res.status(409).json({
-        message:
-          "This account is already logged in on another device. Please logout from the other device first.",
-      });
-    }
+    
     const sessionId = crypto.randomUUID();
 
     user.activeSessionId = sessionId;
