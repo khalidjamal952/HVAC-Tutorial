@@ -109,11 +109,39 @@ async function loadCourses() {
     }
 
     if (Array.isArray(data.courses)) {
-      allCourses = data.courses;
+      allCourses = await Promise.all(
+        data.courses.map(async function (course) {
+          try {
+            const ratingResponse = await fetch(
+              `https://hvac-tutorial.onrender.com/api/ratings/${course.id}`,
+            );
+
+            if (!ratingResponse.ok) {
+              return {
+                ...course,
+                rating: 0,
+              };
+            }
+
+            const ratingData = await ratingResponse.json();
+
+            return {
+              ...course,
+              rating: Number(ratingData.averageRating || 0),
+            };
+          } catch (error) {
+            console.error(`Rating Error for ${course.id}:`, error);
+
+            return {
+              ...course,
+              rating: 0,
+            };
+          }
+        }),
+      );
     } else {
       allCourses = [];
     }
-
     // LOAD COUPONS
     try {
       const token = localStorage.getItem("hvacToken");
