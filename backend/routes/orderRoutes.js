@@ -176,6 +176,29 @@ router.post("/razorpay/verify-payment", authMiddleware, async (req, res) => {
     });
 
     // ========================================
+    // UPDATE COURSE STUDENT COUNT
+    // ========================================
+
+    for (const course of orderCourses) {
+      const alreadyPurchased = await Order.findOne({
+        user: req.user.userId,
+        status: "Paid",
+        "courses.id": course.id,
+        _id: { $ne: order._id },
+      });
+
+      if (!alreadyPurchased) {
+        await Course.findOneAndUpdate(
+          { id: course.id },
+          {
+            $inc: {
+              students: 1,
+            },
+          },
+        );
+      }
+    }
+    // ========================================
     // INCREASE COUPON USAGE COUNT
     // ========================================
 
