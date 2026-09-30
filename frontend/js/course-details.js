@@ -229,4 +229,225 @@ if (cartBtn) {
   });
 }
 
+
+// =========================================
+// COURSE RATING SYSTEM
+// =========================================
+
+let selectedRating = 0;
+
+const ratingStars = document.querySelectorAll(".rating-star");
+const selectedRatingText = document.getElementById("selectedRatingText");
+const ratingReview = document.getElementById("ratingReview");
+const submitRatingBtn = document.getElementById("submitRatingBtn");
+const averageRating = document.getElementById("averageRating");
+const averageRatingStars = document.getElementById("averageRatingStars");
+const totalRatings = document.getElementById("totalRatings");
+const courseReviewsList = document.getElementById("courseReviewsList");
+
+// Select rating
+ratingStars.forEach(function (star) {
+  star.addEventListener("click", function () {
+    selectedRating = Number(this.dataset.rating);
+
+    ratingStars.forEach(function (item) {
+      const itemRating = Number(item.dataset.rating);
+
+      if (itemRating <= selectedRating) {
+        item.classList.add("active");
+      } else {
+        item.classList.remove("active");
+      }
+    });
+
+    if (selectedRatingText) {
+      selectedRatingText.textContent =
+        selectedRating + " out of 5 stars selected";
+    }
+  });
+});
+
+
+// Load course ratings
+async function loadCourseRatings() {
+  if (!courseId) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `https://hvac-tutorial.onrender.com/api/ratings/${courseId}`
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Unable to load ratings:", data);
+      return;
+    }
+
+    const avg = Number(data.averageRating || 0);
+    const count = Number(data.totalRatings || 0);
+
+    if (averageRating) {
+      averageRating.textContent = avg.toFixed(1);
+    }
+
+    if (totalRatings) {
+      totalRatings.textContent = count;
+    }
+
+    if (averageRatingStars) {
+      const roundedRating = Math.round(avg);
+
+      averageRatingStars.textContent =
+        "★".repeat(roundedRating) +
+        "☆".repeat(5 - roundedRating);
+    }
+
+    if (courseReviewsList) {
+      if (!Array.isArray(data.ratings) || data.ratings.length === 0) {
+        courseReviewsList.innerHTML = "<p>No reviews yet.</p>";
+        return;
+      }
+
+      courseReviewsList.innerHTML = "";
+
+      data.ratings.forEach(function (item) {
+        const reviewItem = document.createElement("div");
+        reviewItem.className = "course-review-item";
+
+        const userName =
+          item.user && item.user.name
+            ? item.user.name
+            : "Student";
+
+        const stars =
+          "★".repeat(Number(item.rating)) +
+          "☆".repeat(5 - Number(item.rating));
+
+        reviewItem.innerHTML = `
+          <div class="course-review-header">
+            <strong class="course-review-name">
+              ${userName}
+            </strong>
+
+            <span class="course-review-stars">
+              ${stars}
+            </span>
+          </div>
+
+          ${
+            item.review
+              ? `<p class="course-review-text">${item.review}</p>`
+              : ""
+          }
+        `;
+
+        courseReviewsList.appendChild(reviewItem);
+      });
+    }
+  } catch (error) {
+    console.error("Load Course Ratings Error:", error);
+  }
+}
+
+
+// Submit rating
+if (submitRatingBtn) {
+  submitRatingBtn.addEventListener("click", async function () {
+    if (!courseId) {
+      alert("Course not found.");
+      return;
+    }
+
+    if (selectedRating === 0) {
+      alert("Please select a rating first.");
+      return;
+    }
+
+    const token = localStorage.getItem("hvacToken");
+
+    if (!token) {
+      alert("Please login to rate this course.");
+      window.location.href = "login.html";
+      return;
+    }
+
+    const review = ratingReview
+      ? ratingReview.value.trim()
+      : "";
+
+    try {
+      submitRatingBtn.disabled = true;
+      submitRatingBtn.textContent = "Submitting...";
+
+      const response = await fetch(
+        `https://hvac-tutorial.onrender.com/api/ratings/${courseId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify({
+            rating: selectedRating,
+            review: review,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 401) {
+        localStorage.removeItem("hvacToken");
+        localStorage.removeItem("hvacCurrentUser");
+        localStorage.removeItem("hvacRememberMe");
+
+        alert("Your session has expired. Please login again.");
+
+        window.location.href = "login.html";
+        return;
+      }
+
+      if (response.status === 403) {
+        alert(
+          data.message ||
+            "You can rate only courses you have purchased."
+        );
+        return;
+      }
+
+      if (!response.ok) {
+        alert(data.message || "Unable to submit rating.");
+        return;
+      }
+
+      alert("Your rating has been submitted successfully.");
+
+      selectedRating = 0;
+
+      ratingStars.forEach(function (star) {
+        star.classList.remove("active");
+      });
+
+      if (selectedRatingText) {
+        selectedRatingText.textContent = "Select a rating";
+      }
+
+      if (ratingReview) {
+        ratingReview.value = "";
+      }
+
+      await loadCourseRatings();
+    } catch (error) {
+      console.error("Submit Rating Error:", error);
+      alert("Unable to submit rating. Please try again.");
+    } finally {
+      submitRatingBtn.disabled = false;
+      submitRatingBtn.textContent = "Submit Rating";
+    }
+  });
+}
 loadCourseDetails();
+loadCourseRatings();
