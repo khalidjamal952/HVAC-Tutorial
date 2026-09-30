@@ -409,4 +409,53 @@ router.get("/access/:courseId", authMiddleware, async (req, res) => {
     });
   }
 });
+
+// ========================================
+// SYNC COURSE STUDENT COUNTS
+// ========================================
+
+router.post("/admin/sync-student-counts", adminAuthMiddleware, async (req, res) => {
+  try {
+    const courses = await Course.find();
+
+    const paidOrders = await Order.find({
+      status: {
+        $in: ["Paid", "Completed", "Success", "Successful"],
+      },
+    });
+
+    for (const course of courses) {
+      const uniqueStudents = new Set();
+
+      paidOrders.forEach(function (order) {
+        const hasCourse = order.courses.some(function (purchasedCourse) {
+          return purchasedCourse.id === course.id;
+        });
+
+        if (hasCourse) {
+          uniqueStudents.add(String(order.user));
+        }
+      });
+
+      await Course.findOneAndUpdate(
+        { id: course.id },
+        {
+          $set: {
+            students: uniqueStudents.size,
+          },
+        }
+      );
+    }
+
+    res.status(200).json({
+      message: "Course student counts synced successfully.",
+    });
+  } catch (error) {
+    console.error("Sync Student Counts Error:", error);
+
+    res.status(500).json({
+      message: "Unable to sync course student counts.",
+    });
+  }
+});
 module.exports = router;
