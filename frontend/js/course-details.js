@@ -229,7 +229,6 @@ if (cartBtn) {
   });
 }
 
-
 // =========================================
 // COURSE RATING SYSTEM
 // =========================================
@@ -267,7 +266,6 @@ ratingStars.forEach(function (star) {
   });
 });
 
-
 // Load course ratings
 async function loadCourseRatings() {
   if (!courseId) {
@@ -276,7 +274,7 @@ async function loadCourseRatings() {
 
   try {
     const response = await fetch(
-      `https://hvac-tutorial.onrender.com/api/ratings/${courseId}`
+      `https://hvac-tutorial.onrender.com/api/ratings/${courseId}`,
     );
 
     const data = await response.json();
@@ -288,6 +286,16 @@ async function loadCourseRatings() {
 
     const avg = Number(data.averageRating || 0);
     const count = Number(data.totalRatings || 0);
+    // Update top course rating
+    const courseStats = document.querySelectorAll(".course-details-stats div");
+
+    if (courseStats.length >= 1) {
+      const ratingStrong = courseStats[0].querySelector("strong");
+
+      if (ratingStrong) {
+        ratingStrong.textContent = `⭐ ${avg.toFixed(1)}`;
+      }
+    }
 
     if (averageRating) {
       averageRating.textContent = avg.toFixed(1);
@@ -301,8 +309,7 @@ async function loadCourseRatings() {
       const roundedRating = Math.round(avg);
 
       averageRatingStars.textContent =
-        "★".repeat(roundedRating) +
-        "☆".repeat(5 - roundedRating);
+        "★".repeat(roundedRating) + "☆".repeat(5 - roundedRating);
     }
 
     if (courseReviewsList) {
@@ -318,13 +325,10 @@ async function loadCourseRatings() {
         reviewItem.className = "course-review-item";
 
         const userName =
-          item.user && item.user.name
-            ? item.user.name
-            : "Student";
+          item.user && item.user.name ? item.user.name : "Student";
 
         const stars =
-          "★".repeat(Number(item.rating)) +
-          "☆".repeat(5 - Number(item.rating));
+          "★".repeat(Number(item.rating)) + "☆".repeat(5 - Number(item.rating));
 
         reviewItem.innerHTML = `
           <div class="course-review-header">
@@ -352,7 +356,6 @@ async function loadCourseRatings() {
   }
 }
 
-
 // Submit rating
 if (submitRatingBtn) {
   submitRatingBtn.addEventListener("click", async function () {
@@ -374,9 +377,7 @@ if (submitRatingBtn) {
       return;
     }
 
-    const review = ratingReview
-      ? ratingReview.value.trim()
-      : "";
+    const review = ratingReview ? ratingReview.value.trim() : "";
 
     try {
       submitRatingBtn.disabled = true;
@@ -394,7 +395,7 @@ if (submitRatingBtn) {
             rating: selectedRating,
             review: review,
           }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -411,10 +412,7 @@ if (submitRatingBtn) {
       }
 
       if (response.status === 403) {
-        alert(
-          data.message ||
-            "You can rate only courses you have purchased."
-        );
+        alert(data.message || "You can rate only courses you have purchased.");
         return;
       }
 
