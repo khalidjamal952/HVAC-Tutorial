@@ -118,6 +118,18 @@ async function loadCourses() {
     try {
       const token = localStorage.getItem("hvacToken");
 
+      if (!token) {
+        allCourses = allCourses.map(function (course) {
+          return {
+            ...course,
+            coupon: null,
+          };
+        });
+
+        renderCourses();
+        return;
+      }
+
       allCourses = await Promise.all(
         allCourses.map(async function (course) {
           try {
