@@ -16,6 +16,7 @@ const ebookRoutes = require("./routes/ebookRoutes");
 const razorpayRoutes = require("./routes/razorpayRoutes");
 const couponRoutes = require("./routes/couponRoutes");
 const ratingRoutes = require("./routes/ratingRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
 
 const app = express();
 app.use(cors());
@@ -43,8 +44,8 @@ app.use("/api/razorpay", razorpayRoutes);
 app.use("/api/lectures", lectureRoutes);
 app.use("/api/live-classes", liveClassRoutes);
 app.use("/api/coupons", couponRoutes);
-
 app.use("/api/ratings", ratingRoutes);
+app.use("/api/categories", categoryRoutes);
 app.get("/api/coupons/test-server", function (req, res) {
   res.json({
     success: true,

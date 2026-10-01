@@ -514,6 +514,7 @@ if (adminCoursesTableBody) {
       }
 
       updateCourseCount();
+      populateCourseCategories();
       displayAdminCourses(adminCourses);
     } catch (error) {
       console.error("Admin Courses Backend Error:", error);
@@ -521,7 +522,37 @@ if (adminCoursesTableBody) {
   }
 
   loadAdminCourses();
+  loadCategories();
 
+  function populateCourseCategories() {
+    const categorySelect = document.getElementById("courseCategory");
+
+    if (!categorySelect) return;
+
+    const categories = [];
+
+    adminCourses.forEach(function (course) {
+      if (course.category && !categories.includes(course.category)) {
+        categories.push(course.category);
+      }
+    });
+
+    categorySelect.innerHTML = "";
+
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Select Category";
+    categorySelect.appendChild(defaultOption);
+
+    categories.forEach(function (category) {
+      const option = document.createElement("option");
+
+      option.value = category;
+      option.textContent = getCategoryName(category);
+
+      categorySelect.appendChild(option);
+    });
+  }
   // =====================================
   // CATEGORY NAME
   // =====================================
@@ -539,7 +570,44 @@ if (adminCoursesTableBody) {
 
     return categories[category] || category;
   }
+  async function loadCategories() {
+    const categorySelect = document.getElementById("courseCategory");
 
+    if (!categorySelect) return;
+
+    try {
+      const response = await fetch(
+        "https://hvac-tutorial.onrender.com/api/categories",
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        console.error("Categories Fetch Error:", data.message);
+        return;
+      }
+
+      categorySelect.innerHTML = "";
+
+      const defaultOption = document.createElement("option");
+      defaultOption.value = "";
+      defaultOption.textContent = "Select Category";
+      categorySelect.appendChild(defaultOption);
+
+      const categories = Array.isArray(data.categories) ? data.categories : [];
+
+      categories.forEach(function (category) {
+        const option = document.createElement("option");
+
+        option.value = category.name;
+        option.textContent = category.name;
+
+        categorySelect.appendChild(option);
+      });
+    } catch (error) {
+      console.error("Load Categories Error:", error);
+    }
+  }
   // =====================================
   // DISPLAY COURSES
   // =====================================
