@@ -8,87 +8,6 @@ const noCourses = document.getElementById("noCourses");
 
 let allCourses = [];
 
-const defaultCourses = [
-  {
-    id: "hvac-fundamentals",
-    title: "HVAC Fundamentals",
-    category: "ac",
-    rating: 4.8,
-    students: 125,
-    lessons: 25,
-    duration: "6 Hours",
-    price: 499,
-    originalPrice: 999,
-    description:
-      "Learn the basic concepts of HVAC systems, components and working principles.",
-  },
-  {
-    id: "air-conditioning",
-    title: "Air Conditioning Basics",
-    category: "ac",
-    rating: 4.7,
-    students: 98,
-    lessons: 20,
-    duration: "5 Hours",
-    price: 599,
-    originalPrice: 1199,
-    description:
-      "Understand air conditioning systems, components, cooling cycles and basic operation.",
-  },
-  {
-    id: "refrigeration",
-    title: "Refrigeration Fundamentals",
-    category: "refrigeration",
-    rating: 4.9,
-    students: 143,
-    lessons: 30,
-    duration: "8 Hours",
-    price: 699,
-    originalPrice: 1499,
-    description:
-      "Learn refrigeration cycles, components, refrigerants and system operation.",
-  },
-  {
-    id: "hvac-electrical",
-    title: "HVAC Electrical & Controls",
-    category: "electrical",
-    rating: 4.8,
-    students: 87,
-    lessons: 22,
-    duration: "6 Hours",
-    price: 799,
-    originalPrice: 1599,
-    description:
-      "Learn HVAC electrical systems, wiring, controls and troubleshooting basics.",
-  },
-  {
-    id: "installation-service",
-    title: "HVAC Installation & Service",
-    category: "service",
-    rating: 4.9,
-    students: 156,
-    lessons: 35,
-    duration: "10 Hours",
-    price: 899,
-    originalPrice: 1799,
-    description:
-      "Learn practical HVAC installation, maintenance and servicing techniques.",
-  },
-  {
-    id: "troubleshooting",
-    title: "HVAC Troubleshooting",
-    category: "service",
-    rating: 4.8,
-    students: 112,
-    lessons: 28,
-    duration: "7 Hours",
-    price: 749,
-    originalPrice: 1499,
-    description:
-      "Learn how to identify HVAC problems and perform systematic troubleshooting.",
-  },
-];
-
 // =========================
 // LOAD ADMIN COURSES
 // =========================
@@ -334,6 +253,7 @@ function renderCourses() {
     coursesGrid.appendChild(card);
   });
 
+createDynamicFilters();
   setupCourseFilters();
 }
 
@@ -344,7 +264,47 @@ function renderCourses() {
 const searchInput = document.getElementById("courseSearch");
 
 const searchBtn = document.getElementById("searchBtn");
+function createDynamicFilters() {
+  const filterContainer = document.querySelector(".course-filter");
 
+  if (!filterContainer) {
+    return;
+  }
+
+  filterContainer.innerHTML = "";
+
+  const allButton = document.createElement("button");
+  allButton.type = "button";
+  allButton.className = "filter-btn active";
+  allButton.dataset.category = "all";
+  allButton.textContent = "All Courses";
+
+  filterContainer.appendChild(allButton);
+
+  const categories = [];
+
+  allCourses.forEach(function (course) {
+    if (course.category && !categories.includes(course.category)) {
+      categories.push(course.category);
+    }
+  });
+
+  categories.forEach(function (category) {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "filter-btn";
+    button.dataset.category = category;
+
+    button.textContent = category
+      .replace(/[-_]/g, " ")
+      .replace(/\b\w/g, function (letter) {
+        return letter.toUpperCase();
+      });
+
+    filterContainer.appendChild(button);
+  });
+}
 const filterButtons = document.querySelectorAll(".filter-btn");
 
 let currentCategory = "all";
