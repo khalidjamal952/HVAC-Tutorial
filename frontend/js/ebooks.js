@@ -119,7 +119,6 @@ function renderEbooks(ebooks) {
     `;
 
     ebooksGrid.appendChild(card);
-   
   });
   setupEbookBuyButtons();
 }
@@ -162,6 +161,25 @@ function setupEbookBuyButtons() {
         }
 
         console.log("E-Book Order Created:", data.order);
+        const options = {
+          key: "rzp_test_Th1CmeN7wn6UYo",
+          amount: data.order.amount,
+          currency: data.order.currency,
+          name: "HVAC Tutorial",
+          description: "E-Book Purchase",
+          order_id: data.order.id,
+
+          handler: async function (response) {
+            console.log("E-Book Payment Response:", response);
+          },
+
+          theme: {
+           color: "#0d6efd",
+          },
+        };
+
+        const razorpay = new Razorpay(options);
+        razorpay.open();
       } catch (error) {
         console.error("E-Book Payment Error:", error);
         alert("Unable to connect to payment server.");
