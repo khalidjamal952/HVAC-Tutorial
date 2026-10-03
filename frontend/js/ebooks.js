@@ -228,6 +228,7 @@ function setupEbookBuyButtons() {
             console.log("E-Book Payment Response:", response);
 
             try {
+              console.log("STARTING E-BOOK PAYMENT VERIFICATION...");
               const token = localStorage.getItem("hvacToken");
 
               const verifyResponse = await fetch(
