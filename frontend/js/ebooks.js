@@ -104,35 +104,71 @@ function renderEbooks(ebooks) {
           </span>
 
         </div>
+<div class="ebook-actions">
+  <button
+    type="button"
+    class="ebook-buy-btn"
+    data-ebook-id="${ebook._id}"
+  >
+    💳 Buy Now
+  </button>
 
-        <div class="ebook-actions">
-
-          <a
-            href="${fileUrl}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="ebook-view-btn"
-          >
-            👁 View PDF
-          </a>
-
-          <a
-            href="${fileUrl}"
-            download="${escapeHtml(ebook.fileName)}"
-            class="ebook-download-btn"
-          >
-            ⬇ Download
-          </a>
-
-        </div>
+</div>
 
       </div>
     `;
 
     ebooksGrid.appendChild(card);
+    // setupEbookBuyButtons();
   });
+  setupEbookBuyButtons();
 }
 
+function setupEbookBuyButtons() {
+  const buyButtons = document.querySelectorAll(".ebook-buy-btn");
+
+  buyButtons.forEach(function (button) {
+    button.addEventListener("click", async function () {
+      const ebookId = button.dataset.ebookId;
+
+      const token = localStorage.getItem("hvacToken");
+
+      if (!token) {
+        alert("Please login before purchasing an E-Book.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/api/ebook-purchases/create-order`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+              ebookId: ebookId,
+            }),
+          },
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          alert(data.message || "Unable to create payment order.");
+          return;
+        }
+
+        console.log("E-Book Order Created:", data.order);
+      } catch (error) {
+        console.error("E-Book Payment Error:", error);
+        alert("Unable to connect to payment server.");
+      }
+    });
+  });
+}
 // =========================================
 // SEARCH
 // =========================================

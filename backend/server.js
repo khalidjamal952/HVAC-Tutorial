@@ -13,6 +13,7 @@ const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const certificateRoutes = require("./routes/certificateRoutes");
 const ebookRoutes = require("./routes/ebookRoutes");
+const ebookPurchaseRoutes = require("./routes/ebookPurchaseRoutes");
 const razorpayRoutes = require("./routes/razorpayRoutes");
 const couponRoutes = require("./routes/couponRoutes");
 const ratingRoutes = require("./routes/ratingRoutes");
@@ -25,6 +26,11 @@ app.use(express.json());
 app.use("/assets/videos", function (req, res, next) {
   return res.status(403).json({
     message: "Direct video access is not allowed.",
+  });
+});
+app.use("/assets/ebooks", function (req, res, next) {
+  return res.status(403).json({
+    message: "Direct e-book access is not allowed.",
   });
 });
 app.use("/assets", express.static(path.join(__dirname, "../assets")));
@@ -40,6 +46,7 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/certificates", certificateRoutes);
 app.use("/api/ebooks", ebookRoutes);
+app.use("/api/ebook-purchases", ebookPurchaseRoutes);
 app.use("/api/razorpay", razorpayRoutes);
 app.use("/api/lectures", lectureRoutes);
 app.use("/api/live-classes", liveClassRoutes);
