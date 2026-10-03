@@ -191,17 +191,19 @@ function setupEbookBuyButtons() {
                 },
               );
 
-              const data = await verifyResponse.json();
+              const verifyData = await verifyResponse.json();
 
               if (!verifyResponse.ok) {
-                alert(data.message || "Payment verification failed.");
+                alert(verifyData.message || "Payment verification failed.");
                 return;
               }
 
-              alert("E-Book payment successful! 🎉");
-              console.log("E-Book Payment Verified:", data);
+              console.log("E-Book Payment Verified:", verifyData);
+
+              alert("Payment successful! E-Book purchased successfully.");
             } catch (error) {
-              console.error("E-Book Verification Error:", error);
+              console.error("E-Book Payment Verification Error:", error);
+
               alert("Unable to verify payment.");
             }
           },
