@@ -119,7 +119,7 @@ function renderEbooks(ebooks) {
     `;
 
     ebooksGrid.appendChild(card);
-    // setupEbookBuyButtons();
+   
   });
   setupEbookBuyButtons();
 }

@@ -93,13 +93,25 @@ router.post("/create-order", authMiddleware, async (req, res) => {
     // CREATE PENDING PURCHASE
     // ========================================
 
-    await EbookPurchase.create({
-      user: req.user.userId,
-      ebook: ebook._id,
-      amount: price,
-      razorpayOrderId: order.id,
-      paymentStatus: "Pending",
-    });
+    await EbookPurchase.findOneAndUpdate(
+      {
+        user: req.user.userId,
+        ebook: ebook._id,
+      },
+      {
+        user: req.user.userId,
+        ebook: ebook._id,
+        amount: price,
+        razorpayOrderId: order.id,
+        paymentStatus: "Pending",
+        razorpayPaymentId: "",
+      },
+      {
+        upsert: true,
+        new: true,
+        setDefaultsOnInsert: true,
+      },
+    );
 
     res.status(200).json({
       message: "E-Book Razorpay order created successfully.",
@@ -240,7 +252,7 @@ router.get("/:ebookId/download", authMiddleware, async (req, res) => {
     const filePath = path.join(
       __dirname,
       "../..",
-      ebook.filePath.replace("/assets/", "assets/")
+      ebook.filePath.replace("/assets/", "assets/"),
     );
 
     if (!fs.existsSync(filePath)) {
@@ -249,10 +261,7 @@ router.get("/:ebookId/download", authMiddleware, async (req, res) => {
       });
     }
 
-    return res.download(
-      filePath,
-      ebook.fileName || `${ebook.title}.pdf`
-    );
+    return res.download(filePath, ebook.fileName || `${ebook.title}.pdf`);
   } catch (error) {
     console.error("E-Book Download Error:", error);
 
