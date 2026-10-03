@@ -171,10 +171,43 @@ function setupEbookBuyButtons() {
 
           handler: async function (response) {
             console.log("E-Book Payment Response:", response);
+
+            try {
+              const token = localStorage.getItem("hvacToken");
+
+              const verifyResponse = await fetch(
+                `${API_BASE_URL}/api/ebook-purchases/verify-payment`,
+                {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + token,
+                  },
+                  body: JSON.stringify({
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature,
+                  }),
+                },
+              );
+
+              const data = await verifyResponse.json();
+
+              if (!verifyResponse.ok) {
+                alert(data.message || "Payment verification failed.");
+                return;
+              }
+
+              alert("E-Book payment successful! 🎉");
+              console.log("E-Book Payment Verified:", data);
+            } catch (error) {
+              console.error("E-Book Verification Error:", error);
+              alert("Unable to verify payment.");
+            }
           },
 
           theme: {
-           color: "#0d6efd",
+            color: "#0d6efd",
           },
         };
 
