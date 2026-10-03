@@ -44,7 +44,7 @@ async function loadEbooks() {
 // RENDER E-BOOKS
 // =========================================
 
-function renderEbooks(ebooks) {
+async function renderEbooks(ebooks) {
   if (!ebooksGrid) return;
 
   ebooksGrid.innerHTML = "";
@@ -57,8 +57,8 @@ function renderEbooks(ebooks) {
     return;
   }
 
-  ebooks.forEach(function (ebook) {
-    const fileUrl = `${API_BASE_URL}${ebook.filePath}`;
+  for (const ebook of ebooks) {
+    const isPurchased = await checkEbookPurchase(ebook._id);
 
     const card = document.createElement("article");
 
@@ -104,25 +104,80 @@ function renderEbooks(ebooks) {
           </span>
 
         </div>
-<div class="ebook-actions">
-  <button
-    type="button"
-    class="ebook-buy-btn"
-    data-ebook-id="${ebook._id}"
-  >
-    💳 Buy Now
-  </button>
 
-</div>
+        <div class="ebook-actions">
+
+          ${
+            isPurchased
+              ? `
+                <button
+                  type="button"
+                  class="ebook-read-btn"
+                  data-ebook-id="${ebook._id}"
+                >
+                  📖 Read PDF
+                </button>
+
+                <button
+                  type="button"
+                  class="ebook-download-btn"
+                  data-ebook-id="${ebook._id}"
+                >
+                  ⬇ Download PDF
+                </button>
+              `
+              : `
+                <button
+                  type="button"
+                  class="ebook-buy-btn"
+                  data-ebook-id="${ebook._id}"
+                >
+                  💳 Buy Now
+                </button>
+              `
+          }
+
+        </div>
 
       </div>
     `;
 
     ebooksGrid.appendChild(card);
-  });
+  }
+
   setupEbookBuyButtons();
 }
 
+async function checkEbookPurchase(ebookId) {
+  const token = localStorage.getItem("hvacToken");
+
+  if (!token) {
+    return false;
+  }
+
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/ebook-purchases/${ebookId}/purchased`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return false;
+    }
+
+    return data.purchased === true;
+  } catch (error) {
+    console.error("Check E-Book Purchase Error:", error);
+    return false;
+  }
+}
 function setupEbookBuyButtons() {
   const buyButtons = document.querySelectorAll(".ebook-buy-btn");
 
@@ -218,6 +273,98 @@ function setupEbookBuyButtons() {
       } catch (error) {
         console.error("E-Book Payment Error:", error);
         alert("Unable to connect to payment server.");
+      }
+    });
+  });
+  const readButtons = document.querySelectorAll(".ebook-read-btn");
+  const downloadButtons = document.querySelectorAll(".ebook-download-btn");
+
+  readButtons.forEach(function (button) {
+    button.addEventListener("click", async function () {
+      const ebookId = button.dataset.ebookId;
+      const token = localStorage.getItem("hvacToken");
+
+      if (!token) {
+        alert("Please login first.");
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/api/ebook-purchases/${ebookId}/download`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          const data = await response.json();
+          alert(data.message || "Unable to open E-Book.");
+          return;
+        }
+
+        const blob = await response.blob();
+        const pdfUrl = URL.createObjectURL(blob);
+
+        window.open(pdfUrl, "_blank");
+
+        setTimeout(function () {
+          URL.revokeObjectURL(pdfUrl);
+        }, 60000);
+      } catch (error) {
+        console.error("Read E-Book Error:", error);
+        alert("Unable to open E-Book.");
+      }
+    });
+  });
+
+  downloadButtons.forEach(function (button) {
+    button.addEventListener("click", async function () {
+      const ebookId = button.dataset.ebookId;
+      const token = localStorage.getItem("hvacToken");
+
+      if (!token) {
+        alert("Please login first.");
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/api/ebook-purchases/${ebookId}/download`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          const data = await response.json();
+          alert(data.message || "Unable to download E-Book.");
+          return;
+        }
+
+        const blob = await response.blob();
+        const downloadUrl = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = downloadUrl;
+        link.download = "ebook.pdf";
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        setTimeout(function () {
+          URL.revokeObjectURL(downloadUrl);
+        }, 60000);
+      } catch (error) {
+        console.error("Download E-Book Error:", error);
+        alert("Unable to download E-Book.");
       }
     });
   });
