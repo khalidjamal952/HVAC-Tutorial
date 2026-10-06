@@ -426,7 +426,35 @@
   gap: 8px;
   margin-top: auto;
 }
+.ebook-read-btn,
+.ebook-download-btn {
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.ebook-read-btn {
+  background: #0d6efd;
+  color: #fff;
+}
 
+.ebook-read-btn:hover {
+  background: #0b5ed7;
+  transform: translateY(-1px);
+}
+
+.ebook-download-btn {
+  background: #198754;
+  color: #fff;
+}
+
+.ebook-download-btn:hover {
+  background: #157347;
+  transform: translateY(-1px);
+}
 .ebook-actions a {
   flex: 1;
   display: inline-flex;

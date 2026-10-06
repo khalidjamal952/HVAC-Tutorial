@@ -257,6 +257,7 @@ function setupEbookBuyButtons() {
               console.log("E-Book Payment Verified:", verifyData);
 
               alert("Payment successful! E-Book purchased successfully.");
+              renderEbooks(allEbooks);
             } catch (error) {
               console.error("E-Book Payment Verification Error:", error);
 
