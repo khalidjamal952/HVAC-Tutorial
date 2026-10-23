@@ -44,7 +44,7 @@ if (certificatesGrid && certificatesEmpty) {
 
     try {
       const response = await fetch(
-        "https://hvac-tutorial.onrender.com/api/certificates/my",
+          "/api/certificates/my",
         {
           method: "GET",
           headers: {
