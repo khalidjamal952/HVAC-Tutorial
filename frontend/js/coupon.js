@@ -1,4 +1,5 @@
-const API_BASE_URL = "https://hvac-tutorial.onrender.com";
+// const API_BASE_URL = "https://hvac-tutorial.onrender.com";
+const API_BASE_URL = "";
 
 let coupons = [];
 let courses = [];
