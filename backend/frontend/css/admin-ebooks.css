@@ -1,0 +1,622 @@
+/* =========================================
+   ADMIN E-BOOKS
+========================================= */
+
+.admin-page {
+  padding: 50px 0;
+  min-height: 70vh;
+  background: #f8fafc;
+}
+
+.admin-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.admin-page-header h1 {
+  margin: 0 0 8px;
+  color: #111827;
+  font-size: 30px;
+}
+
+.admin-page-header p {
+  margin: 0;
+  color: #64748b;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.admin-primary-btn,
+.admin-secondary-btn {
+  border: none;
+  border-radius: 7px;
+  padding: 11px 17px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-primary-btn {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.admin-primary-btn:hover {
+  background: #1d4ed8;
+}
+
+.admin-secondary-btn {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.admin-secondary-btn:hover {
+  background: #cbd5e1;
+}
+
+/* =========================================
+   STATS
+========================================= */
+
+.admin-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.admin-stat-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.admin-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: #eff6ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.admin-stat-card span {
+  display: block;
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+.admin-stat-card strong {
+  display: block;
+  color: #111827;
+  font-size: 24px;
+}
+
+/* =========================================
+   TABLE CARD
+========================================= */
+
+.admin-table-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.admin-table-header {
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.admin-table-header h2 {
+  margin: 0 0 5px;
+  font-size: 20px;
+  color: #111827;
+}
+
+.admin-table-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.admin-table-header input {
+  width: 280px;
+  padding: 11px 14px;
+  border: 1px solid #dbe2ea;
+  border-radius: 7px;
+  outline: none;
+  font-size: 14px;
+}
+
+.admin-table-header input:focus {
+  border-color: #2563eb;
+}
+
+/* =========================================
+   TABLE
+========================================= */
+
+.admin-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 850px;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 15px 18px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.admin-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.admin-table td {
+  color: #334155;
+  font-size: 14px;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* =========================================
+   STATUS
+========================================= */
+
+.admin-status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.ebook-admin-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ebook-edit-btn,
+.ebook-delete-btn,
+.ebook-view-btn {
+  border: none;
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.ebook-edit-btn {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.ebook-delete-btn {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.ebook-view-btn {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* =========================================
+   EMPTY
+========================================= */
+
+.admin-empty {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.admin-empty-icon {
+  font-size: 45px;
+  margin-bottom: 12px;
+}
+
+.admin-empty h3 {
+  margin: 0 0 8px;
+  color: #111827;
+}
+
+.admin-empty p {
+  margin: 0;
+  color: #64748b;
+}
+
+/* =========================================
+   MODAL
+========================================= */
+
+.admin-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.admin-modal-content {
+  width: 100%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25);
+}
+
+.admin-modal-header {
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.admin-modal-header h2 {
+  margin: 0 0 5px;
+  color: #111827;
+  font-size: 22px;
+}
+
+.admin-modal-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.admin-modal-close {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.admin-modal-close:hover {
+  color: #111827;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+#ebookForm {
+  padding: 20px;
+}
+
+.admin-form-group {
+  margin-bottom: 18px;
+}
+
+.admin-form-group label {
+  display: block;
+  margin-bottom: 7px;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.admin-form-group input,
+.admin-form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 11px 13px;
+  border: 1px solid #dbe2ea;
+  border-radius: 7px;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.admin-form-group textarea {
+  resize: vertical;
+}
+
+.admin-form-group input:focus,
+.admin-form-group textarea:focus {
+  border-color: #2563eb;
+}
+
+.admin-form-group small {
+  display: block;
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.admin-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.admin-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 10px;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+  .admin-page {
+    padding: 35px 0;
+  }
+
+  .admin-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-page-header .admin-primary-btn {
+    width: 100%;
+  }
+
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-table-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-table-header input {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .admin-form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .admin-form-actions {
+    flex-direction: column;
+  }
+
+  .admin-form-actions button {
+    width: 100%;
+  }
+}
+
+/* =========================================
+   ADMIN FOOTER
+========================================= */
+
+.admin-footer {
+  margin-top: 60px;
+  background: #0f172a;
+  color: #ffffff;
+  border-top: 3px solid #2563eb;
+}
+
+.admin-footer-content {
+  min-height: 150px;
+  padding: 35px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.admin-footer-brand {
+  max-width: 320px;
+}
+
+.admin-footer-logo {
+  display: inline-block;
+  margin-bottom: 10px;
+  color: #ffffff;
+  font-size: 23px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.admin-footer-logo span {
+  color: #2563eb;
+}
+
+.admin-footer-brand p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.admin-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px 22px;
+}
+
+.admin-footer-links a {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.admin-footer-links a:hover {
+  color: #ffffff;
+}
+
+.admin-footer-bottom {
+  padding: 18px 0;
+  border-top: 1px solid #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.admin-footer-bottom p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+/* =========================================
+   FOOTER MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+  .admin-footer-content {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 30px 0;
+  }
+
+  .admin-footer-links {
+    justify-content: flex-start;
+    gap: 12px 18px;
+  }
+
+  .admin-footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+/* =========================================
+   E-BOOK ACTION BUTTONS
+========================================= */
+
+.ebook-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.ebook-actions a,
+.ebook-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 58px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+/* View Button */
+
+.ebook-actions .admin-view-btn {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+
+.ebook-actions .admin-view-btn:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+/* Edit Button */
+
+.ebook-actions .admin-edit-btn {
+  background: #fffbeb;
+  color: #d97706;
+  border-color: #fde68a;
+}
+
+.ebook-actions .admin-edit-btn:hover {
+  background: #f59e0b;
+  color: #ffffff;
+  border-color: #f59e0b;
+}
+
+/* Delete Button */
+
+.ebook-actions .admin-delete-btn {
+  background: #fef2f2;
+  color: #dc2626;
+  border-color: #fecaca;
+}
+
+.ebook-actions .admin-delete-btn:hover {
+  background: #dc2626;
+  color: #ffffff;
+  border-color: #dc2626;
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+  .ebook-actions {
+    gap: 6px;
+  }
+
+  .ebook-actions a,
+  .ebook-actions button {
+    min-width: 54px;
+    height: 32px;
+    padding: 0 9px;
+    font-size: 12px;
+  }
+}

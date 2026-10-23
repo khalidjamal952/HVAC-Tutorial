@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Manage E-Books | HVAC Tutorial</title>
+
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/responsive.css" />
+    <link rel="stylesheet" href="../css/admin-ebooks.css">
+  </head>
+
+  <body>
+    <!-- =========================
+         ADMIN NAVBAR
+    ========================== -->
+
+    <header class="navbar">
+      <div class="container nav-container">
+        <a href="admin.html" class="logo"> HVAC<span>Tutorial</span> </a>
+
+        <button class="menu-toggle" id="menuToggle">☰</button>
+
+        <nav class="nav-menu">
+          <a href="admin.html"> Dashboard </a>
+
+          <a href="admin-courses.html"> Courses </a>
+
+          <a href="admin-lectures.html"> Lectures </a>
+
+          <a href="admin-students.html"> Students </a>
+
+          <a href="admin-orders.html"> Orders </a>
+
+          <a href="admin-live-classes.html"> Live Classes </a>
+
+          <a href="admin-certificates.html"> Certificates </a>
+
+          <a href="admin-ebooks.html" class="active"> E-Books </a>
+
+          <a href="#" id="adminLogoutBtn" class="logout-link"> Logout </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="admin-page">
+      <div class="container">
+        <!-- PAGE HEADER -->
+
+        <div class="admin-page-header">
+          <div>
+            <h1>Manage E-Books</h1>
+
+            <p>Add, edit and manage your study materials and PDF books.</p>
+          </div>
+
+          <button class="admin-primary-btn" id="addEbookBtn">
+            + Add E-Book
+          </button>
+        </div>
+
+        <!-- STATS -->
+
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card">
+            <div class="admin-stat-icon">📚</div>
+
+            <div>
+              <span> Total E-Books </span>
+
+              <strong id="ebookTotal"> 0 </strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEARCH -->
+
+        <div class="admin-table-card">
+          <div class="admin-table-header">
+            <div>
+              <h2>E-Books</h2>
+
+              <p>Manage all available PDF resources.</p>
+            </div>
+
+            <input
+              type="search"
+              id="ebookSearch"
+              placeholder="Search E-Books..."
+            />
+          </div>
+
+          <!-- TABLE -->
+
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+
+                  <th>Category</th>
+
+                  <th>Type</th>
+
+                  <th>Price</th>
+
+                  <th>Status</th>
+
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="ebooksTableBody">
+                <!-- E-Books will load here -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- EMPTY -->
+
+          <div id="ebooksEmpty" class="admin-empty" style="display: none">
+            <div class="admin-empty-icon">📚</div>
+
+            <h3>No E-Books Found</h3>
+
+            <p>Add your first E-Book to get started.</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- =========================
+         ADD / EDIT MODAL
+    ========================== -->
+
+    <div class="admin-modal" id="ebookModal" style="display: none">
+      <div class="admin-modal-content">
+        <div class="admin-modal-header">
+          <div>
+            <h2 id="ebookModalTitle">Add E-Book</h2>
+
+            <p>Enter E-Book details below.</p>
+          </div>
+
+          <button type="button" class="admin-modal-close" id="closeEbookModal">
+            ×
+          </button>
+        </div>
+
+        <form id="ebookForm">
+          <input type="hidden" id="ebookId" />
+
+          <div class="admin-form-group">
+            <label for="ebookTitle"> E-Book Title </label>
+
+            <input
+              type="text"
+              id="ebookTitle"
+              placeholder="Enter E-Book title"
+              required
+            />
+          </div>
+
+          <div class="admin-form-group">
+            <label for="ebookDescription"> Description </label>
+
+            <textarea
+              id="ebookDescription"
+              rows="4"
+              placeholder="Enter E-Book description"
+              required
+            ></textarea>
+          </div>
+
+          <div class="admin-form-row">
+            <div class="admin-form-group">
+              <label for="ebookCategory"> Category </label>
+
+              <input
+                type="text"
+                id="ebookCategory"
+                placeholder="e.g. HVAC"
+                required
+              />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="ebookPrice"> Price </label>
+
+              <input
+                type="number"
+                id="ebookPrice"
+                min="0"
+                value="0"
+                placeholder="0"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="ebookFile"> PDF File </label>
+
+            <input type="file" id="ebookFile" accept=".pdf,application/pdf" />
+
+            <small> Upload a PDF file for this E-Book. </small>
+          </div>
+
+          <div class="admin-form-actions">
+            <button
+              type="button"
+              class="admin-secondary-btn"
+              id="cancelEbookBtn"
+            >
+              Cancel
+            </button>
+
+            <button type="submit" class="admin-primary-btn">Save E-Book</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+       <!-- =========================
+     ADMIN FOOTER
+========================= -->
+
+<footer class="admin-footer">
+
+    <div class="container">
+
+        <div class="admin-footer-content">
+
+            <div class="admin-footer-brand">
+
+                <a href="admin.html" class="admin-footer-logo">
+                    HVAC<span>Tutorial</span>
+                </a>
+
+                <p>
+                    Manage your HVAC learning platform
+                    from one place.
+                </p>
+
+            </div>
+
+
+            <div class="admin-footer-links">
+
+                <a href="admin.html">
+                    Dashboard
+                </a>
+
+                <a href="admin-courses.html">
+                    Courses
+                </a>
+
+                <a href="admin-lectures.html">
+                    Lectures
+                </a>
+
+                <a href="admin-students.html">
+                    Students
+                </a>
+
+                <a href="admin-orders.html">
+                    Orders
+                </a>
+
+                <a href="admin-ebooks.html">
+                    E-Books
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="admin-footer-bottom">
+
+            <p>
+                © <span id="currentYear"></span>
+                HVAC Tutorial. All rights reserved.
+            </p>
+
+            <p>
+                Admin Panel
+            </p>
+
+        </div>
+
+    </div>
+
+</footer>
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script src="../js/main.js"></script>
+    <script src="../js/admin.js"></script>
+    <script src="../js/admin-ebooks.js"></script>
+  </body>
+</html>
