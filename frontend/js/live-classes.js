@@ -30,15 +30,12 @@ async function loadLiveClasses() {
   }
 
   try {
-    const response = await fetch(
-      "https://hvac-tutorial.onrender.com/api/live-classes",
-      {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+    const response = await fetch("/api/live-classes", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
       },
-    );
+    });
 
     const data = await response.json();
 

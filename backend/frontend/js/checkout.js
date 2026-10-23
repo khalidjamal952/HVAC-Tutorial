@@ -175,25 +175,22 @@ if (checkoutForm) {
 
       const firstCourse = cart[0];
 
-      const orderResponse = await fetch(
-        "https://hvac-tutorial.onrender.com/api/razorpay/create-order",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-          body: JSON.stringify({
-            amount: finalTotal,
-            courseId: firstCourse.id,
-            courseName: firstCourse.title,
-            couponCode: appliedCoupon ? appliedCoupon.coupon.code : "",
-            courseIds: cart.map(function (course) {
-              return course.id;
-            }),
-          }),
+      const orderResponse = await fetch("/api/razorpay/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
         },
-      );
+        body: JSON.stringify({
+          amount: finalTotal,
+          courseId: firstCourse.id,
+          courseName: firstCourse.title,
+          couponCode: appliedCoupon ? appliedCoupon.coupon.code : "",
+          courseIds: cart.map(function (course) {
+            return course.id;
+          }),
+        }),
+      });
 
       const orderData = await orderResponse.json();
 
@@ -238,7 +235,7 @@ if (checkoutForm) {
 
           try {
             const verifyResponse = await fetch(
-              "https://hvac-tutorial.onrender.com/api/orders/razorpay/verify-payment",
+              "/api/orders/razorpay/verify-payment",
               {
                 method: "POST",
                 headers: {
@@ -362,28 +359,25 @@ if (applyCouponBtn) {
       applyCouponBtn.disabled = true;
       applyCouponBtn.textContent = "Checking...";
 
-      const response = await fetch(
-        "https://hvac-tutorial.onrender.com/api/coupons/validate",
-        {
-          method: "POST",
+      const response = await fetch("/api/coupons/validate", {
+        method: "POST",
 
-          headers: {
-            "Content-Type": "application/json",
+        headers: {
+          "Content-Type": "application/json",
 
-            Authorization: "Bearer " + token,
-          },
-
-          body: JSON.stringify({
-            code: code,
-
-            amount: subtotal,
-
-            courseIds: cart.map(function (course) {
-              return course.id;
-            }),
-          }),
+          Authorization: "Bearer " + token,
         },
-      );
+
+        body: JSON.stringify({
+          code: code,
+
+          amount: subtotal,
+
+          courseIds: cart.map(function (course) {
+            return course.id;
+          }),
+        }),
+      });
 
       const data = await response.json();
 

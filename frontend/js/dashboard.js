@@ -11,16 +11,13 @@ async function loadCurrentUserFromBackend() {
   }
 
   try {
-    const response = await fetch(
-      "https://hvac-tutorial.onrender.com/api/user/profile",
-      {
-        method: "GET",
+    const response = await fetch("/api/user/profile", {
+      method: "GET",
 
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+      headers: {
+        Authorization: "Bearer " + token,
       },
-    );
+    });
 
     const data = await response.json();
 
@@ -78,16 +75,13 @@ async function initializeDashboard() {
   try {
     const token = localStorage.getItem("hvacToken");
 
-    const response = await fetch(
-      "https://hvac-tutorial.onrender.com/api/orders",
-      {
-        method: "GET",
+    const response = await fetch("/api/orders", {
+      method: "GET",
 
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+      headers: {
+        Authorization: "Bearer " + token,
       },
-    );
+    });
 
     const data = await response.json();
 
@@ -137,9 +131,7 @@ async function initializeDashboard() {
   let activeCourseIds = [];
 
   try {
-    const response = await fetch(
-      "https://hvac-tutorial.onrender.com/api/courses",
-    );
+    const response = await fetch("/api/courses");
 
     const data = await response.json();
 
@@ -250,16 +242,13 @@ async function initializeDashboard() {
         const progressResults = await Promise.all(
           uniqueCourses.map(async function (course) {
             try {
-              const response = await fetch(
-                "https://hvac-tutorial.onrender.com/api/progress/" + course.id,
-                {
-                  method: "GET",
+              const response = await fetch("/api/progress/" + course.id, {
+                method: "GET",
 
-                  headers: {
-                    Authorization: "Bearer " + token,
-                  },
+                headers: {
+                  Authorization: "Bearer " + token,
                 },
-              );
+              });
 
               const data = await response.json();
 
@@ -348,16 +337,13 @@ async function initializeDashboard() {
         const progressResults = await Promise.all(
           uniqueCourses.map(async function (course) {
             try {
-              const response = await fetch(
-                "https://hvac-tutorial.onrender.com/api/progress/" + course.id,
-                {
-                  method: "GET",
+              const response = await fetch("/api/progress/" + course.id, {
+                method: "GET",
 
-                  headers: {
-                    Authorization: "Bearer " + token,
-                  },
+                headers: {
+                  Authorization: "Bearer " + token,
                 },
-              );
+              });
 
               const data = await response.json();
 
@@ -401,15 +387,12 @@ async function initializeDashboard() {
         const certificateResults = await Promise.all(
           uniqueCourses.map(async function (course) {
             try {
-              const response = await fetch(
-                "https://hvac-tutorial.onrender.com/api/progress/" + course.id,
-                {
-                  method: "GET",
-                  headers: {
-                    Authorization: "Bearer " + token,
-                  },
+              const response = await fetch("/api/progress/" + course.id, {
+                method: "GET",
+                headers: {
+                  Authorization: "Bearer " + token,
                 },
-              );
+              });
 
               const data = await response.json();
 
@@ -469,16 +452,13 @@ async function initializeDashboard() {
 
       if (token) {
         try {
-          const response = await fetch(
-            "https://hvac-tutorial.onrender.com/api/progress/" + course.id,
-            {
-              method: "GET",
+          const response = await fetch("/api/progress/" + course.id, {
+            method: "GET",
 
-              headers: {
-                Authorization: "Bearer " + token,
-              },
+            headers: {
+              Authorization: "Bearer " + token,
             },
-          );
+          });
 
           const data = await response.json();
 

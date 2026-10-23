@@ -103,29 +103,26 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   if (token) {
     try {
-      const response = await fetch(
-        "https://hvac-tutorial.onrender.com/api/orders",
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + token,
-          },
+      const response = await fetch("/api/orders", {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
         },
-      );
+      });
 
       const data = await response.json();
-         if (response.status === 401) {
-  localStorage.removeItem("hvacToken");
-  localStorage.removeItem("hvacCurrentUser");
-  localStorage.removeItem("hvacRememberMe");
-  localStorage.removeItem("hvacRedirectAfterLogin");
+      if (response.status === 401) {
+        localStorage.removeItem("hvacToken");
+        localStorage.removeItem("hvacCurrentUser");
+        localStorage.removeItem("hvacRememberMe");
+        localStorage.removeItem("hvacRedirectAfterLogin");
 
-  window.location.href = window.location.pathname.includes("/pages/")
-    ? "login.html"
-    : "pages/login.html";
+        window.location.href = window.location.pathname.includes("/pages/")
+          ? "login.html"
+          : "pages/login.html";
 
-  return;
-}
+        return;
+      }
       if (response.ok && Array.isArray(data.orders)) {
         hasPurchasedCourse = data.orders.some(function (order) {
           return (
@@ -202,7 +199,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         try {
           if (token) {
-            await fetch("https://hvac-tutorial.onrender.com/api/auth/logout", {
+            await fetch("/api/auth/logout", {
               method: "POST",
               headers: {
                 Authorization: "Bearer " + token,

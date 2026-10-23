@@ -82,23 +82,20 @@ if (registerForm) {
     }
 
     try {
-      const response = await fetch(
-        "https://hvac-tutorial.onrender.com/api/auth/register",
-        {
-          method: "POST",
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
 
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            name: name,
-            email: email,
-            phone: phone,
-            password: password,
-          }),
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          phone: phone,
+          password: password,
+        }),
+      });
 
       const data = await response.json();
 

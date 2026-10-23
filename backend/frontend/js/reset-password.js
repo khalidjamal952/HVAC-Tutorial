@@ -95,21 +95,18 @@ if (resetPasswordForm) {
     }
 
     try {
-      const response = await fetch(
-        "https://hvac-tutorial.onrender.com/api/auth/reset-password",
-        {
-          method: "POST",
+      const response = await fetch("/api/auth/reset-password", {
+        method: "POST",
 
-          headers: {
-            "Content-Type": "application/json",
-          },
-
-          body: JSON.stringify({
-            token: resetToken,
-            password: password,
-          }),
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+
+        body: JSON.stringify({
+          token: resetToken,
+          password: password,
+        }),
+      });
 
       const data = await response.json();
 

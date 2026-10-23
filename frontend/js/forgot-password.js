@@ -21,18 +21,15 @@ if (forgotPasswordForm) {
     }
 
     try {
-      const response = await fetch(
-        "https://hvac-tutorial.onrender.com/api/auth/forgot-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email,
-          }),
+      const response = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          email: email,
+        }),
+      });
 
       const data = await response.json();
 

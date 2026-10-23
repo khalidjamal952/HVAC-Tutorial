@@ -13,9 +13,7 @@ let allCourses = [];
 // =========================
 async function loadCourses() {
   try {
-    const response = await fetch(
-      "https://hvac-tutorial.onrender.com/api/courses",
-    );
+    const response = await fetch("/api/courses");
 
     const data = await response.json();
 
@@ -31,9 +29,7 @@ async function loadCourses() {
       allCourses = await Promise.all(
         data.courses.map(async function (course) {
           try {
-            const ratingResponse = await fetch(
-              `https://hvac-tutorial.onrender.com/api/ratings/${course.id}`,
-            );
+            const ratingResponse = await fetch(`/api/ratings/${course.id}`);
 
             if (!ratingResponse.ok) {
               return {
@@ -81,7 +77,7 @@ async function loadCourses() {
         allCourses.map(async function (course) {
           try {
             const couponResponse = await fetch(
-              `https://hvac-tutorial.onrender.com/api/coupons/available/${course.id}`,
+              `/api/coupons/available/${course.id}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -253,7 +249,7 @@ function renderCourses() {
     coursesGrid.appendChild(card);
   });
 
-createDynamicFilters();
+  createDynamicFilters();
   setupCourseFilters();
 }
 

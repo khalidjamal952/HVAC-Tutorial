@@ -46,15 +46,12 @@ async function loadProfileFromBackend() {
   }
 
   try {
-    const response = await fetch(
-      "https://hvac-tutorial.onrender.com/api/user/profile",
-      {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+    const response = await fetch("/api/user/profile", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
       },
-    );
+    });
 
     const data = await response.json();
 
@@ -165,22 +162,19 @@ if (profileForm) {
     }
 
     try {
-      const response = await fetch(
-        "https://hvac-tutorial.onrender.com/api/user/profile",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-          body: JSON.stringify({
-            name: updatedName,
-            email: updatedEmail,
-            phone: updatedPhone,
-            city: updatedCity,
-          }),
+      const response = await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
         },
-      );
+        body: JSON.stringify({
+          name: updatedName,
+          email: updatedEmail,
+          phone: updatedPhone,
+          city: updatedCity,
+        }),
+      });
 
       const data = await response.json();
 

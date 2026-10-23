@@ -99,9 +99,7 @@ const courseId = urlParams.get("id");
 let course = null;
 
 async function loadCourseDetails() {
-  const response = await fetch(
-    "https://hvac-tutorial.onrender.com/api/courses",
-  );
+  const response = await fetch("/api/courses");
 
   const data = await response.json();
 
@@ -273,9 +271,7 @@ async function loadCourseRatings() {
   }
 
   try {
-    const response = await fetch(
-      `https://hvac-tutorial.onrender.com/api/ratings/${courseId}`,
-    );
+    const response = await fetch(`/api/ratings/${courseId}`);
 
     const data = await response.json();
 
@@ -383,20 +379,17 @@ if (submitRatingBtn) {
       submitRatingBtn.disabled = true;
       submitRatingBtn.textContent = "Submitting...";
 
-      const response = await fetch(
-        `https://hvac-tutorial.onrender.com/api/ratings/${courseId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
-          },
-          body: JSON.stringify({
-            rating: selectedRating,
-            review: review,
-          }),
+      const response = await fetch(`/api/ratings/${courseId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
         },
-      );
+        body: JSON.stringify({
+          rating: selectedRating,
+          review: review,
+        }),
+      });
 
       const data = await response.json();
 

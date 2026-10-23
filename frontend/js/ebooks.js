@@ -1,4 +1,4 @@
-// const API_BASE_URL = "https://hvac-tutorial.onrender.com";
+// const API_BASE_URL = "";
 const API_BASE_URL = "";
 
 const ebooksGrid = document.getElementById("ebooksGrid");
