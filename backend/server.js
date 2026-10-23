@@ -35,7 +35,8 @@ app.use("/assets/ebooks", function (req, res, next) {
 });
 app.use("/assets", express.static(path.join(__dirname, "../assets")));
 
-const PORT = 5000;
+// const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 connectDB();
 
 app.use("/api/user", userRoutes);
@@ -59,8 +60,10 @@ app.get("/api/coupons/test-server", function (req, res) {
     message: "Coupon test route from server.js is working",
   });
 });
+app.use(express.static(path.join(__dirname, "../frontend")));
+
 app.get("/", function (req, res) {
-  res.send("HVAC Tutorial Backend is Running!");
+  res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
 
 app.listen(PORT, function () {
