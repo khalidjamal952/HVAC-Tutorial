@@ -266,6 +266,7 @@ router.post("/upload/complete", adminAuthMiddleware, async (req, res) => {
       req.body;
 
     const adminId = String(
+      req.admin?.adminId ||
       req.admin?.userId ||
         req.admin?._id ||
         req.admin?.id ||
