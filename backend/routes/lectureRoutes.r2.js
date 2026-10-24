@@ -5,6 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const Lecture = require("../models/Lecture");
+const UploadSession = require("../models/UploadSession");
 const authMiddleware = require("../middleware/authMiddleware");
 const adminAuthMiddleware = require("../middleware/adminAuthMiddleware");
 
@@ -12,6 +13,10 @@ const {
   S3Client,
   DeleteObjectCommand,
   GetObjectCommand,
+  CreateMultipartUploadCommand,
+  UploadPartCommand,
+  CompleteMultipartUploadCommand,
+  AbortMultipartUploadCommand,
 } = require("@aws-sdk/client-s3");
 const { Upload } = require("@aws-sdk/lib-storage");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
@@ -51,6 +56,408 @@ const s3 = isR2Configured()
       },
     })
   : null;
+
+// R2 multipart upload settings
+const R2_MAX_VIDEO_SIZE = 50 * 1024 * 1024 * 1024;
+const R2_PART_SIZE = 16 * 1024 * 1024;
+
+function requireR2(res) {
+  if (!isR2Configured() || !s3) {
+    res.status(503).json({
+      message: "Cloudflare R2 is not configured correctly.",
+    });
+    return false;
+  }
+  return true;
+}
+
+// INITIATE MULTIPART UPLOAD
+router.post("/upload/initiate", adminAuthMiddleware, async (req, res) => {
+  try {
+    if (!requireR2(res)) return;
+
+    const { fileName, contentType, fileSize, courseId } = req.body;
+
+    if (!fileName || !contentType || !fileSize || !courseId) {
+      return res.status(400).json({
+        message: "File name, type, size and course are required.",
+      });
+    }
+
+    const size = Number(fileSize);
+    if (!Number.isSafeInteger(size) || size <= 0 || size > R2_MAX_VIDEO_SIZE) {
+      return res.status(400).json({
+        message: "Video size must be between 1 byte and 50 GB.",
+      });
+    }
+
+    const allowedTypes = [
+      "video/mp4",
+      "video/webm",
+      "video/ogg",
+      "video/quicktime",
+    ];
+
+    if (!allowedTypes.includes(contentType)) {
+      return res.status(400).json({ message: "Unsupported video type." });
+    }
+
+    const extension = path.extname(fileName).toLowerCase();
+    if (![".mp4", ".webm", ".ogg", ".mov"].includes(extension)) {
+      return res.status(400).json({
+        message: "Unsupported video extension.",
+      });
+    }
+
+    const key = `courses/${encodeURIComponent(String(courseId))}/videos/${Date.now()}-${crypto.randomUUID()}${extension}`;
+
+    const result = await s3.send(
+      new CreateMultipartUploadCommand({
+        Bucket: R2_BUCKET_NAME,
+        Key: key,
+        ContentType: contentType,
+        Metadata: {
+          originalname: path.basename(fileName).slice(0, 200),
+        },
+      }),
+    );
+
+    if (!result.UploadId) {
+      return res.status(500).json({
+        message: "R2 did not return an upload ID.",
+      });
+    }
+
+    const adminId = String(
+      req.admin?.userId ||
+        req.admin?._id ||
+        req.admin?.id ||
+        req.admin?.sub ||
+        "",
+    );
+
+    if (!adminId) {
+      await s3.send(
+        new AbortMultipartUploadCommand({
+          Bucket: R2_BUCKET_NAME,
+          Key: key,
+          UploadId: result.UploadId,
+        }),
+      );
+
+      return res.status(401).json({
+        message: "Admin identity not found. Check adminAuthMiddleware.",
+      });
+    }
+
+    try {
+      await UploadSession.create({
+        uploadId: result.UploadId,
+        key,
+        adminId,
+        courseId: String(courseId),
+        fileName: path.basename(fileName),
+        contentType,
+        fileSize: size,
+        status: "initiated",
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      });
+    } catch (dbError) {
+      try {
+        await s3.send(
+          new AbortMultipartUploadCommand({
+            Bucket: R2_BUCKET_NAME,
+            Key: key,
+            UploadId: result.UploadId,
+          }),
+        );
+      } catch (abortError) {
+        console.error("R2 Abort After Session Failure:", abortError);
+      }
+      throw dbError;
+    }
+
+    return res.status(200).json({
+      message: "Multipart upload initiated.",
+      uploadId: result.UploadId,
+      key,
+      partSize: R2_PART_SIZE,
+    });
+  } catch (error) {
+    console.error("R2 Initiate Upload Error:", error);
+    return res.status(500).json({
+      message: "Unable to initiate video upload.",
+    });
+  }
+});
+
+// GENERATE SIGNED URL FOR EACH PART
+router.post("/upload/sign-part", adminAuthMiddleware, async (req, res) => {
+  try {
+    if (!requireR2(res)) return;
+
+    const { key, uploadId, partNumber } = req.body;
+    const part = Number(partNumber);
+
+    const adminId = String(
+      req.admin?.userId ||
+        req.admin?._id ||
+        req.admin?.id ||
+        req.admin?.sub ||
+        "",
+    );
+
+    if (
+      !adminId ||
+      typeof key !== "string" ||
+      typeof uploadId !== "string" ||
+      !uploadId ||
+      !Number.isInteger(part) ||
+      part < 1 ||
+      part > 10000
+    ) {
+      return res.status(400).json({
+        message: "Invalid multipart upload details.",
+      });
+    }
+
+    const session = await UploadSession.findOne({
+      key,
+      uploadId,
+      adminId,
+      status: "initiated",
+      expiresAt: { $gt: new Date() },
+    });
+
+    if (!session) {
+      return res.status(403).json({
+        message: "Upload session is invalid, expired, or unauthorized.",
+      });
+    }
+
+    const url = await getSignedUrl(
+      s3,
+      new UploadPartCommand({
+        Bucket: R2_BUCKET_NAME,
+        Key: session.key,
+        UploadId: session.uploadId,
+        PartNumber: part,
+      }),
+      { expiresIn: 900 },
+    );
+
+    return res.json({ url });
+  } catch (error) {
+    console.error("R2 Sign Part Error:", error);
+    return res.status(500).json({
+      message: "Unable to generate upload URL.",
+    });
+  }
+});
+
+// COMPLETE MULTIPART UPLOAD
+router.post("/upload/complete", adminAuthMiddleware, async (req, res) => {
+  try {
+    if (!requireR2(res)) return;
+
+    const { key, uploadId, parts, courseId, number, title, description } =
+      req.body;
+
+    const adminId = String(
+      req.admin?.userId ||
+        req.admin?._id ||
+        req.admin?.id ||
+        req.admin?.sub ||
+        "",
+    );
+
+    if (
+      !courseId ||
+      number === undefined ||
+      number === null ||
+      String(number).trim() === "" ||
+      !Number.isSafeInteger(Number(number)) ||
+      Number(number) < 1 ||
+      typeof title !== "string" ||
+      !title.trim()
+    ) {
+      return res.status(400).json({
+        message: "Valid course, lecture number and title are required.",
+      });
+    }
+
+    if (
+      !adminId ||
+      typeof key !== "string" ||
+      typeof uploadId !== "string" ||
+      !uploadId ||
+      !Array.isArray(parts) ||
+      parts.length === 0 ||
+      parts.length > 10000
+    ) {
+      return res.status(400).json({
+        message: "Invalid multipart completion details.",
+      });
+    }
+
+    const session = await UploadSession.findOne({
+      key,
+      uploadId,
+      adminId,
+      courseId: String(courseId),
+      status: "initiated",
+      expiresAt: { $gt: new Date() },
+    });
+
+    if (!session) {
+      return res.status(403).json({
+        message: "Upload session is invalid, expired, or unauthorized.",
+      });
+    }
+
+    const expectedParts = Math.ceil(session.fileSize / R2_PART_SIZE);
+    if (parts.length !== expectedParts) {
+      return res.status(400).json({
+        message: "Uploaded parts count does not match file size.",
+      });
+    }
+
+    const normalizedParts = parts.map((part) => ({
+      PartNumber: Number(part.PartNumber),
+      ETag: typeof part.ETag === "string" ? part.ETag : "",
+    }));
+
+    const validParts = normalizedParts.every(
+      (part, index) =>
+        Number.isInteger(part.PartNumber) &&
+        part.PartNumber === index + 1 &&
+        part.ETag.length > 0,
+    );
+
+    if (!validParts) {
+      return res.status(400).json({
+        message: "Invalid uploaded parts list.",
+      });
+    }
+
+    const result = await s3.send(
+      new CompleteMultipartUploadCommand({
+        Bucket: R2_BUCKET_NAME,
+        Key: session.key,
+        UploadId: session.uploadId,
+        MultipartUpload: { Parts: normalizedParts },
+      }),
+    );
+
+    const lectureId =
+      "LECTURE" + Date.now() + crypto.randomBytes(3).toString("hex");
+
+    let lecture;
+
+    try {
+      lecture = await Lecture.create({
+        lectureId,
+        courseId: session.courseId,
+        number: Number(number),
+        title: title.trim(),
+        description: typeof description === "string" ? description.trim() : "",
+        video: session.key,
+        thumbnail: "",
+      });
+    } catch (dbError) {
+      console.error("Lecture Save After R2 Completion Failed:", dbError);
+
+      try {
+        await s3.send(
+          new DeleteObjectCommand({
+            Bucket: R2_BUCKET_NAME,
+            Key: session.key,
+          }),
+        );
+      } catch (cleanupError) {
+        console.error("R2 Orphan Video Cleanup Failed:", cleanupError);
+      }
+
+      throw dbError;
+    }
+
+    session.status = "completed";
+    await session.save();
+
+    return res.status(201).json({
+      message: "Video uploaded and lecture saved successfully.",
+      lecture,
+      key: session.key,
+      etag: result.ETag,
+    });
+  } catch (error) {
+    console.error("R2 Complete Upload Error:", error);
+    return res.status(500).json({
+      message: "Unable to complete upload or save lecture.",
+    });
+  }
+});
+
+// ABORT MULTIPART UPLOAD
+router.post("/upload/abort", adminAuthMiddleware, async (req, res) => {
+  try {
+    if (!requireR2(res)) return;
+
+    const { key, uploadId } = req.body;
+
+    const adminId = String(
+      req.admin?.userId ||
+        req.admin?._id ||
+        req.admin?.id ||
+        req.admin?.sub ||
+        "",
+    );
+
+    if (
+      !adminId ||
+      typeof key !== "string" ||
+      typeof uploadId !== "string" ||
+      !uploadId
+    ) {
+      return res.status(400).json({
+        message: "Invalid multipart abort details.",
+      });
+    }
+
+    const session = await UploadSession.findOne({
+      key,
+      uploadId,
+      adminId,
+      status: "initiated",
+    });
+
+    if (!session) {
+      return res.status(403).json({
+        message: "Upload session is invalid or unauthorized.",
+      });
+    }
+
+    await s3.send(
+      new AbortMultipartUploadCommand({
+        Bucket: R2_BUCKET_NAME,
+        Key: session.key,
+        UploadId: session.uploadId,
+      }),
+    );
+
+    session.status = "aborted";
+    await session.save();
+
+    return res.json({
+      message: "Multipart upload aborted successfully.",
+    });
+  } catch (error) {
+    console.error("R2 Abort Upload Error:", error);
+    return res.status(500).json({
+      message: "Unable to abort video upload.",
+    });
+  }
+});
 
 function isR2Key(value) {
   // New records store an object key, e.g. courses/<courseId>/<file>.
