@@ -265,9 +265,12 @@ router.post("/upload/complete", adminAuthMiddleware, async (req, res) => {
     const { key, uploadId, parts, courseId, number, title, description } =
       req.body;
 
+    console.log("[R2 DEBUG] req.admin:", JSON.stringify(req.admin));
+    console.log("[R2 DEBUG] adminId field:", req.admin?.adminId);
+
     const adminId = String(
       req.admin?.adminId ||
-      req.admin?.userId ||
+        req.admin?.userId ||
         req.admin?._id ||
         req.admin?.id ||
         req.admin?.sub ||
