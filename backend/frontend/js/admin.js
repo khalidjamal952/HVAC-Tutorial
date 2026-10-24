@@ -38,19 +38,16 @@ if (adminLoginForm) {
     }
 
     try {
-      const response = await fetch(
-        "/api/admin/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email,
-            password: password,
-          }),
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
 
       const data = await response.json();
 
@@ -203,15 +200,12 @@ if (studentsTableBody) {
     }
 
     try {
-      const response = await fetch(
-        "/api/user/admin/students",
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + adminToken,
-          },
+      const response = await fetch("/api/user/admin/students", {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + adminToken,
         },
-      );
+      });
 
       const data = await response.json();
 
@@ -312,8 +306,7 @@ if (studentsTableBody) {
 
         try {
           const response = await fetch(
-            "/api/user/admin/students/" +
-              studentId,
+            "/api/user/admin/students/" + studentId,
             {
               method: "DELETE",
               headers: {
@@ -493,9 +486,7 @@ if (adminCoursesTableBody) {
 
   async function loadAdminCourses() {
     try {
-      const response = await fetch(
-        "/api/courses",
-      );
+      const response = await fetch("/api/courses");
 
       const data = await response.json();
 
@@ -573,9 +564,7 @@ if (adminCoursesTableBody) {
     if (!categorySelect) return;
 
     try {
-      const response = await fetch(
-        "/api/categories",
-      );
+      const response = await fetch("/api/categories");
 
       const data = await response.json();
 
@@ -721,15 +710,12 @@ if (adminCoursesTableBody) {
         const adminToken = localStorage.getItem("hvacAdminToken");
 
         try {
-          const response = await fetch(
-            "/api/courses/admin/" + courseId,
-            {
-              method: "DELETE",
-              headers: {
-                Authorization: "Bearer " + adminToken,
-              },
+          const response = await fetch("/api/courses/admin/" + courseId, {
+            method: "DELETE",
+            headers: {
+              Authorization: "Bearer " + adminToken,
             },
-          );
+          });
 
           const data = await response.json();
 
@@ -814,19 +800,16 @@ if (adminCoursesTableBody) {
       }
 
       try {
-        const response = await fetch(
-          "/api/categories",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + adminToken,
-            },
-            body: JSON.stringify({
-              name: categoryName.trim(),
-            }),
+        const response = await fetch("/api/categories", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + adminToken,
           },
-        );
+          body: JSON.stringify({
+            name: categoryName.trim(),
+          }),
+        });
 
         const data = await response.json();
 
@@ -940,26 +923,23 @@ if (adminCoursesTableBody) {
         // =============================
 
         if (editingId) {
-          const response = await fetch(
-            "/api/courses/admin/" + editingId,
-            {
-              method: "PUT",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + adminToken,
-              },
-              body: JSON.stringify({
-                title: title,
-                category: category,
-                lessons: lessons,
-                duration: duration,
-                price: price,
-                originalPrice: originalPrice,
-                students: 0,
-                description: description,
-              }),
+          const response = await fetch("/api/courses/admin/" + editingId, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + adminToken,
             },
-          );
+            body: JSON.stringify({
+              title: title,
+              category: category,
+              lessons: lessons,
+              duration: duration,
+              price: price,
+              originalPrice: originalPrice,
+              students: 0,
+              description: description,
+            }),
+          });
 
           const data = await response.json();
 
@@ -987,17 +967,14 @@ if (adminCoursesTableBody) {
             description: description,
           };
 
-          const response = await fetch(
-            "/api/courses/admin",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + adminToken,
-              },
-              body: JSON.stringify(newCourse),
+          const response = await fetch("/api/courses/admin", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer " + adminToken,
             },
-          );
+            body: JSON.stringify(newCourse),
+          });
 
           const data = await response.json();
 
@@ -1046,15 +1023,12 @@ async function loadAdminOrders() {
   }
 
   try {
-    const response = await fetch(
-      "/api/orders/admin/all",
-      {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+    const response = await fetch("/api/orders/admin/all", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
       },
-    );
+    });
 
     const data = await response.json();
 
@@ -1267,15 +1241,12 @@ document.addEventListener("click", async function (event) {
   }
 
   try {
-    const response = await fetch(
-      "/api/orders/admin/" + orderId,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+    const response = await fetch("/api/orders/admin/" + orderId, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token,
       },
-    );
+    });
 
     const data = await response.json();
 
@@ -1347,15 +1318,12 @@ async function loadAdminLectures() {
   }
 
   try {
-    const response = await fetch(
-      "/api/lectures/admin",
-      {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + adminToken,
-        },
+    const response = await fetch("/api/lectures/admin", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + adminToken,
       },
-    );
+    });
 
     const data = await response.json();
 
@@ -1384,9 +1352,7 @@ async function populateLectureCourses() {
   }
 
   try {
-    const response = await fetch(
-      "/api/courses",
-    );
+    const response = await fetch("/api/courses");
 
     const data = await response.json();
 
@@ -1429,9 +1395,7 @@ async function renderAdminLectures() {
   let courses = [];
 
   try {
-    const response = await fetch(
-      "/api/courses",
-    );
+    const response = await fetch("/api/courses");
 
     const data = await response.json();
 
@@ -1615,6 +1579,9 @@ function closeLectureModalWindow() {
 // =========================
 // SAVE LECTURE
 // =========================
+// =========================
+// SAVE LECTURE - R2 MULTIPART UPLOAD
+// =========================
 if (lectureForm) {
   lectureForm.addEventListener("submit", async function (event) {
     event.preventDefault();
@@ -1625,109 +1592,284 @@ if (lectureForm) {
     const description = lectureDescription.value.trim();
     const videoFile = lectureVideo.files[0];
     const thumbnailFile = lectureThumbnail.files[0];
+    const adminToken = localStorage.getItem("hvacAdminToken");
 
     if (!courseId || !number || !title) {
       alert("Please fill all lecture details.");
       return;
     }
 
-    const adminToken = localStorage.getItem("hvacAdminToken");
-    // =========================
-    // EDIT EXISTING LECTURE
-    // =========================
-
-    if (editingLectureId) {
-      try {
-        const response = await fetch(
-          "/api/lectures/" + editingLectureId,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + adminToken,
-            },
-            body: JSON.stringify({
-              courseId: courseId,
-              number: number,
-              title: title,
-              description: description,
-            }),
-          },
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          alert(data.message || "Failed to update lecture.");
-          return;
-        }
-
-        alert("Lecture updated successfully!");
-
-        closeLectureModalWindow();
-        lectureForm.reset();
-
-        await loadAdminLectures();
-
-        return;
-      } catch (error) {
-        console.error("Edit Lecture Error:", error);
-
-        alert("Unable to update lecture. Please check the server.");
-
-        return;
-      }
-    }
     if (!adminToken) {
       alert("Admin authentication required. Please login again.");
       return;
     }
 
-    const formData = new FormData();
-
-    formData.append("courseId", courseId);
-    formData.append("number", number);
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("video", videoFile);
-    if (thumbnailFile) {
-      formData.append("thumbnail", thumbnailFile);
-    }
-
-    try {
-      const response = await fetch(
-        "/api/lectures",
-        {
-          method: "POST",
+    // Edit existing lecture
+    if (editingLectureId) {
+      try {
+        const response = await fetch("/api/lectures/" + editingLectureId, {
+          method: "PUT",
           headers: {
+            "Content-Type": "application/json",
             Authorization: "Bearer " + adminToken,
           },
-          body: formData,
-        },
-      );
+          body: JSON.stringify({
+            courseId,
+            number,
+            title,
+            description,
+          }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (!response.ok) {
-        alert(data.message || "Failed to upload lecture.");
-        return;
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to update lecture.");
+        }
+
+        alert("Lecture updated successfully!");
+        closeLectureModalWindow();
+        lectureForm.reset();
+        await loadAdminLectures();
+      } catch (error) {
+        console.error("Edit Lecture Error:", error);
+        alert(error.message || "Unable to update lecture.");
       }
 
-      alert("Lecture added successfully!");
+      return;
+    }
+
+    if (!videoFile) {
+      alert("Please select a video file.");
+      return;
+    }
+
+    if (videoFile.size > 50 * 1024 * 1024 * 1024) {
+      alert("Maximum video size is 50 GB.");
+      return;
+    }
+
+    const submitButton = lectureForm.querySelector(
+      'button[type="submit"], input[type="submit"]',
+    );
+
+    let progressContainer = document.getElementById("r2UploadProgress");
+    let progressBar = document.getElementById("r2UploadProgressBar");
+    let progressText = document.getElementById("r2UploadProgressText");
+
+    if (!progressContainer) {
+      progressContainer = document.createElement("div");
+      progressContainer.id = "r2UploadProgress";
+      progressContainer.style.cssText = "margin:16px 0;";
+
+      progressText = document.createElement("p");
+      progressText.id = "r2UploadProgressText";
+      progressText.textContent = "Preparing upload...";
+
+      const track = document.createElement("div");
+      track.style.cssText =
+        "height:12px;background:#ddd;border-radius:8px;overflow:hidden;";
+
+      progressBar = document.createElement("div");
+      progressBar.id = "r2UploadProgressBar";
+      progressBar.style.cssText =
+        "height:100%;width:0%;background:#1677ff;transition:width .2s;";
+
+      track.appendChild(progressBar);
+      progressContainer.append(progressText, track);
+
+      lectureForm.appendChild(progressContainer);
+    }
+
+    const setProgress = (percent, message) => {
+      progressBar.style.width = `${percent}%`;
+      progressText.textContent = `${message} — ${Math.round(percent)}%`;
+    };
+
+    const request = async (url, body) => {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + adminToken,
+        },
+        body: JSON.stringify(body),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || `Request failed: ${url}`);
+      }
+
+      return data;
+    };
+
+    let uploadInfo;
+    let uploadCompleted = false;
+
+    try {
+      if (submitButton) submitButton.disabled = true;
+
+      // Step 1: Ask backend to start multipart upload
+      setProgress(0, "Starting upload");
+
+      uploadInfo = await request("/api/lectures/upload/initiate", {
+        fileName: videoFile.name,
+        contentType: videoFile.type || "video/mp4",
+        fileSize: videoFile.size,
+        courseId,
+      });
+
+      const { key, uploadId, partSize } = uploadInfo;
+
+      if (!key || !uploadId || !partSize) {
+        throw new Error("Server returned incomplete upload information.");
+      }
+
+      const totalParts = Math.ceil(videoFile.size / partSize);
+      const completedParts = new Array(totalParts);
+      let nextPart = 0;
+      let uploadedBytes = 0;
+      const partProgress = new Array(totalParts).fill(0);
+      const concurrency = 4;
+
+      // Upload each part directly to Cloudflare R2
+      async function uploadPart(partIndex) {
+        const start = partIndex * partSize;
+        const end = Math.min(start + partSize, videoFile.size);
+        const blob = videoFile.slice(start, end);
+        const partNumber = partIndex + 1;
+
+        const signed = await request("/api/lectures/upload/sign-part", {
+          key,
+          uploadId,
+          partNumber,
+        });
+
+        if (!signed.url) {
+          throw new Error(`Missing signed URL for part ${partNumber}.`);
+        }
+
+        const etag = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+
+          xhr.open("PUT", signed.url);
+          xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+              partProgress[partIndex] = event.loaded;
+              const currentBytes = partProgress.reduce(
+                (sum, value) => sum + value,
+                0,
+              );
+              const percent = (currentBytes / videoFile.size) * 100;
+              setProgress(percent, "Uploading video");
+            }
+          };
+
+          xhr.onload = () => {
+            if (xhr.status < 200 || xhr.status >= 300) {
+              reject(new Error(`R2 upload failed for part ${partNumber}.`));
+              return;
+            }
+
+            const tag = xhr.getResponseHeader("ETag");
+
+            if (!tag) {
+              reject(
+                new Error(
+                  "ETag missing. Check R2 CORS ExposeHeaders includes ETag.",
+                ),
+              );
+              return;
+            }
+
+            resolve(tag.replaceAll('"', ""));
+          };
+
+          xhr.onerror = () => reject(new Error("Network error during upload."));
+          xhr.onabort = () => reject(new Error("Upload was cancelled."));
+          xhr.send(blob);
+        });
+
+        uploadedBytes += blob.size;
+        completedParts[partIndex] = {
+          PartNumber: partNumber,
+          ETag: etag,
+        };
+      }
+
+      async function worker() {
+        while (true) {
+          const partIndex = nextPart++;
+          if (partIndex >= totalParts) return;
+          await uploadPart(partIndex);
+        }
+      }
+
+      await Promise.all(
+        Array.from({ length: Math.min(concurrency, totalParts) }, () =>
+          worker(),
+        ),
+      );
+
+      // Step 2: Tell backend to finish upload and save lecture metadata
+      setProgress(99, "Finalizing upload");
+
+      await request("/api/lectures/upload/complete", {
+        key,
+        uploadId,
+        parts: completedParts,
+        courseId,
+        number,
+        title,
+        description,
+        fileName: videoFile.name,
+        contentType: videoFile.type || "video/mp4",
+        fileSize: videoFile.size,
+        thumbnail: "",
+      });
+
+      uploadCompleted = true;
+      setProgress(100, "Upload complete");
+
+      alert(
+        thumbnailFile
+          ? "Video uploaded. Thumbnail upload must be implemented separately."
+          : "Lecture upload completed.",
+      );
 
       closeLectureModalWindow();
-
       lectureForm.reset();
-
-      loadAdminLectures();
+      await loadAdminLectures();
+      // } catch (error) {
+      //   console.error("R2 Multipart Upload Error:", error);
+      //   alert(error.message || "Video upload failed.");
+      // } finally {
+      //   if (submitButton) submitButton.disabled = false;
+      // }
     } catch (error) {
-      console.error("Add Lecture Error:", error);
+      console.error("R2 Multipart Upload Error:", error);
 
-      alert("Unable to upload lecture. Please check the server.");
+      // Abort incomplete multipart upload if initiation succeeded
+      if (uploadInfo?.key && uploadInfo?.uploadId && !uploadCompleted) {
+        try {
+          await request("/api/lectures/upload/abort", {
+            key: uploadInfo.key,
+            uploadId: uploadInfo.uploadId,
+          });
+          console.log("Incomplete R2 upload aborted.");
+        } catch (abortError) {
+          console.error("R2 Upload Abort Failed:", abortError);
+        }
+      }
+
+      alert(error.message || "Video upload failed.");
+    } finally {
+      if (submitButton) submitButton.disabled = false;
     }
   });
 }
-
 // =========================
 // DELETE LECTURE
 // =========================
@@ -1749,15 +1891,12 @@ async function deleteLecture(id) {
   }
 
   try {
-    const response = await fetch(
-      "/api/lectures/" + id,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + adminToken,
-        },
+    const response = await fetch("/api/lectures/" + id, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + adminToken,
       },
-    );
+    });
 
     const data = await response.json();
 
@@ -1872,15 +2011,12 @@ async function loadAdminLiveClasses() {
   }
 
   try {
-    const response = await fetch(
-      "/api/live-classes/admin",
-      {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + adminToken,
-        },
+    const response = await fetch("/api/live-classes/admin", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + adminToken,
       },
-    );
+    });
 
     const data = await response.json();
 
@@ -1909,9 +2045,7 @@ async function populateLiveClassCourses() {
   }
 
   try {
-    const response = await fetch(
-      "/api/courses",
-    );
+    const response = await fetch("/api/courses");
 
     const data = await response.json();
 
@@ -1985,9 +2119,7 @@ async function renderAdminLiveClasses() {
   let courses = [];
 
   try {
-    const response = await fetch(
-      "/api/courses",
-    );
+    const response = await fetch("/api/courses");
 
     const data = await response.json();
 
@@ -2239,8 +2371,7 @@ if (liveClassForm) {
 
       if (editingLiveClassId) {
         const response = await fetch(
-          "/api/live-classes/admin/" +
-            editingLiveClassId,
+          "/api/live-classes/admin/" + editingLiveClassId,
           {
             method: "PUT",
             headers: {
@@ -2273,25 +2404,22 @@ if (liveClassForm) {
       // ADD
       // =========================
       else {
-        const response = await fetch(
-          "/api/live-classes/admin",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + adminToken,
-            },
-            body: JSON.stringify({
-              title: title,
-              courseId: courseId,
-              date: date,
-              time: time,
-              instructor: instructor,
-              link: link,
-              description: description,
-            }),
+        const response = await fetch("/api/live-classes/admin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + adminToken,
           },
-        );
+          body: JSON.stringify({
+            title: title,
+            courseId: courseId,
+            date: date,
+            time: time,
+            instructor: instructor,
+            link: link,
+            description: description,
+          }),
+        });
 
         const data = await response.json();
 
@@ -2337,15 +2465,12 @@ async function deleteLiveClass(id) {
   }
 
   try {
-    const response = await fetch(
-      "/api/live-classes/admin/" + id,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + adminToken,
-        },
+    const response = await fetch("/api/live-classes/admin/" + id, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + adminToken,
       },
-    );
+    });
 
     const data = await response.json();
 
@@ -2434,15 +2559,12 @@ async function loadAdminCertificates() {
   }
 
   try {
-    const response = await fetch(
-      "/api/certificates/admin/all",
-      {
-        method: "GET",
-        headers: {
-          Authorization: "Bearer " + adminToken,
-        },
+    const response = await fetch("/api/certificates/admin/all", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + adminToken,
       },
-    );
+    });
 
     const data = await response.json();
 
@@ -2646,16 +2768,12 @@ document.addEventListener("click", async function (event) {
   }
 
   try {
-    const response = await fetch(
-      "/api/certificates/admin/" +
-        certificateId,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+    const response = await fetch("/api/certificates/admin/" + certificateId, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token,
       },
-    );
+    });
 
     const data = await response.json();
 
@@ -2708,9 +2826,7 @@ if (document.getElementById("adminCourseCount")) {
   // TOTAL COURSES
   async function loadAdminCourseCount() {
     try {
-      const response = await fetch(
-        "/api/courses",
-      );
+      const response = await fetch("/api/courses");
 
       const data = await response.json();
 
@@ -2972,18 +3088,15 @@ if (adminForgotPasswordForm) {
     }
 
     try {
-      const response = await fetch(
-        "/api/admin/forgot-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email,
-          }),
+      const response = await fetch("/api/admin/forgot-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          email: email,
+        }),
+      });
 
       const data = await response.json();
 
@@ -3069,19 +3182,16 @@ if (adminResetPasswordForm) {
     }
 
     try {
-      const response = await fetch(
-        "/api/admin/reset-password",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            token: token,
-            password: newPassword,
-          }),
+      const response = await fetch("/api/admin/reset-password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-      );
+        body: JSON.stringify({
+          token: token,
+          password: newPassword,
+        }),
+      });
 
       const data = await response.json();
 
