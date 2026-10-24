@@ -130,7 +130,8 @@ router.post("/upload/initiate", adminAuthMiddleware, async (req, res) => {
     }
 
     const adminId = String(
-      req.admin?.userId ||
+      req.admin?.adminId ||
+        req.admin?.userId ||
         req.admin?._id ||
         req.admin?.id ||
         req.admin?.sub ||
