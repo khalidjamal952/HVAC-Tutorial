@@ -74,6 +74,7 @@ function requireR2(res) {
 // INITIATE MULTIPART UPLOAD
 router.post("/upload/initiate", adminAuthMiddleware, async (req, res) => {
   try {
+    console.log("Decoded admin JWT:", req.admin);
     if (!requireR2(res)) return;
 
     const { fileName, contentType, fileSize, courseId } = req.body;
