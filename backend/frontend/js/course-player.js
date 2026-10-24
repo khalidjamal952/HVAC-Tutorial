@@ -453,6 +453,7 @@ if (course) {
 // =========================================
 
 let currentLectureIndex = 0;
+let currentVideoObjectUrl = null;
 // =========================================
 // PROGRESS STORAGE KEY
 // =========================================
@@ -851,29 +852,49 @@ function loadLecture() {
   if (lecture.video) {
     const token = localStorage.getItem("hvacToken");
 
-    // Clear previous video
+    // Clear previous Blob URL to prevent memory leaks.
+    if (currentVideoObjectUrl) {
+      URL.revokeObjectURL(currentVideoObjectUrl);
+      currentVideoObjectUrl = null;
+    }
+
     videoSource.src = "";
     lectureVideo.load();
 
-    fetch("/api/lectures/video/" + lecture.lectureId, {
+    fetch("/api/lectures/video/" + encodeURIComponent(lecture.lectureId), {
       method: "GET",
       headers: {
         Authorization: "Bearer " + token,
       },
     })
-      .then(function (response) {
+      .then(async function (response) {
         if (!response.ok) {
-          throw new Error("Video request failed: " + response.status);
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || "Video request failed: " + response.status,
+          );
         }
 
-        return response.blob();
-      })
-      .then(function (blob) {
-        const videoUrl = URL.createObjectURL(blob);
+        const contentType = response.headers.get("content-type") || "";
 
-        videoSource.src = videoUrl;
+        // New R2 videos return a signed URL as JSON.
+        if (contentType.includes("application/json")) {
+          const data = await response.json();
 
-        lectureVideo.load();
+          if (!data.url) {
+            throw new Error("Signed video URL was not returned.");
+          }
+
+          videoSource.src = data.url;
+          lectureVideo.load();
+        } else {
+          // Support older videos stored locally.
+          const blob = await response.blob();
+
+          currentVideoObjectUrl = URL.createObjectURL(blob);
+          videoSource.src = currentVideoObjectUrl;
+          lectureVideo.load();
+        }
 
         lectureVideo.addEventListener(
           "loadedmetadata",
@@ -889,6 +910,7 @@ function loadLecture() {
       })
       .catch(function (error) {
         console.error("Video Load Error:", error);
+        alert("Video load nahi hui. Please dobara try karein.");
       });
   } else {
     videoSource.src = "";

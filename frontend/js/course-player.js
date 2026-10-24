@@ -847,31 +847,40 @@ function loadLecture() {
   // =========================================
   // VIDEO
   // =========================================
-
   if (lecture.video) {
     const token = localStorage.getItem("hvacToken");
 
-    // Clear previous video
     videoSource.src = "";
     lectureVideo.load();
 
-    fetch("/api/lectures/video/" + lecture.lectureId, {
+    fetch("/api/lectures/video/" + encodeURIComponent(lecture.lectureId), {
       method: "GET",
       headers: {
         Authorization: "Bearer " + token,
       },
     })
-      .then(function (response) {
+      .then(async function (response) {
         if (!response.ok) {
-          throw new Error("Video request failed: " + response.status);
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.message || "Video request failed: " + response.status,
+          );
         }
 
-        return response.blob();
-      })
-      .then(function (blob) {
-        const videoUrl = URL.createObjectURL(blob);
+        const contentType = response.headers.get("content-type") || "";
 
-        videoSource.src = videoUrl;
+        if (contentType.includes("application/json")) {
+          const data = await response.json();
+
+          if (!data.url) {
+            throw new Error("Signed video URL was not returned.");
+          }
+
+          videoSource.src = data.url;
+        } else {
+          const blob = await response.blob();
+          videoSource.src = URL.createObjectURL(blob);
+        }
 
         lectureVideo.load();
 
@@ -880,7 +889,11 @@ function loadLecture() {
           function () {
             const savedTime = videoPositions[currentLectureIndex];
 
-            if (savedTime !== undefined && savedTime < lectureVideo.duration) {
+            if (
+              savedTime !== undefined &&
+              savedTime >= 0 &&
+              savedTime < lectureVideo.duration
+            ) {
               lectureVideo.currentTime = savedTime;
             }
           },

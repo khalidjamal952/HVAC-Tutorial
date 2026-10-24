@@ -1,5 +1,6 @@
 require("dotenv").config();
-const lectureRoutes = require("./routes/lectureRoutes");
+// const lectureRoutes = require("./routes/lectureRoutes");
+const lectureRoutes = require("./routes/lectureRoutes.r2");
 const liveClassRoutes = require("./routes/liveClassRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const path = require("path");
