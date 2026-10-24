@@ -1579,6 +1579,9 @@ function closeLectureModalWindow() {
 // =========================
 // SAVE LECTURE
 // =========================
+// =========================
+// SAVE LECTURE - R2 MULTIPART UPLOAD
+// =========================
 if (lectureForm) {
   lectureForm.addEventListener("submit", async function (event) {
     event.preventDefault();
@@ -1589,17 +1592,19 @@ if (lectureForm) {
     const description = lectureDescription.value.trim();
     const videoFile = lectureVideo.files[0];
     const thumbnailFile = lectureThumbnail.files[0];
+    const adminToken = localStorage.getItem("hvacAdminToken");
 
     if (!courseId || !number || !title) {
       alert("Please fill all lecture details.");
       return;
     }
 
-    const adminToken = localStorage.getItem("hvacAdminToken");
-    // =========================
-    // EDIT EXISTING LECTURE
-    // =========================
+    if (!adminToken) {
+      alert("Admin authentication required. Please login again.");
+      return;
+    }
 
+    // Edit existing lecture
     if (editingLectureId) {
       try {
         const response = await fetch("/api/lectures/" + editingLectureId, {
@@ -1609,83 +1614,262 @@ if (lectureForm) {
             Authorization: "Bearer " + adminToken,
           },
           body: JSON.stringify({
-            courseId: courseId,
-            number: number,
-            title: title,
-            description: description,
+            courseId,
+            number,
+            title,
+            description,
           }),
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-          alert(data.message || "Failed to update lecture.");
-          return;
+          throw new Error(data.message || "Failed to update lecture.");
         }
 
         alert("Lecture updated successfully!");
-
         closeLectureModalWindow();
         lectureForm.reset();
-
         await loadAdminLectures();
-
-        return;
       } catch (error) {
         console.error("Edit Lecture Error:", error);
-
-        alert("Unable to update lecture. Please check the server.");
-
-        return;
+        alert(error.message || "Unable to update lecture.");
       }
-    }
-    if (!adminToken) {
-      alert("Admin authentication required. Please login again.");
+
       return;
     }
 
-    const formData = new FormData();
-
-    formData.append("courseId", courseId);
-    formData.append("number", number);
-    formData.append("title", title);
-    formData.append("description", description);
-    formData.append("video", videoFile);
-    if (thumbnailFile) {
-      formData.append("thumbnail", thumbnailFile);
+    if (!videoFile) {
+      alert("Please select a video file.");
+      return;
     }
 
-    try {
-      const response = await fetch("/api/lectures", {
+    if (videoFile.size > 50 * 1024 * 1024 * 1024) {
+      alert("Maximum video size is 50 GB.");
+      return;
+    }
+
+    const submitButton = lectureForm.querySelector(
+      'button[type="submit"], input[type="submit"]',
+    );
+
+    let progressContainer = document.getElementById("r2UploadProgress");
+    let progressBar = document.getElementById("r2UploadProgressBar");
+    let progressText = document.getElementById("r2UploadProgressText");
+
+    if (!progressContainer) {
+      progressContainer = document.createElement("div");
+      progressContainer.id = "r2UploadProgress";
+      progressContainer.style.cssText = "margin:16px 0;";
+
+      progressText = document.createElement("p");
+      progressText.id = "r2UploadProgressText";
+      progressText.textContent = "Preparing upload...";
+
+      const track = document.createElement("div");
+      track.style.cssText =
+        "height:12px;background:#ddd;border-radius:8px;overflow:hidden;";
+
+      progressBar = document.createElement("div");
+      progressBar.id = "r2UploadProgressBar";
+      progressBar.style.cssText =
+        "height:100%;width:0%;background:#1677ff;transition:width .2s;";
+
+      track.appendChild(progressBar);
+      progressContainer.append(progressText, track);
+
+      lectureForm.appendChild(progressContainer);
+    }
+
+    const setProgress = (percent, message) => {
+      progressBar.style.width = `${percent}%`;
+      progressText.textContent = `${message} — ${Math.round(percent)}%`;
+    };
+
+    const request = async (url, body) => {
+      const response = await fetch(url, {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: "Bearer " + adminToken,
         },
-        body: formData,
+        body: JSON.stringify(body),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        alert(data.message || "Failed to upload lecture.");
-        return;
+        throw new Error(data.message || `Request failed: ${url}`);
       }
 
-      alert("Lecture added successfully!");
+      return data;
+    };
+
+    let uploadInfo;
+    let uploadCompleted = false;
+
+    try {
+      if (submitButton) submitButton.disabled = true;
+
+      // Step 1: Ask backend to start multipart upload
+      setProgress(0, "Starting upload");
+
+      uploadInfo = await request("/api/lectures/upload/initiate", {
+        fileName: videoFile.name,
+        contentType: videoFile.type || "video/mp4",
+        fileSize: videoFile.size,
+        courseId,
+      });
+
+      const { key, uploadId, partSize } = uploadInfo;
+
+      if (!key || !uploadId || !partSize) {
+        throw new Error("Server returned incomplete upload information.");
+      }
+
+      const totalParts = Math.ceil(videoFile.size / partSize);
+      const completedParts = new Array(totalParts);
+      let nextPart = 0;
+      let uploadedBytes = 0;
+      const partProgress = new Array(totalParts).fill(0);
+      const concurrency = 4;
+
+      // Upload each part directly to Cloudflare R2
+      async function uploadPart(partIndex) {
+        const start = partIndex * partSize;
+        const end = Math.min(start + partSize, videoFile.size);
+        const blob = videoFile.slice(start, end);
+        const partNumber = partIndex + 1;
+
+        const signed = await request("/api/lectures/upload/sign-part", {
+          key,
+          uploadId,
+          partNumber,
+        });
+
+        if (!signed.url) {
+          throw new Error(`Missing signed URL for part ${partNumber}.`);
+        }
+
+        const etag = await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+
+          xhr.open("PUT", signed.url);
+          xhr.upload.onprogress = (event) => {
+            if (event.lengthComputable) {
+              partProgress[partIndex] = event.loaded;
+              const currentBytes = partProgress.reduce(
+                (sum, value) => sum + value,
+                0,
+              );
+              const percent = (currentBytes / videoFile.size) * 100;
+              setProgress(percent, "Uploading video");
+            }
+          };
+
+          xhr.onload = () => {
+            if (xhr.status < 200 || xhr.status >= 300) {
+              reject(new Error(`R2 upload failed for part ${partNumber}.`));
+              return;
+            }
+
+            const tag = xhr.getResponseHeader("ETag");
+
+            if (!tag) {
+              reject(
+                new Error(
+                  "ETag missing. Check R2 CORS ExposeHeaders includes ETag.",
+                ),
+              );
+              return;
+            }
+
+            resolve(tag.replaceAll('"', ""));
+          };
+
+          xhr.onerror = () => reject(new Error("Network error during upload."));
+          xhr.onabort = () => reject(new Error("Upload was cancelled."));
+          xhr.send(blob);
+        });
+
+        uploadedBytes += blob.size;
+        completedParts[partIndex] = {
+          PartNumber: partNumber,
+          ETag: etag,
+        };
+      }
+
+      async function worker() {
+        while (true) {
+          const partIndex = nextPart++;
+          if (partIndex >= totalParts) return;
+          await uploadPart(partIndex);
+        }
+      }
+
+      await Promise.all(
+        Array.from({ length: Math.min(concurrency, totalParts) }, () =>
+          worker(),
+        ),
+      );
+
+      // Step 2: Tell backend to finish upload and save lecture metadata
+      setProgress(99, "Finalizing upload");
+
+      await request("/api/lectures/upload/complete", {
+        key,
+        uploadId,
+        parts: completedParts,
+        courseId,
+        number,
+        title,
+        description,
+        fileName: videoFile.name,
+        contentType: videoFile.type || "video/mp4",
+        fileSize: videoFile.size,
+        thumbnail: "",
+      });
+
+      uploadCompleted = true;
+      setProgress(100, "Upload complete");
+
+      alert(
+        thumbnailFile
+          ? "Video uploaded. Thumbnail upload must be implemented separately."
+          : "Lecture upload completed.",
+      );
 
       closeLectureModalWindow();
-
       lectureForm.reset();
-
-      loadAdminLectures();
+      await loadAdminLectures();
+      // } catch (error) {
+      //   console.error("R2 Multipart Upload Error:", error);
+      //   alert(error.message || "Video upload failed.");
+      // } finally {
+      //   if (submitButton) submitButton.disabled = false;
+      // }
     } catch (error) {
-      console.error("Add Lecture Error:", error);
+      console.error("R2 Multipart Upload Error:", error);
 
-      alert("Unable to upload lecture. Please check the server.");
+      // Abort incomplete multipart upload if initiation succeeded
+      if (uploadInfo?.key && uploadInfo?.uploadId && !uploadCompleted) {
+        try {
+          await request("/api/lectures/upload/abort", {
+            key: uploadInfo.key,
+            uploadId: uploadInfo.uploadId,
+          });
+          console.log("Incomplete R2 upload aborted.");
+        } catch (abortError) {
+          console.error("R2 Upload Abort Failed:", abortError);
+        }
+      }
+
+      alert(error.message || "Video upload failed.");
+    } finally {
+      if (submitButton) submitButton.disabled = false;
     }
   });
 }
-
 // =========================
 // DELETE LECTURE
 // =========================

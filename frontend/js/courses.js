@@ -26,6 +26,8 @@ async function loadCourses() {
     }
 
     if (Array.isArray(data.courses)) {
+
+
       allCourses = await Promise.all(
         data.courses.map(async function (course) {
           try {
@@ -54,78 +56,79 @@ async function loadCourses() {
           }
         }),
       );
+
+      
     } else {
       allCourses = [];
     }
     // LOAD COUPONS
 
-    try {
-      const token = localStorage.getItem("hvacToken");
+try {
+  const token = localStorage.getItem("hvacToken");
 
-      if (!token) {
-        allCourses = allCourses.map(function (course) {
-          return {
-            ...course,
-            coupon: null,
-          };
-        });
+  if (!token) {
+    allCourses = allCourses.map(function (course) {
+      return {
+        ...course,
+        coupon: null,
+      };
+    });
+  } else {
+    const coursesWithCoupons = [];
 
-        renderCourses();
-        return;
-      }
-
-      const coursesWithCoupons = [];
-
-      for (const course of allCourses) {
-        try {
-          const couponResponse = await fetch(
-            `/api/coupons/available/${course.id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+    for (const course of allCourses) {
+      try {
+        const couponResponse = await fetch(
+          `/api/coupons/available/${course.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
             },
+          }
+        );
+
+        if (!couponResponse.ok) {
+          console.warn(
+            `Coupon request failed for ${course.id}:`,
+            couponResponse.status
           );
 
-          if (!couponResponse.ok) {
-            console.warn(
-              `Coupon request failed for ${course.id}:`,
-              couponResponse.status,
-            );
-
-            coursesWithCoupons.push({
-              ...course,
-              coupon: null,
-            });
-
-            continue;
-          }
-
-          const couponData = await couponResponse.json();
-
-          const coupon =
-            Array.isArray(couponData.coupons) && couponData.coupons.length > 0
-              ? couponData.coupons[0]
-              : null;
-
-          coursesWithCoupons.push({
-            ...course,
-            coupon: coupon,
-          });
-        } catch (error) {
-          console.error(`Coupon Error for ${course.id}:`, error);
-
           coursesWithCoupons.push({
             ...course,
             coupon: null,
           });
-        }
-      }
 
-      allCourses = coursesWithCoupons;
-    } catch (couponError) {
-      console.error("Coupon Fetch Error:", couponError);
+          continue;
+        }
+
+        const couponData = await couponResponse.json();
+
+        const coupon =
+          Array.isArray(couponData.coupons) &&
+          couponData.coupons.length > 0
+            ? couponData.coupons[0]
+            : null;
+
+        coursesWithCoupons.push({
+          ...course,
+          coupon,
+        });
+      } catch (error) {
+        console.error(`Coupon Error for ${course.id}:`, error);
+
+        coursesWithCoupons.push({
+          ...course,
+          coupon: null,
+        });
+      }
     }
+
+    allCourses = coursesWithCoupons;
+  }
+} 
+catch (couponError) {
+  console.error("Coupon Fetch Error:", couponError);
+}
 
     renderCourses();
   } catch (error) {
