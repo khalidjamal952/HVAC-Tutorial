@@ -201,7 +201,8 @@ router.post("/upload/sign-part", adminAuthMiddleware, async (req, res) => {
     const part = Number(partNumber);
 
     const adminId = String(
-      req.admin?.userId ||
+      req.admin?.adminId ||
+        req.admin?.userId ||
         req.admin?._id ||
         req.admin?.id ||
         req.admin?.sub ||
