@@ -62,24 +62,19 @@ app.get("/api/coupons/test-server", function (req, res) {
   });
 });
 
-app.use(express.static(path.join(__dirname, "../frontend")));
-
+const frontendPath = path.join(__dirname, "frontend");
 
 console.log("Backend directory:", __dirname);
-console.log(
-  "Frontend directory:",
-  path.join(__dirname, "../frontend")
-);
+console.log("Frontend directory:", frontendPath);
 console.log(
   "Frontend exists:",
-  require("fs").existsSync(
-    path.join(__dirname, "../frontend/index.html")
-  )
+  require("fs").existsSync(path.join(frontendPath, "index.html")),
 );
 
+app.use(express.static(frontendPath));
 
 app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname, "../frontend/index.html"));
+  res.sendFile(path.join(frontendPath, "index.html"));
 });
 
 app.listen(PORT, function () {
