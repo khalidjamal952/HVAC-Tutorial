@@ -184,6 +184,58 @@ async function loadCourseDetails() {
       }
     }
 
+    // =========================================
+    // LOAD COURSE LECTURES
+    // =========================================
+    const courseLessonsList = document.getElementById("courseLessonsList");
+
+    if (courseLessonsList) {
+      courseLessonsList.replaceChildren();
+
+      try {
+        const response = await fetch("/api/lectures/admin");
+        const data = await response.json();
+
+        if (!response.ok || !Array.isArray(data.lectures)) {
+          throw new Error("Unable to load course lectures");
+        }
+
+        const courseLectures = data.lectures
+          .filter((lecture) => String(lecture.courseId) === String(course.id))
+          .sort((a, b) => Number(a.number) - Number(b.number));
+
+        if (courseLectures.length === 0) {
+          courseLessonsList.textContent =
+            "No lectures have been added to this course yet.";
+        } else {
+          courseLectures.forEach((lecture) => {
+            const item = document.createElement("div");
+            item.className = "lesson-item";
+
+            const number = document.createElement("span");
+            number.textContent = String(lecture.number).padStart(2, "0");
+
+            const details = document.createElement("div");
+
+            const title = document.createElement("h3");
+            title.textContent = lecture.title || "Untitled Lecture";
+
+            const description = document.createElement("p");
+            description.textContent = lecture.description || "";
+
+            details.append(title, description);
+
+            item.append(number, details);
+            courseLessonsList.appendChild(item);
+          });
+        }
+      } catch (error) {
+        console.error("Load Course Lectures Error:", error);
+        courseLessonsList.textContent =
+          "Unable to load lectures. Please try again later.";
+      }
+    }
+
     // Course Requirements - current course only
     const requirementsList = document.getElementById("courseRequirementsList");
 
@@ -234,7 +286,6 @@ async function loadCourseDetails() {
     }
   }
 }
-
 
 // =========================================
 // ENROLL BUTTON
