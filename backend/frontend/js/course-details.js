@@ -188,6 +188,10 @@ async function loadCourseDetails() {
     // LOAD COURSE LECTURES
     // =========================================
     const courseLessonsList = document.getElementById("courseLessonsList");
+    console.log("Course ID:", course.id);
+console.log("Starting lecture fetch...");
+const response = await fetch("/api/lectures/admin");
+console.log("Lecture API status:", response.status);
 
     if (courseLessonsList) {
       courseLessonsList.replaceChildren();
