@@ -1199,7 +1199,7 @@ if (adminCoursesTableBody) {
 
           // Thumbnail input se image lena
           const thumbnailInput = document.getElementById("courseThumbnail");
-          
+
           if (thumbnailInput && thumbnailInput.files.length > 0) {
             formData.append("thumbnail", thumbnailInput.files[0]);
           }
@@ -1537,10 +1537,8 @@ const lectureDescription = document.getElementById("lectureDescription");
 let allLectures = [];
 
 let editingLectureId = null;
-
-// =========================
-// GET COURSES
-// =========================
+let allLectureCourses = [];
+let selectedLectureCourseId = null;
 
 // =========================
 // LOAD LECTURES
@@ -1570,8 +1568,8 @@ async function loadAdminLectures() {
 
     allLectures = data.lectures || [];
 
-    populateLectureCourses();
-    renderAdminLectures();
+    await populateLectureCourses();
+    await renderAdminLectures();
   } catch (error) {
     console.error("Load Admin Lectures Error:", error);
 
@@ -1617,10 +1615,9 @@ async function populateLectureCourses() {
     console.error("Populate Lecture Courses Error:", error);
   }
 }
+
 async function renderAdminLectures() {
-  if (!lectureTableBody) {
-    return;
-  }
+  if (!lectureTableBody) return;
 
   lectureTableBody.innerHTML = "";
 
@@ -1628,30 +1625,146 @@ async function renderAdminLectures() {
     ? lectureSearch.value.toLowerCase().trim()
     : "";
 
-  let courses = [];
-
   try {
     const response = await fetch("/api/courses");
-
     const data = await response.json();
 
-    if (response.ok && Array.isArray(data.courses)) {
-      courses = data.courses;
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to load courses");
     }
+
+    allLectureCourses = Array.isArray(data.courses) ? data.courses : [];
   } catch (error) {
     console.error("Render Lecture Courses Error:", error);
+    allLectureCourses = [];
   }
 
-  const filteredLectures = allLectures.filter(function (lecture) {
-    const course = courses.find(function (item) {
-      return item.id === lecture.courseId;
+  const findCourse = (lecture) =>
+    allLectureCourses.find(
+      (course) => String(course.id) === String(lecture.courseId),
+    );
+
+  // COURSE FOLDER VIEW
+  if (selectedLectureCourseId === null) {
+    if (lectureTotal) {
+      lectureTotal.textContent = allLectures.length;
+    }
+
+    if (lecturesEmpty) {
+      lecturesEmpty.style.display =
+        allLectureCourses.length === 0 ? "block" : "none";
+    }
+
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+
+    cell.colSpan = 5;
+
+    const grid = document.createElement("div");
+    grid.className = "lecture-folder-grid";
+
+    const visibleCourses = allLectureCourses.filter((course) =>
+      (course.title || "").toLowerCase().includes(searchText),
+    );
+
+    visibleCourses.forEach((course) => {
+      const count = allLectures.filter(
+        (lecture) => String(lecture.courseId) === String(course.id),
+      ).length;
+
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "lecture-folder-card";
+
+      const icon = document.createElement("span");
+      icon.className = "lecture-folder-icon";
+      icon.textContent = "📁";
+
+      const title = document.createElement("strong");
+      title.textContent = course.title || "Untitled Course";
+
+      const lectureCount = document.createElement("span");
+      lectureCount.className = "lecture-folder-count";
+      lectureCount.textContent = `${count} ${count === 1 ? "Lecture" : "Lectures"}`;
+
+      card.append(icon, title, lectureCount);
+
+      card.addEventListener("click", () => {
+        selectedLectureCourseId = String(course.id);
+
+        if (lectureSearch) {
+          lectureSearch.value = "";
+        }
+
+        renderAdminLectures();
+      });
+
+      grid.appendChild(card);
     });
 
-    const courseName = course ? course.title : "Unknown Course";
+    if (visibleCourses.length === 0) {
+      const message = document.createElement("p");
+      message.textContent = searchText
+        ? "No matching courses found."
+        : "No courses available.";
+      grid.appendChild(message);
+    }
+
+    cell.appendChild(grid);
+    row.appendChild(cell);
+    lectureTableBody.appendChild(row);
+
+    if (lecturesEmpty) {
+      lecturesEmpty.style.display = "none";
+    }
+
+    return;
+  }
+
+  // SELECTED COURSE LECTURE VIEW
+  const selectedCourse = allLectureCourses.find(
+    (course) => String(course.id) === String(selectedLectureCourseId),
+  );
+
+  if (!selectedCourse) {
+    selectedLectureCourseId = null;
+    return renderAdminLectures();
+  }
+
+  const backRow = document.createElement("tr");
+  const backCell = document.createElement("td");
+  backCell.colSpan = 5;
+
+  const backButton = document.createElement("button");
+  backButton.type = "button";
+  backButton.className = "lecture-back-btn";
+  backButton.textContent = "← Back to Courses";
+
+  backButton.addEventListener("click", () => {
+    selectedLectureCourseId = null;
+
+    if (lectureSearch) {
+      lectureSearch.value = "";
+    }
+
+    renderAdminLectures();
+  });
+
+  const heading = document.createElement("h3");
+  heading.className = "lecture-folder-heading";
+  heading.textContent = `📁 ${selectedCourse.title}`;
+
+  backCell.append(backButton, heading);
+  backRow.appendChild(backCell);
+  lectureTableBody.appendChild(backRow);
+
+  const filteredLectures = allLectures.filter((lecture) => {
+    const sameCourse = String(lecture.courseId) === String(selectedCourse.id);
 
     return (
-      (lecture.title || "").toLowerCase().includes(searchText) ||
-      courseName.toLowerCase().includes(searchText)
+      sameCourse &&
+      ((lecture.title || "").toLowerCase().includes(searchText) ||
+        (selectedCourse.title || "").toLowerCase().includes(searchText))
     );
   });
 
@@ -1659,100 +1772,59 @@ async function renderAdminLectures() {
     lectureTotal.textContent = filteredLectures.length;
   }
 
-  if (filteredLectures.length === 0) {
-    if (lecturesEmpty) {
-      lecturesEmpty.style.display = "block";
-    }
-
-    return;
-  }
-
   if (lecturesEmpty) {
-    lecturesEmpty.style.display = "none";
+    lecturesEmpty.style.display =
+      filteredLectures.length === 0 ? "block" : "none";
   }
 
-  filteredLectures.forEach(function (lecture) {
-    console.log("LECTURE OBJECT:", lecture);
+  filteredLectures.forEach((lecture) => {
     const row = document.createElement("tr");
 
-    const course = courses.find(function (item) {
-      return item.id === lecture.courseId;
+    const numberCell = document.createElement("td");
+    numberCell.textContent = lecture.number ?? "";
+
+    const titleCell = document.createElement("td");
+    titleCell.textContent = lecture.title || "Untitled Lecture";
+
+    const courseCell = document.createElement("td");
+    courseCell.textContent = selectedCourse.title;
+
+    const videoCell = document.createElement("td");
+    videoCell.textContent = "🎥 Video";
+
+    const actionsCell = document.createElement("td");
+    const actions = document.createElement("div");
+    actions.className = "course-action-group";
+
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.className = "student-action-btn lecture-edit-btn";
+    editButton.textContent = "Edit";
+    editButton.dataset.id = lecture._id;
+    editButton.addEventListener("click", () => {
+      openLectureEdit(lecture._id);
     });
 
-    const courseName = course ? course.title : "Unknown Course";
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "student-action-btn lecture-delete-btn";
+    deleteButton.textContent = "Delete";
+    deleteButton.dataset.id = lecture._id;
+    deleteButton.addEventListener("click", () => {
+      deleteLecture(lecture._id);
+    });
 
-    row.innerHTML = `
-        <td>
-          <span class="lecture-number-cell">
-            ${lecture.number}
-          </span>
-        </td>
-
-        <td>
-          <strong>
-            ${lecture.title}
-          </strong>
-        </td>
-
-        <td>
-          <span class="lecture-course-cell">
-            ${courseName}
-          </span>
-        </td>
-
-        <td>
-          <span class="lecture-video-cell">
-            🎥 Video
-          </span>
-        </td>
-
-        <td>
-          <div class="course-action-group">
-            <button
-    type="button"
-    class="student-action-btn lecture-edit-btn"
-  data-id="${lecture._id}"
-  >
-    Edit
-  </button>
-
-          <button
-    type="button"
-    class="student-action-btn lecture-delete-btn"
-    data-id="${lecture._id}"
-  >
-    Delete
-  </button>
-          </div>
-        </td>
-      `;
+    actions.append(editButton, deleteButton);
+    actionsCell.appendChild(actions);
+    row.append(numberCell, titleCell, courseCell, videoCell, actionsCell);
 
     lectureTableBody.appendChild(row);
   });
-
-  // EDIT BUTTONS
-  lectureTableBody
-    .querySelectorAll(".lecture-edit-btn")
-    .forEach(function (button) {
-      button.addEventListener("click", function () {
-        openLectureEdit(button.dataset.id);
-      });
-    });
-
-  // DELETE BUTTONS
-  lectureTableBody
-    .querySelectorAll(".lecture-delete-btn")
-    .forEach(function (button) {
-      button.addEventListener("click", function () {
-        deleteLecture(button.dataset.id);
-      });
-    });
 }
 // =========================
 // OPEN ADD MODAL
 // =========================
-
-function openLectureAdd() {
+async function openLectureAdd() {
   editingLectureId = null;
 
   if (lectureModalTitle) {
@@ -1763,13 +1835,16 @@ function openLectureAdd() {
     lectureForm.reset();
   }
 
-  populateLectureCourses();
+  await populateLectureCourses();
+
+  if (selectedLectureCourseId !== null && lectureCourse) {
+    lectureCourse.value = selectedLectureCourseId;
+  }
 
   if (lectureModal) {
     lectureModal.classList.add("active");
   }
 }
-
 // =========================
 // OPEN EDIT MODAL
 // =========================

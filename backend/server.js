@@ -36,6 +36,7 @@ app.use("/assets/ebooks", function (req, res, next) {
 });
 app.use("/assets", express.static(path.join(__dirname, "../assets")));
 
+app.use(express.static(path.join(__dirname, "frontend")));
 // const PORT = 5000;
 const PORT = process.env.PORT || 5000;
 connectDB();
