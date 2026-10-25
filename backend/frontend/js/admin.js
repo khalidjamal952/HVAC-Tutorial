@@ -1709,6 +1709,16 @@ async function renderAdminLectures() {
         : "No courses available.";
       grid.appendChild(message);
     }
+    cell.appendChild(grid);
+    row.appendChild(cell);
+    lectureTableBody.appendChild(row);
+
+    if (lecturesEmpty) {
+      lecturesEmpty.style.display =
+        visibleCourses.length === 0 ? "block" : "none";
+    }
+
+    return;
 
     cell.appendChild(grid);
     row.appendChild(cell);
