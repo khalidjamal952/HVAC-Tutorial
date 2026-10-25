@@ -61,11 +61,13 @@ app.get("/api/coupons/test-server", function (req, res) {
     message: "Coupon test route from server.js is working",
   });
 });
-app.use(express.static(path.join(__dirname, "frontend")));
+
+app.use(express.static(path.join(__dirname, "../frontend")));
 
 app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname, "frontend/index.html"));
+  res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
+
 app.listen(PORT, function () {
   console.log(`Server running on http://localhost:${PORT}`);
 });
