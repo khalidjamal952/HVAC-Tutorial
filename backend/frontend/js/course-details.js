@@ -194,7 +194,7 @@ async function loadCourseDetails() {
 
       try {
         const response = await fetch(
-         `/api/lectures/course/${encodeURIComponent(course.id)}/preview`
+          `/api/lectures/course/${encodeURIComponent(course.id)}/preview`,
         );
         const data = await response.json();
 
@@ -319,7 +319,7 @@ if (cartBtn) {
 
     let cart = JSON.parse(localStorage.getItem("hvacCart")) || [];
 
-    const alreadyAdded = cart.some((item) => item.id === courseId);
+    const alreadyAdded = cart.some((item) => item.id === course.id);
 
     if (alreadyAdded) {
       alert("This course is already in your cart.");
@@ -328,7 +328,7 @@ if (cartBtn) {
     }
 
     cart.push({
-      id: courseId,
+      id: course.id,
       title: course.title,
       price: course.price,
     });
@@ -387,8 +387,9 @@ async function loadCourseRatings() {
   }
 
   try {
-    const response = await fetch(`/api/ratings/${courseId}`);
-
+    const response = await fetch(
+      `/api/lectures/course/${encodeURIComponent(course.id)}/preview`,
+    );
     const data = await response.json();
 
     if (!response.ok) {
