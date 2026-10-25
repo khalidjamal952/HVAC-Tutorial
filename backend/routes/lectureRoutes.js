@@ -590,6 +590,26 @@ router.get("/admin", adminAuthMiddleware, async (req, res) => {
   }
 });
 
+
+// PUBLIC COURSE CONTENT - METADATA ONLY
+router.get("/course/:courseId", async (req, res) => {
+  try {
+    const lectures = await Lecture.find({
+      courseId: req.params.courseId,
+    })
+      .select("courseId number title description")
+      .sort({ number: 1 });
+
+    return res.status(200).json({ lectures });
+  } catch (error) {
+    console.error("Public Course Content Error:", error);
+
+    return res.status(500).json({
+      message: "Unable to fetch course content",
+    });
+  }
+});
+
 // =========================
 // ADD LECTURE WITH VIDEO
 // =========================
