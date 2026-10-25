@@ -64,6 +64,20 @@ app.get("/api/coupons/test-server", function (req, res) {
 
 app.use(express.static(path.join(__dirname, "../frontend")));
 
+
+console.log("Backend directory:", __dirname);
+console.log(
+  "Frontend directory:",
+  path.join(__dirname, "../frontend")
+);
+console.log(
+  "Frontend exists:",
+  require("fs").existsSync(
+    path.join(__dirname, "../frontend/index.html")
+  )
+);
+
+
 app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "../frontend/index.html"));
 });
