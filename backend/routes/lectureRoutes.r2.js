@@ -808,6 +808,60 @@ router.get("/video/:lectureId", authMiddleware, async (req, res) => {
   }
 });
 
+// PUBLIC COURSE PREVIEW — METADATA ONLY
+router.get("/course/:courseId/preview", async (req, res) => {
+  try {
+    const courseId = req.params.courseId;
+
+    const lectures = await Lecture.find({ courseId })
+      .select("courseId number title description")
+      .sort({ number: 1 })
+      .lean();
+
+    return res.status(200).json({ lectures });
+  } catch (error) {
+    console.error("Course Preview Error:", error);
+
+    return res.status(500).json({
+      message: "Unable to fetch course preview.",
+    });
+  }
+});
+
+// GET COURSE LECTURES - PURCHASE REQUIRED
+router.get("/course/:courseId", authMiddleware, async (req, res) => {
+  try {
+    const courseId = req.params.courseId;
+
+    const order = await Order.findOne({
+      user: req.user.userId,
+      status: { $in: ["Paid", "Completed", "Success", "Successful"] },
+      "courses.id": courseId,
+    });
+
+    if (!order) {
+      return res.status(403).json({
+        message: "You have not purchased this course.",
+        access: false,
+      });
+    }
+
+    const lectures = await Lecture.find({ courseId }).sort({ number: 1 });
+
+    return res.status(200).json({
+      message: "Course lectures fetched successfully",
+      access: true,
+      lectures,
+    });
+  } catch (error) {
+    console.error("Get Course Lectures Error:", error);
+
+    return res.status(500).json({
+      message: "Server error",
+      access: false,
+    });
+  }
+});
 // GET COURSE LECTURES - PURCHASE REQUIRED
 router.get("/course/:courseId", authMiddleware, async (req, res) => {
   try {

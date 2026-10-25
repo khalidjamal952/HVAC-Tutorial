@@ -194,7 +194,7 @@ async function loadCourseDetails() {
 
       try {
         const response = await fetch(
-          `/api/lectures/course/${encodeURIComponent(course.id)}`
+         `/api/lectures/course/${encodeURIComponent(course.id)}/preview`
         );
         const data = await response.json();
 
