@@ -590,9 +590,10 @@ router.get("/admin", adminAuthMiddleware, async (req, res) => {
   }
 });
 
-
 // PUBLIC COURSE CONTENT - METADATA ONLY
 router.get("/course/:courseId", async (req, res) => {
+  console.log("PUBLIC COURSE ROUTE HIT:", req.params.courseId);
+
   try {
     const lectures = await Lecture.find({
       courseId: req.params.courseId,
