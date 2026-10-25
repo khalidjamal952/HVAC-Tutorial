@@ -2371,3 +2371,182 @@ body.dark-mode .admin-table div {
 .admin-create-account a:hover {
   text-decoration: underline;
 }
+
+/* =========================================
+   COURSE POINTS - ADD / DELETE UI
+========================================= */
+
+.course-points-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.course-point-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.course-point-row:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.course-point-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.course-point-text {
+  flex: 1;
+  min-width: 0;
+  color: #334155;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.course-point-add-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.course-point-add-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.course-point-add-row button {
+  flex-shrink: 0;
+  padding: 11px 14px;
+  border: 1px solid #bfdbfe;
+  border-radius: 7px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.course-point-add-row button:hover {
+  background: #dbeafe;
+}
+
+.course-point-delete {
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.course-point-delete:hover {
+  background: #fee2e2;
+}
+
+/* Dark mode */
+body.dark-mode .course-point-row {
+  background: #111827;
+  border-color: #334155;
+}
+
+body.dark-mode .course-point-row:hover {
+  background: #1e293b;
+  border-color: #475569;
+}
+
+body.dark-mode .course-point-text {
+  color: #e5e7eb;
+}
+
+body.dark-mode .course-point-number {
+  background: #1e3a8a;
+  color: #bfdbfe;
+}
+
+body.dark-mode .course-point-add-row button {
+  background: #1e3a8a;
+  border-color: #3b82f6;
+  color: #bfdbfe;
+}
+
+body.dark-mode .course-point-delete {
+  background: #450a0a;
+  border-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+/* Mobile */
+@media (max-width: 500px) {
+  .course-point-row {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .course-point-add-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .course-point-add-row button {
+    width: 100%;
+  }
+}
+
+/* Course Description Preview */
+.course-description-preview {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  max-width: 260px;
+  color: #4b5563;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.course-description-preview.expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+.course-read-more-btn {
+  margin-top: 5px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.course-read-more-btn:hover {
+  text-decoration: underline;
+}

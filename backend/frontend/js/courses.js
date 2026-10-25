@@ -172,37 +172,56 @@ function renderCourses() {
     card.dataset.category = course.category;
 
     card.innerHTML = `
-            <div class="course-image">
+         <div class="course-image">
 
-                <div class="course-image-icon">
+    ${
+      course.thumbnail
+        ? `<img
+                    src="${course.thumbnail}"
+                    alt="${course.title}"
+                    class="course-thumbnail"
+               >`
+        : `<div class="course-image-icon">
                     ${courseIcon}
-                </div>
+               </div>`
+    }
 
-                <span class="course-category">
-                    ${categoryName}
-                </span>
+    <span class="course-category">
+        ${categoryName}
+    </span>
 
-            </div>
+</div>
 
             <div class="course-content">
 
                 <h2>${course.title}</h2>
+              
+<div class="course-description-wrapper">
+    <p class="course-description">
+        ${course.description || "No description available"}
+    </p>
 
-                <p>
-                    ${course.description}
-                </p>
+    ${
+      course.description && course.description.length > 100
+        ? `<button type="button" class="course-read-more-btn">
+                Read More
+              </button>`
+        : ""
+    }
+</div>
 
-                <div class="course-meta">
 
-                    <span>
-                        ⭐ ${course.rating || 4.8}
-                    </span>
+              <div class="course-meta">
+  ${
+    Number(course.totalRatings) > 0
+      ? `<span>⭐ ${Number(course.rating).toFixed(1)}</span>`
+      : ""
+  }
 
-                    <span>
-                        👨‍🎓 ${course.students || 0} Students
-                    </span>
-
-                </div>
+  <span>
+    👨‍🎓 ${course.students || 0} Students
+  </span>
+</div>
 
                 <div class="course-meta">
 
@@ -256,6 +275,15 @@ function renderCourses() {
         `;
 
     coursesGrid.appendChild(card);
+    const readMoreButton = card.querySelector(".course-read-more-btn");
+    const description = card.querySelector(".course-description");
+
+    if (readMoreButton && description) {
+      readMoreButton.addEventListener("click", function () {
+        const expanded = description.classList.toggle("expanded");
+        readMoreButton.textContent = expanded ? "Read Less" : "Read More";
+      });
+    }
   });
 
   createDynamicFilters();

@@ -55,9 +55,18 @@
           <!-- LEFT SIDE -->
 
           <div class="course-details-main">
-            <div class="course-details-image">
-              <div class="course-details-icon">❄️</div>
-            </div>
+           
+<div class="course-details-image">
+  <img
+    id="courseThumbnailImage"
+    class="course-details-thumbnail"
+    src=""
+    alt="Course thumbnail"
+    style="display: none;"
+  />
+  <div class="course-details-icon" id="courseDetailsFallbackIcon">❄️</div>
+</div>
+
 
             <div class="course-details-content">
               <span class="course-details-category"> Air Conditioning </span>
@@ -94,26 +103,17 @@
               </div>
 
               <!-- WHAT YOU WILL LEARN -->
+                <section class="course-section">
+  <h2>What You'll Learn</h2>
+ <div id="learningOutcomesList" class="learning-list"></div>
+</section>
 
-              <section class="course-section">
-                <h2>What You'll Learn</h2>
 
-                <div class="learning-list">
-                  <div>✓ HVAC fundamentals and terminology</div>
-
-                  <div>✓ Basic HVAC components and functions</div>
-
-                  <div>✓ Cooling and heating principles</div>
-
-                  <div>✓ Understanding HVAC systems</div>
-
-                  <div>✓ Basic maintenance concepts</div>
-
-                  <div>✓ Introduction to troubleshooting</div>
-                </div>
-                
-              </section>
-
+                 <!-- REQUIREMENTS -->
+<section class="course-section">
+  <h2>Requirements</h2>
+  <div id="courseRequirementsList" class="learning-list"></div>
+</section>
               <!-- COURSE CONTENT -->
 
               <section class="course-section">

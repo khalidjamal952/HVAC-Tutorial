@@ -82,7 +82,7 @@
                   <th>Course</th>
 
                   <th>Category</th>
-
+                  <th>Description</th>
                   <th>Lessons</th>
 
                   <th>Price</th>
@@ -211,6 +211,97 @@
               placeholder="Enter course description"
               required
             ></textarea>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="courseThumbnail">Course Thumbnail Image</label>
+
+            <input type="file" id="courseThumbnail" accept="image/*" />
+
+            <div
+              id="courseThumbnailPreviewContainer"
+              style="display: none; margin-top: 12px"
+            >
+              <img
+                id="courseThumbnailPreview"
+                src=""
+                alt="Course thumbnail preview"
+                style="
+                  width: 200px;
+                  height: 120px;
+                  object-fit: cover;
+                  border-radius: 8px;
+                "
+              />
+            </div>
+          </div>
+
+          <!-- Learning Outcomes -->
+          <div class="admin-form-group">
+            <label>Learning Outcomes</label>
+
+            <div id="courseOutcomesList" class="course-points-list"></div>
+
+            <div class="course-point-add-row">
+              <input
+                type="text"
+                id="courseOutcomeInput"
+                placeholder="Enter a learning outcome"
+              />
+
+              <button type="button" id="addCourseOutcomeBtn">
+                + Add Point
+              </button>
+            </div>
+          </div>
+
+          <!-- Requirements -->
+          <div class="admin-form-group">
+            <label>Requirements</label>
+
+            <div id="courseRequirementsList" class="course-points-list"></div>
+
+            <div class="course-point-add-row">
+              <input
+                type="text"
+                id="courseRequirementInput"
+                placeholder="Enter a requirement"
+              />
+
+              <button type="button" id="addCourseRequirementBtn">
+                + Add Point
+              </button>
+            </div>
+          </div>
+
+          <!-- Course Tags -->
+          <div class="admin-form-group">
+            <label for="courseTags">Course Tags</label>
+            <input
+              type="text"
+              id="courseTags"
+              placeholder="HVAC, AC Repair, Installation"
+            />
+            <small>Enter tags separated by commas.</small>
+          </div>
+
+          <!-- Target Audience -->
+          <div class="admin-form-group">
+            <label>Target Audience</label>
+
+            <div id="courseAudienceList" class="course-points-list"></div>
+
+            <div class="course-point-add-row">
+              <input
+                type="text"
+                id="courseAudienceInput"
+                placeholder="Enter target audience"
+              />
+
+              <button type="button" id="addCourseAudienceBtn">
+                + Add Point
+              </button>
+            </div>
           </div>
 
           <div class="admin-modal-actions">

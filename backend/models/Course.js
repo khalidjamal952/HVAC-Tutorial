@@ -54,10 +54,40 @@ const courseSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
+
+    thumbnail: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // New Course Builder fields
+    outcomes: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    requirements: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    tags: {
+      type: [String],
+      default: [],
+    },
+
+    audience: {
+      type: String,
+      default: "",
+      trim: true,
+    },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Course = mongoose.model("Course", courseSchema);

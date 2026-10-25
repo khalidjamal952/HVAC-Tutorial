@@ -134,12 +134,76 @@ async function loadCourseDetails() {
       title.textContent = course.title;
     }
 
+    const thumbnailImage = document.getElementById("courseThumbnailImage");
+    const fallbackIcon = document.getElementById("courseDetailsFallbackIcon");
+
+    if (thumbnailImage && course.thumbnail) {
+      thumbnailImage.src = course.thumbnail;
+      thumbnailImage.style.display = "block";
+
+      if (fallbackIcon) {
+        fallbackIcon.style.display = "none";
+      }
+    } else {
+      if (thumbnailImage) {
+        thumbnailImage.style.display = "none";
+      }
+
+      if (fallbackIcon) {
+        fallbackIcon.style.display = "block";
+      }
+    }
+
     if (description) {
       description.textContent = course.description || "";
     }
 
     if (category) {
       category.textContent = course.category || "";
+    }
+
+    // Learning Outcomes - current course only
+    const learningList = document.getElementById("learningOutcomesList");
+
+    if (learningList) {
+      learningList.replaceChildren();
+
+      const outcomes = String(course.outcomes || "")
+        .split(/\r?\n|,/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      outcomes.forEach((outcome) => {
+        const item = document.createElement("div");
+        item.textContent = "✓ " + outcome;
+        learningList.appendChild(item);
+      });
+
+      if (outcomes.length === 0) {
+        learningList.textContent = "Learning outcomes will be updated soon.";
+      }
+    }
+
+    // Course Requirements - current course only
+    const requirementsList = document.getElementById("courseRequirementsList");
+
+    if (requirementsList) {
+      requirementsList.replaceChildren();
+
+      const requirements = String(course.requirements || "")
+        .split(/\r?\n|,/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      requirements.forEach((requirement) => {
+        const item = document.createElement("div");
+        item.textContent = "✓ " + requirement;
+        requirementsList.appendChild(item);
+      });
+
+      if (requirements.length === 0) {
+        requirementsList.textContent = "No specific requirements listed.";
+      }
     }
 
     // Course Stats
@@ -171,23 +235,22 @@ async function loadCourseDetails() {
   }
 }
 
+
 // =========================================
 // ENROLL BUTTON
 // =========================================
-
 const enrollBtn = document.getElementById("enrollBtn");
 
 if (enrollBtn) {
   enrollBtn.addEventListener("click", function () {
-    if (!course) {
-      alert("Course not found.");
+    if (!course || !course.id) {
+      alert("Course details not loaded. Please try again.");
       return;
     }
 
-    alert(`${course.title} selected for enrollment.`);
+    window.location.href = `checkout.html?id=${encodeURIComponent(course.id)}`;
   });
 }
-
 // =========================================
 // ADD TO CART
 // =========================================

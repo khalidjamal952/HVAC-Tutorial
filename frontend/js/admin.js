@@ -856,6 +856,17 @@ if (adminCoursesTableBody) {
 
     document.getElementById("courseDescription").value = course.description;
 
+    document.getElementById("courseOutcomes").value = course.outcomes || "";
+
+    document.getElementById("courseRequirements").value =
+      course.requirements || "";
+
+    document.getElementById("courseTags").value = Array.isArray(course.tags)
+      ? course.tags.join(", ")
+      : "";
+
+    document.getElementById("courseAudience").value = course.audience || "";
+
     courseForm.dataset.editingId = courseId;
 
     courseModalTitle.textContent = "Edit Course";
@@ -893,6 +904,7 @@ if (adminCoursesTableBody) {
 
   if (courseForm) {
     courseForm.addEventListener("submit", async function (event) {
+      console.log("COURSE FORM SUBMIT FIRED");
       event.preventDefault();
 
       const title = document.getElementById("courseTitle").value.trim();
@@ -913,87 +925,89 @@ if (adminCoursesTableBody) {
         .getElementById("courseDescription")
         .value.trim();
 
+      const outcomes = document.getElementById("courseOutcomes").value.trim();
+
+      const requirements = document
+        .getElementById("courseRequirements")
+        .value.trim();
+
+      const tags = document
+        .getElementById("courseTags")
+        .value.split(",")
+        .map((tag) => tag.trim())
+        .filter(Boolean);
+
+      const audience = document.getElementById("courseAudience").value.trim();
+
       const editingId = courseForm.dataset.editingId;
 
       const adminToken = localStorage.getItem("hvacAdminToken");
 
       try {
-        // =============================
-        // EDIT EXISTING COURSE
-        // =============================
+        const formData = new FormData();
 
-        if (editingId) {
-          const response = await fetch("/api/courses/admin/" + editingId, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + adminToken,
-            },
-            body: JSON.stringify({
-              title: title,
-              category: category,
-              lessons: lessons,
-              duration: duration,
-              price: price,
-              originalPrice: originalPrice,
-              students: 0,
-              description: description,
-            }),
-          });
+        // Course details
+        formData.append("id", editingId || "course-" + Date.now());
+        formData.append("students", "0");
+        formData.append("title", title);
+        formData.append("category", category);
+        formData.append("lessons", String(lessons));
+        formData.append("duration", duration);
+        formData.append("price", String(price));
+        formData.append("originalPrice", String(originalPrice));
+        formData.append("description", description);
+        formData.append("outcomes", outcomes);
+        formData.append("requirements", requirements);
+        formData.append("tags", JSON.stringify(tags));
+        formData.append("audience", audience);
 
-          const data = await response.json();
+        // Thumbnail image
+        const thumbnailInput = courseForm.querySelector("#courseThumbnail");
+        const thumbnailFile = thumbnailInput?.files?.[0];
 
-          if (!response.ok) {
-            alert(data.message || "Unable to update course.");
-            return;
-          }
-
-          alert("Course updated successfully!");
+        if (!editingId && !thumbnailFile) {
+          alert("Please select a course thumbnail image.");
+          return;
         }
 
-        // =============================
-        // ADD NEW COURSE
-        // =============================
-        else {
-          const newCourse = {
-            id: "course-" + Date.now(),
-            title: title,
-            category: category,
-            lessons: lessons,
-            duration: duration,
-            price: price,
-            originalPrice: originalPrice,
-            students: 0,
-            description: description,
-          };
-
-          const response = await fetch("/api/courses/admin", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + adminToken,
-            },
-            body: JSON.stringify(newCourse),
-          });
-
-          const data = await response.json();
-
-          if (!response.ok) {
-            alert(data.message || "Unable to add course.");
-            return;
-          }
-
-          alert("Course added successfully!");
+        if (thumbnailFile) {
+          formData.append("thumbnail", thumbnailFile);
         }
+
+        console.log("Selected thumbnail:", thumbnailFile);
+
+        // Add or update course
+        const url = editingId
+          ? "/api/courses/admin/" + editingId
+          : "/api/courses/admin";
+
+        const response = await fetch(url, {
+          method: editingId ? "PUT" : "POST",
+          headers: {
+            Authorization: "Bearer " + adminToken,
+          },
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.error("Save course error:", data);
+          alert(data.message || "Unable to save course.");
+          return;
+        }
+
+        alert(
+          editingId
+            ? "Course updated successfully!"
+            : "Course added successfully!",
+        );
 
         delete courseForm.dataset.editingId;
-
         closeCourseModalBox();
-
         loadAdminCourses();
       } catch (error) {
         console.error("Save Course Error:", error);
-
         alert("Server error while saving course.");
       }
     });

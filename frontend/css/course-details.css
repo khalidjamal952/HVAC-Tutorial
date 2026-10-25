@@ -836,3 +836,11 @@ body.dark-mode .course-details-icon {
   color: #2563eb !important;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25) !important;
 }
+
+#courseDescription {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  max-width: 100%;
+  line-height: 1.7;
+}

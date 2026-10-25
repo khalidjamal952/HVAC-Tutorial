@@ -213,6 +213,70 @@
             ></textarea>
           </div>
 
+          <div class="admin-form-group">
+            <label for="courseThumbnail">Course Thumbnail Image</label>
+
+            <input type="file" id="courseThumbnail" accept="image/*" />
+
+            <div
+              id="courseThumbnailPreviewContainer"
+              style="display: none; margin-top: 12px"
+            >
+              <img
+                id="courseThumbnailPreview"
+                src=""
+                alt="Course thumbnail preview"
+                style="
+                  width: 200px;
+                  height: 120px;
+                  object-fit: cover;
+                  border-radius: 8px;
+                "
+              />
+            </div>
+          </div>
+
+          <!-- Learning Outcomes -->
+          <div class="admin-form-group">
+            <label for="courseOutcomes">Learning Outcomes</label>
+            <textarea
+              id="courseOutcomes"
+              rows="3"
+              placeholder="What will students learn?"
+            ></textarea>
+          </div>
+
+          <!-- Requirements -->
+          <div class="admin-form-group">
+            <label for="courseRequirements">Requirements</label>
+            <textarea
+              id="courseRequirements"
+              rows="3"
+              placeholder="What should students know before starting?"
+            ></textarea>
+          </div>
+
+          <!-- Course Tags -->
+          <div class="admin-form-group">
+            <label for="courseTags">Course Tags</label>
+            <input
+              type="text"
+              id="courseTags"
+              placeholder="HVAC, AC Repair, Installation"
+            />
+            <small>Enter tags separated by commas.</small>
+          </div>
+
+          <!-- Target Audience -->
+          <div class="admin-form-group">
+            <label for="courseAudience">Target Audience</label>
+            <textarea
+              id="courseAudience"
+              rows="3"
+              placeholder="Who is this course for?"
+            ></textarea>
+          </div>
+
           <div class="admin-modal-actions">
             <button
               type="button"

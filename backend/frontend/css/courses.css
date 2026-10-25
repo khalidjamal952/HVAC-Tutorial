@@ -592,60 +592,102 @@
 ========================================= */
 
 .course-footer {
-    margin-top: auto;
-    padding-top: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
+  margin-top: auto;
+  padding-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
 }
 
 .course-price {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
 }
 
 .course-price strong {
-    color: #111827;
-    font-size: 21px;
+  color: #111827;
+  font-size: 21px;
 }
 
 .course-price del {
-    color: #94a3b8;
-    font-size: 12px;
+  color: #94a3b8;
+  font-size: 12px;
 }
 
 .course-btn {
-    display: inline-block;
-    padding: 10px 15px;
-    background: #2563eb;
-    color: #ffffff;
-    border-radius: 7px;
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;
-    flex-shrink: 0;
-    text-align: center;
+  display: inline-block;
+  padding: 10px 15px;
+  background: #2563eb;
+  color: #ffffff;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-align: center;
 }
 
 /* Mobile */
 @media (max-width: 600px) {
+  .course-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
 
-    .course-footer {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-    }
+  .course-price {
+    width: 100%;
+    justify-content: flex-start;
+  }
 
-    .course-price {
-        width: 100%;
-        justify-content: flex-start;
-    }
+  .course-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
 
-    .course-btn {
-        width: 100%;
-        text-align: center;
-    }
+/* Course Description Read More */
+.course-description-wrapper {
+  margin-bottom: 12px;
+}
+
+.course-description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  overflow: hidden;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.course-description.expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+.course-read-more-btn {
+  margin-top: 4px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.course-read-more-btn:hover {
+  text-decoration: underline;
+}
+
+.course-thumbnail {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: inherit;
 }

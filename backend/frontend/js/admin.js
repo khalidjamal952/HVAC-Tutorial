@@ -622,7 +622,25 @@ if (adminCoursesTableBody) {
                         <span class="course-category-cell">
                             ${getCategoryName(course.category)}
                         </span>
+
                     </td>
+
+                    
+<td class="course-description-cell">
+    <div class="course-description-preview">
+        ${course.description || "No description available"}
+    </div>
+
+    ${
+      course.description && course.description.length > 100
+        ? `<button
+                type="button"
+                class="course-read-more-btn"
+            >Read More</button>`
+        : ""
+    }
+</td>
+
 
                     <td>
                         ${course.lessons}
@@ -663,6 +681,18 @@ if (adminCoursesTableBody) {
                 `;
 
       adminCoursesTableBody.appendChild(row);
+
+      const readMoreButton = row.querySelector(".course-read-more-btn");
+      const descriptionPreview = row.querySelector(
+        ".course-description-preview",
+      );
+
+      if (readMoreButton && descriptionPreview) {
+        readMoreButton.addEventListener("click", () => {
+          const expanded = descriptionPreview.classList.toggle("expanded");
+          readMoreButton.textContent = expanded ? "Read Less" : "Read More";
+        });
+      }
     });
 
     // =================================
@@ -771,11 +801,142 @@ if (adminCoursesTableBody) {
   function openAddCourse() {
     courseForm.reset();
 
-    courseModalTitle.textContent = "Add New Course";
+    if (courseOutcomesManager) {
+      courseOutcomesManager.clear();
+    }
 
+    if (courseRequirementsManager) {
+      courseRequirementsManager.clear();
+    }
+
+    if (courseAudienceManager) {
+      courseAudienceManager.clear();
+    }
+
+    courseModalTitle.textContent = "Add New Course";
     courseForm.dataset.editingId = "";
 
     courseModal.classList.add("active");
+  }
+  // LEARNING OUTCOMES POINTS MANAGER
+  function setupCoursePoints(listId, inputId, buttonId) {
+    const list = document.getElementById(listId);
+    const input = document.getElementById(inputId);
+    const addButton = document.getElementById(buttonId);
+
+    if (!list || !input || !addButton) return null;
+
+    let points = [];
+
+    function renderPoints() {
+      list.innerHTML = "";
+
+      points.forEach((point, index) => {
+        const row = document.createElement("div");
+        row.className = "course-point-row";
+
+        const number = document.createElement("span");
+        number.className = "course-point-number";
+        number.textContent = `${index + 1}.`;
+
+        const text = document.createElement("span");
+        text.className = "course-point-text";
+        text.textContent = point;
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "course-point-delete";
+        deleteButton.textContent = "Delete";
+
+        deleteButton.addEventListener("click", () => {
+          points.splice(index, 1);
+          renderPoints();
+        });
+
+        row.append(number, text, deleteButton);
+        list.appendChild(row);
+      });
+    }
+
+    function addPoint() {
+      const value = input.value.trim();
+
+      if (!value) {
+        input.focus();
+        return;
+      }
+
+      points.push(value);
+      input.value = "";
+      renderPoints();
+      input.focus();
+    }
+
+    addButton.addEventListener("click", addPoint);
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        addPoint();
+      }
+    });
+
+    return {
+      getPoints: () => [...points],
+
+      setPoints: (newPoints) => {
+        points = Array.isArray(newPoints) ? [...newPoints] : [];
+        renderPoints();
+      },
+
+      clear: () => {
+        points = [];
+        input.value = "";
+        renderPoints();
+      },
+    };
+  }
+
+  const courseOutcomesManager = setupCoursePoints(
+    "courseOutcomesList",
+    "courseOutcomeInput",
+    "addCourseOutcomeBtn",
+  );
+
+  const courseRequirementsManager = setupCoursePoints(
+    "courseRequirementsList",
+    "courseRequirementInput",
+    "addCourseRequirementBtn",
+  );
+  const courseAudienceManager = setupCoursePoints(
+    "courseAudienceList",
+    "courseAudienceInput",
+    "addCourseAudienceBtn",
+  );
+
+  const courseThumbnailInput = document.getElementById("courseThumbnail");
+  const courseThumbnailPreview = document.getElementById(
+    "courseThumbnailPreview",
+  );
+  const courseThumbnailPreviewContainer = document.getElementById(
+    "courseThumbnailPreviewContainer",
+  );
+
+  if (courseThumbnailInput) {
+    courseThumbnailInput.addEventListener("change", function () {
+      const file = this.files[0];
+
+      if (!file) return;
+
+      if (!file.type.startsWith("image/")) {
+        alert("Please select a valid image file.");
+        this.value = "";
+        return;
+      }
+
+      courseThumbnailPreview.src = URL.createObjectURL(file);
+      courseThumbnailPreviewContainer.style.display = "block";
+    });
   }
 
   // =====================================
@@ -856,6 +1017,49 @@ if (adminCoursesTableBody) {
 
     document.getElementById("courseDescription").value = course.description;
 
+    const thumbnailInput = document.getElementById("courseThumbnail");
+    const thumbnailPreview = document.getElementById("courseThumbnailPreview");
+    const thumbnailPreviewContainer = document.getElementById(
+      "courseThumbnailPreviewContainer",
+    );
+
+    if (thumbnailInput) {
+      thumbnailInput.value = "";
+    }
+
+    if (thumbnailPreview && thumbnailPreviewContainer && course.thumbnail) {
+      thumbnailPreview.src = course.thumbnail;
+      thumbnailPreviewContainer.style.display = "block";
+    } else if (thumbnailPreviewContainer) {
+      thumbnailPreviewContainer.style.display = "none";
+    }
+
+    if (courseOutcomesManager) {
+      courseOutcomesManager.setPoints(
+        (course.outcomes || "")
+          .split("\n")
+          .map((point) => point.trim())
+          .filter(Boolean),
+      );
+    }
+
+    if (courseRequirementsManager) {
+      courseRequirementsManager.setPoints(
+        (course.requirements || "")
+          .split("\n")
+          .map((point) => point.trim())
+          .filter(Boolean),
+      );
+    }
+
+    if (courseAudienceManager) {
+      courseAudienceManager.setPoints(
+        (course.audience || "")
+          .split("\n")
+          .map((point) => point.trim())
+          .filter(Boolean),
+      );
+    }
     courseForm.dataset.editingId = courseId;
 
     courseModalTitle.textContent = "Edit Course";
@@ -912,6 +1116,17 @@ if (adminCoursesTableBody) {
       const description = document
         .getElementById("courseDescription")
         .value.trim();
+      const outcomes = courseOutcomesManager
+        ? courseOutcomesManager.getPoints().join("\n")
+        : "";
+
+      const requirements = courseRequirementsManager
+        ? courseRequirementsManager.getPoints().join("\n")
+        : "";
+
+      const audience = courseAudienceManager
+        ? courseAudienceManager.getPoints().join("\n")
+        : "";
 
       const editingId = courseForm.dataset.editingId;
 
@@ -929,6 +1144,7 @@ if (adminCoursesTableBody) {
               "Content-Type": "application/json",
               Authorization: "Bearer " + adminToken,
             },
+
             body: JSON.stringify({
               title: title,
               category: category,
@@ -936,8 +1152,10 @@ if (adminCoursesTableBody) {
               duration: duration,
               price: price,
               originalPrice: originalPrice,
-              students: 0,
               description: description,
+              outcomes: outcomes,
+              requirements: requirements,
+              audience: audience,
             }),
           });
 
@@ -957,23 +1175,41 @@ if (adminCoursesTableBody) {
         else {
           const newCourse = {
             id: "course-" + Date.now(),
-            title: title,
-            category: category,
-            lessons: lessons,
-            duration: duration,
-            price: price,
-            originalPrice: originalPrice,
+            title,
+            category,
+            lessons,
+            duration,
+            price,
+            originalPrice,
             students: 0,
-            description: description,
+            description,
+            outcomes,
+            requirements,
+            audience,
           };
+
+          const formData = new FormData();
+
+          // Course details
+          Object.entries(newCourse).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+              formData.append(key, value);
+            }
+          });
+
+          // Thumbnail input se image lena
+          const thumbnailInput = document.getElementById("courseThumbnail");
+          
+          if (thumbnailInput && thumbnailInput.files.length > 0) {
+            formData.append("thumbnail", thumbnailInput.files[0]);
+          }
 
           const response = await fetch("/api/courses/admin", {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
               Authorization: "Bearer " + adminToken,
             },
-            body: JSON.stringify(newCourse),
+            body: formData,
           });
 
           const data = await response.json();
