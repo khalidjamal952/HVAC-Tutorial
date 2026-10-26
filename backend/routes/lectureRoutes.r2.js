@@ -263,8 +263,16 @@ router.post("/upload/complete", adminAuthMiddleware, async (req, res) => {
   try {
     if (!requireR2(res)) return;
 
-    const { key, uploadId, parts, courseId, number, title, description } =
-      req.body;
+    const {
+      key,
+      uploadId,
+      parts,
+      courseId,
+      number,
+      title,
+      description,
+      duration,
+    } = req.body;
 
     console.log("[R2 DEBUG] req.admin:", JSON.stringify(req.admin));
     console.log("[R2 DEBUG] adminId field:", req.admin?.adminId);
@@ -278,6 +286,12 @@ router.post("/upload/complete", adminAuthMiddleware, async (req, res) => {
         "",
     );
 
+    // Validate video duration in seconds
+    if (!Number.isFinite(Number(duration)) || Number(duration) <= 0) {
+      return res.status(400).json({
+        message: "Valid video duration is required.",
+      });
+    }
     if (
       !courseId ||
       number === undefined ||
@@ -370,6 +384,7 @@ router.post("/upload/complete", adminAuthMiddleware, async (req, res) => {
         description: typeof description === "string" ? description.trim() : "",
         video: session.key,
         thumbnail: "",
+        duration: Math.round(Number(duration)),
       });
     } catch (dbError) {
       console.error("Lecture Save After R2 Completion Failed:", dbError);

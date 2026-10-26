@@ -3,6 +3,8 @@ const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
 const Course = require("../models/Course");
+const Order = require("../models/Order");
+const Lecture = require("../models/Lecture");
 const adminAuthMiddleware = require("../middleware/adminAuthMiddleware");
 
 const router = express.Router();
@@ -71,11 +73,39 @@ const thumbnailUpload = multer({
 
 router.get("/", async (req, res) => {
   try {
-    const courses = await Course.find().sort({
-      createdAt: -1,
-    });
+    const courses = await Course.find().sort({ createdAt: -1 }).lean();
 
-    for (const course of courses) {
+    const paidStatuses = ["Paid", "Completed", "Success", "Successful"];
+
+    const updatedCourses = await Promise.all(
+      courses.map(async (course) => {
+        // Count actual lectures linked to this course
+        const lessons = await Lecture.countDocuments({
+          courseId: course.id,
+        });
+
+        // Find successful orders containing this course
+        const orders = await Order.find({
+          status: { $in: paidStatuses },
+          "courses.id": course.id,
+        })
+          .select("user")
+          .lean();
+
+        // Count unique enrolled users
+        const uniqueStudents = new Set(
+          orders.map((order) => String(order.user)),
+        );
+
+        return {
+          ...course,
+          lessons,
+          students: uniqueStudents.size,
+        };
+      }),
+    );
+
+    for (const course of updatedCourses) {
       if (course.thumbnail) {
         const filename = path.basename(course.thumbnail);
         const filePath = path.join(thumbnailDirectory, filename);
@@ -88,14 +118,14 @@ router.get("/", async (req, res) => {
       }
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "Courses fetched successfully",
-      courses: courses,
+      courses: updatedCourses,
     });
   } catch (error) {
     console.error("Get Courses Error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Server error",
     });
   }

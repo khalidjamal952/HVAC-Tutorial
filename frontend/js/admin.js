@@ -1730,6 +1730,7 @@ if (lectureForm) {
 
       uploadInfo = await request("/api/lectures/upload/initiate", {
         fileName: videoFile.name,
+        duration,
         contentType: videoFile.type || "video/mp4",
         fileSize: videoFile.size,
         courseId,
@@ -1829,7 +1830,7 @@ if (lectureForm) {
 
       // Step 2: Tell backend to finish upload and save lecture metadata
       setProgress(99, "Finalizing upload");
-
+      const duration = await getVideoDuration(videoFile);
       await request("/api/lectures/upload/complete", {
         key,
         uploadId,
@@ -1887,6 +1888,33 @@ if (lectureForm) {
 // =========================
 // DELETE LECTURE
 // =========================
+function getVideoDuration(file) {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement("video");
+    const url = URL.createObjectURL(file);
+
+    video.preload = "metadata";
+
+    video.onloadedmetadata = () => {
+      const duration = video.duration;
+      URL.revokeObjectURL(url);
+
+      if (!Number.isFinite(duration) || duration <= 0) {
+        reject(new Error("Unable to detect video duration."));
+        return;
+      }
+
+      resolve(Math.round(duration));
+    };
+
+    video.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Unable to read video duration."));
+    };
+
+    video.src = url;
+  });
+}
 
 async function deleteLecture(id) {
   const confirmDelete = confirm(

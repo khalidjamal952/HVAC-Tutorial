@@ -256,13 +256,27 @@ router.post("/upload/sign-part", adminAuthMiddleware, async (req, res) => {
 router.post("/upload/complete", adminAuthMiddleware, async (req, res) => {
   try {
     if (!requireR2(res)) return;
-
-    const { key, uploadId, parts, courseId, number, title, description } =
-      req.body;
-
+    const {
+      key,
+      uploadId,
+      parts,
+      courseId,
+      number,
+      title,
+      description,
+      duration,
+     
+    } = req.body;
     const adminId = String(
       req.user?.userId || req.user?._id || req.user?.id || "",
     );
+
+    // Validate video duration (in seconds)
+    if (!Number.isFinite(Number(duration)) || Number(duration) <= 0) {
+      return res.status(400).json({
+        message: "Valid video duration is required.",
+      });
+    }
 
     // Validate lecture details
     if (
@@ -365,6 +379,7 @@ router.post("/upload/complete", adminAuthMiddleware, async (req, res) => {
         description: typeof description === "string" ? description.trim() : "",
         video: session.key,
         thumbnail: "",
+        duration: Math.round(Number(duration)),
       });
     } catch (dbError) {
       // R2 upload succeeded but lecture record could not be saved.

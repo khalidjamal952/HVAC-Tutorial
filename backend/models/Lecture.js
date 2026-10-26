@@ -34,6 +34,11 @@ const lectureSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    duration: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   {
     timestamps: true,

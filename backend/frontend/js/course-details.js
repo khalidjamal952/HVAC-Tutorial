@@ -261,19 +261,21 @@ async function loadCourseDetails() {
     }
 
     // Course Stats
-    const stats = document.querySelectorAll(".course-details-stats div");
+    const studentsValue = document.getElementById("courseStudentsValue");
+    const lessonsValue = document.getElementById("courseLessonsValue");
+    const hoursValue = document.getElementById("courseHoursValue");
 
-    if (stats.length >= 4) {
-      stats[1].querySelector("strong").textContent =
-        `👨‍🎓 ${course.students || 0}`;
-
-      stats[2].querySelector("strong").textContent =
-        `📚 ${course.lessons || 0}`;
-
-      stats[3].querySelector("strong").textContent =
-        `⏱️ ${course.duration || ""}`;
+    if (studentsValue) {
+      studentsValue.textContent = `👨‍🎓 ${course.students ?? 0}`;
     }
 
+    if (lessonsValue) {
+      lessonsValue.textContent = `📚 ${course.lessons ?? 0}`;
+    }
+
+    if (hoursValue) {
+      hoursValue.textContent = `⏱️ ${course.duration ?? course.hours ?? 0}`;
+    }
     // Price
     const price = document.querySelector(".course-price-large strong");
 
