@@ -39,10 +39,11 @@ async function loadCourses() {
             }
 
             const ratingData = await ratingResponse.json();
-
+            console.log("Rating API:", course.id, ratingData);
             return {
               ...course,
               rating: Number(ratingData.averageRating || 0),
+              totalRatings: Number(ratingData.totalRatings || 0),
             };
           } catch (error) {
             console.error(`Rating Error for ${course.id}:`, error);
