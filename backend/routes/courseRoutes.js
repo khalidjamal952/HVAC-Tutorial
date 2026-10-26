@@ -84,6 +84,25 @@ router.get("/", async (req, res) => {
           courseId: course.id,
         });
 
+        const lectures = await Lecture.find({
+          courseId: course.id,
+        })
+          .select("duration")
+          .lean();
+
+        const totalDurationSeconds = lectures.reduce(
+          (total, lecture) => total + (Number(lecture.duration) || 0),
+          0,
+        );
+
+        const totalHours = Math.floor(totalDurationSeconds / 3600);
+        const remainingMinutes = Math.floor((totalDurationSeconds % 3600) / 60);
+
+        const calculatedDuration =
+          totalHours > 0
+            ? `${totalHours} hours${remainingMinutes > 0 ? ` ${remainingMinutes} min` : ""}`
+            : `${remainingMinutes} min`;
+
         // Find successful orders containing this course
         const orders = await Order.find({
           status: { $in: paidStatuses },
@@ -100,6 +119,7 @@ router.get("/", async (req, res) => {
         return {
           ...course,
           lessons,
+          duration: calculatedDuration,
           students: uniqueStudents.size,
         };
       }),
