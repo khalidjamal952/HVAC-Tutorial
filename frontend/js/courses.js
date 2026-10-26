@@ -26,8 +26,6 @@ async function loadCourses() {
     }
 
     if (Array.isArray(data.courses)) {
-
-
       allCourses = await Promise.all(
         data.courses.map(async function (course) {
           try {
@@ -56,79 +54,75 @@ async function loadCourses() {
           }
         }),
       );
-
-      
     } else {
       allCourses = [];
     }
     // LOAD COUPONS
 
-try {
-  const token = localStorage.getItem("hvacToken");
+    try {
+      const token = localStorage.getItem("hvacToken");
 
-  if (!token) {
-    allCourses = allCourses.map(function (course) {
-      return {
-        ...course,
-        coupon: null,
-      };
-    });
-  } else {
-    const coursesWithCoupons = [];
-
-    for (const course of allCourses) {
-      try {
-        const couponResponse = await fetch(
-          `/api/coupons/available/${course.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!couponResponse.ok) {
-          console.warn(
-            `Coupon request failed for ${course.id}:`,
-            couponResponse.status
-          );
-
-          coursesWithCoupons.push({
+      if (!token) {
+        allCourses = allCourses.map(function (course) {
+          return {
             ...course,
             coupon: null,
-          });
+          };
+        });
+      } else {
+        const coursesWithCoupons = [];
 
-          continue;
+        for (const course of allCourses) {
+          try {
+            const couponResponse = await fetch(
+              `/api/coupons/available/${course.id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              },
+            );
+
+            if (!couponResponse.ok) {
+              console.warn(
+                `Coupon request failed for ${course.id}:`,
+                couponResponse.status,
+              );
+
+              coursesWithCoupons.push({
+                ...course,
+                coupon: null,
+              });
+
+              continue;
+            }
+
+            const couponData = await couponResponse.json();
+
+            const coupon =
+              Array.isArray(couponData.coupons) && couponData.coupons.length > 0
+                ? couponData.coupons[0]
+                : null;
+
+            coursesWithCoupons.push({
+              ...course,
+              coupon,
+            });
+          } catch (error) {
+            console.error(`Coupon Error for ${course.id}:`, error);
+
+            coursesWithCoupons.push({
+              ...course,
+              coupon: null,
+            });
+          }
         }
 
-        const couponData = await couponResponse.json();
-
-        const coupon =
-          Array.isArray(couponData.coupons) &&
-          couponData.coupons.length > 0
-            ? couponData.coupons[0]
-            : null;
-
-        coursesWithCoupons.push({
-          ...course,
-          coupon,
-        });
-      } catch (error) {
-        console.error(`Coupon Error for ${course.id}:`, error);
-
-        coursesWithCoupons.push({
-          ...course,
-          coupon: null,
-        });
+        allCourses = coursesWithCoupons;
       }
+    } catch (couponError) {
+      console.error("Coupon Fetch Error:", couponError);
     }
-
-    allCourses = coursesWithCoupons;
-  }
-} 
-catch (couponError) {
-  console.error("Coupon Fetch Error:", couponError);
-}
 
     renderCourses();
   } catch (error) {
@@ -177,17 +171,24 @@ function renderCourses() {
     card.dataset.category = course.category;
 
     card.innerHTML = `
-            <div class="course-image">
+         <div class="course-image">
 
-                <div class="course-image-icon">
-                    ${courseIcon}
-                </div>
+    ${
+      course.thumbnail
+        ? `<img
+             src="${course.thumbnail}"
+             alt="${course.title}"
+             class="course-thumbnail"
+             onerror="this.style.display='none'"
+           >`
+        : `<div class="course-image-icon">${courseIcon}</div>`
+    }
 
-                <span class="course-category">
-                    ${categoryName}
-                </span>
+    <span class="course-category">
+        ${categoryName}
+    </span>
 
-            </div>
+</div>
 
             <div class="course-content">
 
