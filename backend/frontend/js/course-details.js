@@ -384,10 +384,8 @@ ratingStars.forEach(function (star) {
 
 // Load course ratings
 async function loadCourseRatings() {
-  if (!courseId || !course || !course.id) {
-    console.warn(
-      "Course ID or course details not available. Skipping ratings.",
-    );
+  if (!courseId) {
+    console.warn("Course ID not available. Cannot load ratings.");
     return;
   }
 
@@ -562,5 +560,8 @@ if (submitRatingBtn) {
     }
   });
 }
-loadCourseDetails();
-loadCourseRatings();
+loadCourseDetails()
+  .then(() => loadCourseRatings())
+  .catch((error) => {
+    console.error("Load Course Details Error:", error);
+  });
