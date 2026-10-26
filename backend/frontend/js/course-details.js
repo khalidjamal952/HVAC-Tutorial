@@ -393,7 +393,7 @@ async function loadCourseRatings() {
 
   try {
     const response = await fetch(
-      `/api/lectures/course/${encodeURIComponent(course.id)}/preview`,
+      `/api/lectures/course/${encodeURIComponent(courseId)}/preview`,
     );
     const data = await response.json();
 
