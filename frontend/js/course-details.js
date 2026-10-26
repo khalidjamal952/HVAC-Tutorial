@@ -282,14 +282,21 @@ async function loadCourseRatings() {
 
     const avg = Number(data.averageRating || 0);
     const count = Number(data.totalRatings || 0);
-    // Update top course rating
+
+    // Update top course rating only when students have rated
     const courseStats = document.querySelectorAll(".course-details-stats div");
 
     if (courseStats.length >= 1) {
-      const ratingStrong = courseStats[0].querySelector("strong");
+      const ratingStat = courseStats[0];
+      const ratingStrong = ratingStat.querySelector("strong");
 
-      if (ratingStrong) {
-        ratingStrong.textContent = `⭐ ${avg.toFixed(1)}`;
+      if (count > 0) {
+        ratingStat.style.display = "";
+        if (ratingStrong) {
+          ratingStrong.textContent = `⭐ ${avg.toFixed(1)}`;
+        }
+      } else {
+        ratingStat.style.display = "none";
       }
     }
 
