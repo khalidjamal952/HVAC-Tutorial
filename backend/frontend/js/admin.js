@@ -1897,9 +1897,33 @@ function closeLectureModalWindow() {
   editingLectureId = null;
 }
 
-// =========================
-// SAVE LECTURE
-// =========================
+function getVideoDuration(file) {
+  return new Promise((resolve, reject) => {
+    const video = document.createElement("video");
+    const url = URL.createObjectURL(file);
+
+    video.preload = "metadata";
+
+    video.onloadedmetadata = () => {
+      const duration = video.duration;
+      URL.revokeObjectURL(url);
+
+      if (!Number.isFinite(duration) || duration <= 0) {
+        reject(new Error("Unable to detect video duration."));
+        return;
+      }
+
+      resolve(Math.round(duration));
+    };
+
+    video.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Unable to read video duration."));
+    };
+
+    video.src = url;
+  });
+}
 // =========================
 // SAVE LECTURE - R2 MULTIPART UPLOAD
 // =========================
@@ -2032,6 +2056,8 @@ if (lectureForm) {
     try {
       if (submitButton) submitButton.disabled = true;
 
+      const duration = await getVideoDuration(videoFile);
+
       // Step 1: Ask backend to start multipart upload
       setProgress(0, "Starting upload");
 
@@ -2145,6 +2171,7 @@ if (lectureForm) {
         number,
         title,
         description,
+        duration,
         fileName: videoFile.name,
         contentType: videoFile.type || "video/mp4",
         fileSize: videoFile.size,
