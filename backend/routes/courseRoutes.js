@@ -23,6 +23,10 @@ if (!fs.existsSync(thumbnailDirectory)) {
     recursive: true,
   });
 }
+console.log(
+  "THUMBNAIL FOLDER AFTER CREATION:",
+  fs.existsSync(thumbnailDirectory)
+);
 
 const thumbnailStorage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -62,6 +66,7 @@ router.get("/", async (req, res) => {
     const courses = await Course.find().sort({
       createdAt: -1,
     });
+
     for (const course of courses) {
       if (course.thumbnail) {
         const filename = path.basename(course.thumbnail);
