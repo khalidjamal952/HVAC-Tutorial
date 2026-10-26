@@ -15,6 +15,8 @@ const thumbnailDirectory = path.join(
   __dirname,
   "../../assets/course-thumbnails",
 );
+console.log("THUMBNAIL DIRECTORY:", thumbnailDirectory);
+console.log("THUMBNAIL FOLDER EXISTS:", fs.existsSync(thumbnailDirectory));
 
 if (!fs.existsSync(thumbnailDirectory)) {
   fs.mkdirSync(thumbnailDirectory, {
@@ -60,6 +62,18 @@ router.get("/", async (req, res) => {
     const courses = await Course.find().sort({
       createdAt: -1,
     });
+    for (const course of courses) {
+      if (course.thumbnail) {
+        const filename = path.basename(course.thumbnail);
+        const filePath = path.join(thumbnailDirectory, filename);
+
+        console.log({
+          course: course.title,
+          thumbnail: course.thumbnail,
+          fileExists: fs.existsSync(filePath),
+        });
+      }
+    }
 
     res.status(200).json({
       message: "Courses fetched successfully",
@@ -81,7 +95,7 @@ router.get("/", async (req, res) => {
 router.post("/admin/seed", adminAuthMiddleware, async (req, res) => {
   try {
     console.log("ADD COURSE FILE:", req.file);
-console.log("ADD COURSE BODY:", req.body);
+    console.log("ADD COURSE BODY:", req.body);
 
     console.log("Uploaded thumbnail:", req.file);
     const defaultCourses = [
