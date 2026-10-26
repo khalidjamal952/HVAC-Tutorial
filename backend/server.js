@@ -34,6 +34,17 @@ app.use("/assets/ebooks", function (req, res, next) {
     message: "Direct e-book access is not allowed.",
   });
 });
+
+const persistentThumbnailDirectory = path.join(
+  process.env.HOME || "/home/u822452811",
+  "storage",
+  "course-thumbnails",
+);
+
+app.use(
+  "/assets/course-thumbnails",
+  express.static(persistentThumbnailDirectory),
+);
 app.use("/assets", express.static(path.join(__dirname, "../assets")));
 
 app.use(express.static(path.join(__dirname, "frontend")));

@@ -12,9 +12,17 @@ const router = express.Router();
 // =========================================
 
 const thumbnailDirectory = path.join(
-  __dirname,
-  "../../assets/course-thumbnails",
+  process.env.HOME || "/home/u822452811",
+  "storage",
+  "course-thumbnails",
 );
+
+if (!fs.existsSync(thumbnailDirectory)) {
+  fs.mkdirSync(thumbnailDirectory, {
+    recursive: true,
+  });
+}
+
 console.log("THUMBNAIL DIRECTORY:", thumbnailDirectory);
 console.log("THUMBNAIL FOLDER EXISTS:", fs.existsSync(thumbnailDirectory));
 
@@ -25,7 +33,7 @@ if (!fs.existsSync(thumbnailDirectory)) {
 }
 console.log(
   "THUMBNAIL FOLDER AFTER CREATION:",
-  fs.existsSync(thumbnailDirectory)
+  fs.existsSync(thumbnailDirectory),
 );
 
 const thumbnailStorage = multer.diskStorage({
