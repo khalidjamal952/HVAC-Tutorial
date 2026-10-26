@@ -1725,9 +1725,11 @@ if (lectureForm) {
     try {
       if (submitButton) submitButton.disabled = true;
 
+      // Detect video duration before starting upload
+      const duration = await getVideoDuration(videoFile);
+
       // Step 1: Ask backend to start multipart upload
       setProgress(0, "Starting upload");
-
       uploadInfo = await request("/api/lectures/upload/initiate", {
         fileName: videoFile.name,
         duration,
@@ -1830,7 +1832,7 @@ if (lectureForm) {
 
       // Step 2: Tell backend to finish upload and save lecture metadata
       setProgress(99, "Finalizing upload");
-      const duration = await getVideoDuration(videoFile);
+      // const duration = await getVideoDuration(videoFile);
       await request("/api/lectures/upload/complete", {
         key,
         uploadId,
@@ -1839,6 +1841,7 @@ if (lectureForm) {
         number,
         title,
         description,
+        duration,
         fileName: videoFile.name,
         contentType: videoFile.type || "video/mp4",
         fileSize: videoFile.size,
