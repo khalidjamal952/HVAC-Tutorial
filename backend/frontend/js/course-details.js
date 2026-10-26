@@ -384,7 +384,10 @@ ratingStars.forEach(function (star) {
 
 // Load course ratings
 async function loadCourseRatings() {
-  if (!courseId) {
+  if (!courseId || !course || !course.id) {
+    console.warn(
+      "Course ID or course details not available. Skipping ratings.",
+    );
     return;
   }
 
