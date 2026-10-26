@@ -9,7 +9,6 @@ const courses = {
     icon: "❄️",
     description:
       "Learn the fundamentals of HVAC systems, components, cooling principles and basic operation.",
-    rating: "4.8",
     students: "125+",
     lessons: "25",
     hours: "6",
@@ -23,7 +22,6 @@ const courses = {
     icon: "🧊",
     description:
       "Understand AC components, refrigeration cycle, cooling process and basic AC operation.",
-    rating: "4.7",
     students: "98+",
     lessons: "20",
     hours: "5",
@@ -37,7 +35,6 @@ const courses = {
     icon: "🧊",
     description:
       "Learn refrigeration cycles, compressors, condensers, evaporators and refrigerants.",
-    rating: "4.9",
     students: "143+",
     lessons: "30",
     hours: "8",
@@ -51,7 +48,6 @@ const courses = {
     icon: "⚡",
     description:
       "Understand HVAC wiring, electrical components, controls and basic troubleshooting.",
-    rating: "4.8",
     students: "87+",
     lessons: "22",
     hours: "6",
@@ -65,7 +61,6 @@ const courses = {
     icon: "🔧",
     description:
       "Learn practical HVAC installation, servicing procedures, tools, maintenance and safety practices.",
-    rating: "4.9",
     students: "156+",
     lessons: "35",
     hours: "10",
@@ -79,7 +74,6 @@ const courses = {
     icon: "🛠️",
     description:
       "Identify common HVAC problems, diagnose faults and understand practical troubleshooting methods.",
-    rating: "4.8",
     students: "112+",
     lessons: "28",
     hours: "7",
@@ -359,6 +353,13 @@ async function loadCourseRatings() {
   }
 }
 
+const initialCourseStats = document.querySelectorAll(
+  ".course-details-stats div",
+);
+
+if (initialCourseStats.length > 0) {
+  initialCourseStats[0].style.display = "none";
+}
 // Submit rating
 if (submitRatingBtn) {
   submitRatingBtn.addEventListener("click", async function () {
