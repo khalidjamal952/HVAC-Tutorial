@@ -27,11 +27,28 @@ router.post("/create-order", authMiddleware, async (req, res) => {
       });
     }
 
+    if (
+      !courseIds.every((id) => typeof id === "string" && id.trim().length > 0)
+    ) {
+      return res.status(400).json({
+        message: "Invalid course IDs.",
+      });
+    }
+
+    const normalizedCourseIds = courseIds.map((id) => id.trim());
+    const uniqueCourseIds = [...new Set(normalizedCourseIds)];
+
+    if (uniqueCourseIds.length !== normalizedCourseIds.length) {
+      return res.status(400).json({
+        message: "Duplicate course IDs are not allowed.",
+      });
+    }
+
     const courses = await Course.find({
-      id: { $in: courseIds },
+      id: { $in: uniqueCourseIds },
     });
 
-    if (courses.length !== courseIds.length) {
+    if (courses.length !== uniqueCourseIds.length) {
       return res.status(400).json({
         message: "One or more courses were not found.",
       });
@@ -131,21 +148,26 @@ router.post("/create-order", authMiddleware, async (req, res) => {
 
       finalAmount = Math.max(originalTotal - discount, 0);
     }
+    if (!Number.isFinite(finalAmount) || finalAmount <= 0) {
+      return res.status(400).json({
+        message: "Order amount must be greater than zero.",
+      });
+    }
+
     const options = {
       amount: Math.round(Number(finalAmount) * 100),
       currency: "INR",
       receipt: `hvac_${Date.now()}`,
-     notes: {
-  courseId: courseId || "",
-  courseName: courseName || "",
-  courseIds: courseIds.join(","),
-  couponCode: couponCode
-    ? couponCode.trim().toUpperCase()
-    : "",
-  originalTotal: String(originalTotal),
-  discount: String(discount),
-  finalAmount: String(finalAmount),
-},
+      notes: {
+        courseId: courseId || "",
+        courseName: courseName || "",
+        userId: req.user.userId.toString(),
+        courseIds: uniqueCourseIds.join(","),
+        couponCode: couponCode ? couponCode.trim().toUpperCase() : "",
+        originalTotal: String(originalTotal),
+        discount: String(discount),
+        finalAmount: String(finalAmount),
+      },
     };
 
     const order = await razorpay.orders.create(options);

@@ -57,11 +57,23 @@ router.post("/razorpay/verify-payment", authMiddleware, async (req, res) => {
       .update(razorpay_order_id + "|" + razorpay_payment_id)
       .digest("hex");
 
-    if (generatedSignature !== razorpay_signature) {
+    const expectedSignatureBuffer = Buffer.from(generatedSignature, "hex");
+
+    const receivedSignatureBuffer = Buffer.from(
+      String(razorpay_signature),
+      "hex",
+    );
+
+    if (
+      !/^[a-f0-9]{64}$/i.test(String(razorpay_signature)) ||
+      expectedSignatureBuffer.length !== receivedSignatureBuffer.length ||
+      !crypto.timingSafeEqual(expectedSignatureBuffer, receivedSignatureBuffer)
+    ) {
       return res.status(400).json({
         message: "Payment verification failed.",
       });
     }
+
     // ========================================
     // VERIFY RAZORPAY ORDER AMOUNT
     // ========================================
@@ -84,10 +96,31 @@ router.post("/razorpay/verify-payment", authMiddleware, async (req, res) => {
       });
     }
 
+    const payment = await razorpay.payments.fetch(razorpay_payment_id);
+
+    if (
+      payment.order_id !== razorpay_order_id ||
+      payment.status !== "captured" ||
+      payment.currency !== "INR" ||
+      Number(payment.amount) !== expectedAmountPaise
+    ) {
+      return res.status(400).json({
+        message: "Payment verification failed.",
+      });
+    }
+
     // ========================================
     // GET ACTUAL COURSES FROM DATABASE
     // ========================================
-
+    // Step 3: Verify order ownership
+    if (
+      !razorpayOrder.notes?.userId ||
+      razorpayOrder.notes.userId !== req.user.userId.toString()
+    ) {
+      return res.status(403).json({
+        message: "This payment order does not belong to you.",
+      });
+    }
     const courseIdsFromNotes = (razorpayOrder.notes?.courseIds || "")
       .split(",")
       .map(function (id) {
@@ -139,19 +172,25 @@ router.post("/razorpay/verify-payment", authMiddleware, async (req, res) => {
     // CREATE PAID ORDER
     // =========================================
 
+    if (
+      !String(customer?.phone || user.phone || "").trim() ||
+      !String(customer?.city || user.city || "").trim() ||
+      !String(customer?.address || "").trim()
+    ) {
+      return res.status(400).json({
+        message: "Phone, city, and address are required.",
+      });
+    }
+
     const order = await Order.create({
       user: req.user.userId,
 
       customer: {
-        // IMPORTANT:
-        // Name and email come from backend user account
         fullName: user.name,
         email: user.email,
-
-        // Other checkout details can come from checkout form
-        phone: customer?.phone || user.phone || "",
-        city: customer?.city || user.city || "",
-        address: customer?.address || "",
+        phone: String(customer?.phone || user.phone || "").trim(),
+        city: String(customer?.city || user.city || "").trim(),
+        address: String(customer?.address || "").trim(),
       },
 
       courses: orderCourses,
@@ -164,7 +203,7 @@ router.post("/razorpay/verify-payment", authMiddleware, async (req, res) => {
 
       total: Number(razorpayOrder.notes?.finalAmount || 0),
 
-      paymentMethod: paymentMethod || "razorpay",
+      paymentMethod: "razorpay",
 
       razorpayOrderId: razorpay_order_id,
 
@@ -223,7 +262,25 @@ router.post("/razorpay/verify-payment", authMiddleware, async (req, res) => {
   } catch (error) {
     console.error("Razorpay Payment Verification Error:", error);
 
-    res.status(500).json({
+    // Handle duplicate payment verification safely
+    if (error.code === 11000 && error.keyPattern?.razorpayPaymentId) {
+      try {
+        const existingOrder = await Order.findOne({
+          razorpayPaymentId: req.body.razorpay_payment_id,
+        });
+
+        if (existingOrder) {
+          return res.status(200).json({
+            message: "Payment already verified.",
+            order: existingOrder,
+          });
+        }
+      } catch (lookupError) {
+        console.error("Duplicate order lookup error:", lookupError);
+      }
+    }
+
+    return res.status(500).json({
       message: "Payment verification failed.",
     });
   }
@@ -414,48 +471,52 @@ router.get("/access/:courseId", authMiddleware, async (req, res) => {
 // SYNC COURSE STUDENT COUNTS
 // ========================================
 
-router.post("/admin/sync-student-counts", adminAuthMiddleware, async (req, res) => {
-  try {
-    const courses = await Course.find();
+router.post(
+  "/admin/sync-student-counts",
+  adminAuthMiddleware,
+  async (req, res) => {
+    try {
+      const courses = await Course.find();
 
-    const paidOrders = await Order.find({
-      status: {
-        $in: ["Paid", "Completed", "Success", "Successful"],
-      },
-    });
-
-    for (const course of courses) {
-      const uniqueStudents = new Set();
-
-      paidOrders.forEach(function (order) {
-        const hasCourse = order.courses.some(function (purchasedCourse) {
-          return purchasedCourse.id === course.id;
-        });
-
-        if (hasCourse) {
-          uniqueStudents.add(String(order.user));
-        }
+      const paidOrders = await Order.find({
+        status: {
+          $in: ["Paid", "Completed", "Success", "Successful"],
+        },
       });
 
-      await Course.findOneAndUpdate(
-        { id: course.id },
-        {
-          $set: {
-            students: uniqueStudents.size,
+      for (const course of courses) {
+        const uniqueStudents = new Set();
+
+        paidOrders.forEach(function (order) {
+          const hasCourse = order.courses.some(function (purchasedCourse) {
+            return purchasedCourse.id === course.id;
+          });
+
+          if (hasCourse) {
+            uniqueStudents.add(String(order.user));
+          }
+        });
+
+        await Course.findOneAndUpdate(
+          { id: course.id },
+          {
+            $set: {
+              students: uniqueStudents.size,
+            },
           },
-        }
-      );
+        );
+      }
+
+      res.status(200).json({
+        message: "Course student counts synced successfully.",
+      });
+    } catch (error) {
+      console.error("Sync Student Counts Error:", error);
+
+      res.status(500).json({
+        message: "Unable to sync course student counts.",
+      });
     }
-
-    res.status(200).json({
-      message: "Course student counts synced successfully.",
-    });
-  } catch (error) {
-    console.error("Sync Student Counts Error:", error);
-
-    res.status(500).json({
-      message: "Unable to sync course student counts.",
-    });
-  }
-});
+  },
+);
 module.exports = router;
