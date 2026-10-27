@@ -164,6 +164,7 @@ router.post("/razorpay/verify-payment", authMiddleware, async (req, res) => {
 
     if (existingOrder) {
       return res.status(200).json({
+        success: true,
         message: "Payment already verified.",
         order: existingOrder,
       });
@@ -271,6 +272,7 @@ router.post("/razorpay/verify-payment", authMiddleware, async (req, res) => {
 
         if (existingOrder) {
           return res.status(200).json({
+            success: true,
             message: "Payment already verified.",
             order: existingOrder,
           });
