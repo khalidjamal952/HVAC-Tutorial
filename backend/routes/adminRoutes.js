@@ -3,13 +3,12 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const Admin = require("../models/Admin");
+const AdminSetup = require("../models/AdminSetup");
 const adminAuthMiddleware = require("../middleware/adminAuthMiddleware");
 
 const router = express.Router();
 
-// ==========================================
-// ADMIN REGISTER / FIRST-TIME SETUP
-// ==========================================
+// ADMIN REGISTER — FIRST ADMIN ONLY
 router.post("/register", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -26,34 +25,27 @@ router.post("/register", async (req, res) => {
       });
     }
 
-    const existingAdmin = await Admin.findOne({
-      email: email.trim().toLowerCase(),
-    });
-
-    if (existingAdmin) {
-      return res.status(409).json({
-        message: "Admin account already exists.",
-      });
-    }
-
+    // Registration is allowed only when no admin exists.
     const adminCount = await Admin.countDocuments();
 
     if (adminCount > 0) {
       return res.status(403).json({
-        message:
-          "Admin account already exists. Admin registration is disabled.",
+        message: "Admin registration is disabled.",
       });
     }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const admin = await Admin.create({
       name: name.trim(),
-      email: email.trim().toLowerCase(),
+      email: normalizedEmail,
       password: hashedPassword,
       role: "admin",
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Admin account created successfully.",
       admin: {
         id: admin._id,
@@ -65,7 +57,126 @@ router.post("/register", async (req, res) => {
   } catch (error) {
     console.error("Admin Register Error:", error);
 
-    res.status(500).json({
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "An admin with this email already exists.",
+      });
+    }
+
+    return res.status(500).json({
+      message: "Server error.",
+    });
+  }
+});
+
+/* TEMPORARY CLIENT ADMIN HANDOVER */
+router.post("/handover-create", async (req, res) => {
+  let claimed = false;
+
+  try {
+    const setupKey = process.env.ADMIN_HANDOVER_KEY;
+
+    if (!setupKey || req.body.setupKey !== setupKey) {
+      return res.status(403).json({
+        message: "Unauthorized setup request.",
+      });
+    }
+
+    if (process.env.ADMIN_HANDOVER_ENABLED !== "true") {
+      return res.status(403).json({
+        message: "Admin handover is disabled.",
+      });
+    }
+
+    const { name, email, password } = req.body;
+
+    if (!name?.trim() || !email?.trim() || !password || password.length < 12) {
+      return res.status(400).json({
+        message:
+          "Name, email and password (minimum 12 characters) are required.",
+      });
+    }
+
+    // Atomically claim the existing one-time setup record.
+    const setup = await AdminSetup.findOneAndUpdate(
+      {
+        key: "client-handover",
+        completed: false,
+        inProgress: false,
+      },
+      { $set: { inProgress: true } },
+      { new: true },
+    );
+
+    if (!setup) {
+      return res.status(403).json({
+        message: "Admin handover is already used or not initialized.",
+      });
+    }
+
+    claimed = true;
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (await Admin.findOne({ email: normalizedEmail })) {
+      await AdminSetup.updateOne(
+        { key: "client-handover", completed: false },
+        { $set: { inProgress: false } },
+      );
+      claimed = false;
+
+      return res.status(409).json({
+        message: "An admin with this email already exists.",
+      });
+    }
+
+    const admin = await Admin.create({
+      name: name.trim(),
+      email: normalizedEmail,
+      password: await bcrypt.hash(password, 12),
+      role: "admin",
+    });
+
+    await AdminSetup.updateOne(
+      { key: "client-handover", inProgress: true },
+      { $set: { completed: true, inProgress: false } },
+    );
+
+    return res.status(201).json({
+      message: "Client admin created successfully.",
+      admin: {
+        id: admin._id,
+        name: admin.name,
+        email: admin.email,
+        role: admin.role,
+      },
+    });
+  } catch (error) {
+    console.error("Admin Handover Error:", error);
+
+    // Release the claim only if account creation did not succeed.
+    if (claimed) {
+      const adminCreated = await Admin.exists({
+        email: String(req.body.email || "")
+          .trim()
+          .toLowerCase(),
+      }).catch(() => true);
+
+      if (!adminCreated) {
+        await AdminSetup.updateOne(
+          { key: "client-handover", completed: false },
+          { $set: { inProgress: false } },
+        ).catch(() => {});
+      }
+    }
+
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "An admin with this email already exists.",
+      });
+    }
+
+    return res.status(500).json({
       message: "Server error.",
     });
   }
