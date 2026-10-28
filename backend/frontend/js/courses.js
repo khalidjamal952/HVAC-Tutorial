@@ -339,7 +339,7 @@ function createDynamicFilters() {
     filterContainer.appendChild(button);
   });
 }
-const filterButtons = document.querySelectorAll(".filter-btn");
+// const filterButtons = document.querySelectorAll(".filter-btn");
 
 let currentCategory = "all";
 
@@ -393,6 +393,9 @@ function filterCourses() {
 // =========================
 
 function setupCourseFilters() {
+  // Get the latest buttons after dynamic categories are created
+  const filterButtons = document.querySelectorAll(".course-filter .filter-btn");
+
   if (searchBtn) {
     searchBtn.onclick = function () {
       filterCourses();
@@ -426,6 +429,7 @@ function setupCourseFilters() {
       button.classList.remove("active");
     }
   });
+
   filterCourses();
 }
 
