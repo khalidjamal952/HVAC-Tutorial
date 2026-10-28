@@ -1646,3 +1646,41 @@ body.dark-mode .hero-badge {
     height: 42px;
   }
 }
+
+/* HVAC Tutorial logo - responsive fix */
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: visible;
+}
+
+.navbar .logo img {
+  display: block;
+  width: 165px;
+  height: 55px;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+
+@media (max-width: 768px) {
+  .navbar .logo {
+    max-width: calc(100% - 60px);
+  }
+
+  .navbar .logo img {
+    width: 150px;
+    height: 48px;
+    max-width: 100%;
+    object-fit: contain;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar .logo img {
+    width: 140px;
+    height: 42px;
+  }
+}
