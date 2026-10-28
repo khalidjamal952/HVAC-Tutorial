@@ -1622,3 +1622,27 @@ body.dark-mode .hero-badge {
     margin-left: auto;
   }
 }
+
+/* HVAC logo image sizing */
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.navbar .logo img {
+  display: block;
+  width: 155px;
+  height: 45px;
+  max-width: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+
+@media (max-width: 480px) {
+  .navbar .logo img {
+    width: 145px;
+    height: 42px;
+  }
+}
