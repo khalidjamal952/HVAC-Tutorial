@@ -700,3 +700,53 @@ body.dark-mode .lecture-item.active .lecture-number {
   background: #2563eb !important;
   color: #ffffff !important;
 }
+
+/* Video Quality Selector */
+.video-quality-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #131b2a;
+  border: 1px solid #303b4f;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  color: #e0e6ed;
+  font-size: 14px;
+}
+
+.video-quality-control label {
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+#videoQuality {
+  min-width: 100px;
+  padding: 8px 12px;
+  border: 1px solid #3b4b65;
+  border-radius: 6px;
+  background: #1c2940;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+#videoQuality:hover,
+#videoQuality:focus {
+  border-color: #3b82f6;
+}
+
+#videoQuality option {
+  background: #131b2a;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .video-quality-control {
+    justify-content: space-between;
+    padding: 10px;
+  }
+}
