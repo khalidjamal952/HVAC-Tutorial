@@ -157,15 +157,25 @@ function renderCourses() {
       courseIcon = "🛠️";
     }
 
-    let categoryName = "Air Conditioning";
+    const categoryLabels = {
+      ac: "Air Conditioning",
+      "air-conditioning": "Air Conditioning",
+      refrigeration: "Refrigeration",
+      electrical: "Electrical",
+      service: "Installation & Service",
+      "frontend-project": "Frontend Project",
+    };
 
-    if (course.category === "refrigeration") {
-      categoryName = "Refrigeration";
-    } else if (course.category === "electrical") {
-      categoryName = "Electrical";
-    } else if (course.category === "service") {
-      categoryName = "Installation & Service";
-    }
+    const categoryKey = String(course.category || "")
+      .trim()
+      .toLowerCase();
+
+    const categoryName =
+      categoryLabels[categoryKey] ||
+      categoryKey.replace(/[-_]/g, " ").replace(/\b\w/g, function (letter) {
+        return letter.toUpperCase();
+      }) ||
+      "Uncategorized";
 
     const card = document.createElement("article");
 
