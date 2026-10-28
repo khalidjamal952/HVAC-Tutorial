@@ -1331,34 +1331,33 @@ body.dark-mode .course-card .badge {
   border-color: #475569 !important;
 }
 
-
 /* Dark Mode - Courses Hero Badge */
 
 body.dark-mode .courses-badge {
-    background: #dbeafe !important;
-    color: #2563eb !important;
-    border-color: #bfdbfe !important;
+  background: #dbeafe !important;
+  color: #2563eb !important;
+  border-color: #bfdbfe !important;
 }
 
 /* Course price and button spacing */
 
 .course-card .course-price {
-    margin-right: 8px !important;
+  margin-right: 8px !important;
 }
 
 .course-card .course-btn {
-    margin-left: 0 !important;
-    margin-top: 6px !important;
+  margin-left: 0 !important;
+  margin-top: 6px !important;
 }
 
 .feature-card {
-    text-decoration: none;
-    color: inherit;
-    display: block;
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
 .feature-card:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 /* ===============================
@@ -1366,23 +1365,23 @@ body.dark-mode .courses-badge {
 ================================ */
 
 .feature-grid .feature-card {
-    position: relative !important;
-    z-index: 10 !important;
-    display: block !important;
-    cursor: pointer !important;
-    pointer-events: auto !important;
-    text-decoration: none !important;
-    color: inherit !important;
+  position: relative !important;
+  z-index: 10 !important;
+  display: block !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  text-decoration: none !important;
+  color: inherit !important;
 }
 
 .feature-grid .feature-card:hover {
-    text-decoration: none !important;
+  text-decoration: none !important;
 }
 
 /* Dark mode - Hero badge text */
 
 body.dark-mode .hero-badge {
-    color: #60a5fa !important;
+  color: #60a5fa !important;
 }
 
 /* =========================================
@@ -1390,7 +1389,6 @@ body.dark-mode .hero-badge {
 ========================================= */
 
 @media (max-width: 768px) {
-
   .navbar .nav-container {
     position: relative;
     flex-wrap: nowrap !important;
@@ -1450,7 +1448,6 @@ body.dark-mode .hero-badge {
 ========================================= */
 
 @media (max-width: 768px) {
-
   .navbar .nav-container {
     position: relative;
     flex-wrap: nowrap !important;
@@ -1515,7 +1512,6 @@ body.dark-mode .hero-badge {
 /* FINAL MOBILE NAVBAR TEXT COLOR FIX */
 
 @media (max-width: 768px) {
-
   .navbar .nav-menu a,
   .dark-mode .navbar .nav-menu a,
   .dark-mode .header .nav-menu a {
@@ -1528,5 +1524,26 @@ body.dark-mode .hero-badge {
     color: #2563eb !important;
     background: #eff6ff !important;
   }
+}
 
+/* HVAC Tutorial Navbar Logo */
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.navbar .logo img {
+  display: block;
+  width: 220px;
+  height: 60px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+@media (max-width: 768px) {
+  .navbar .logo img {
+    width: 170px;
+    height: 48px;
+  }
 }
