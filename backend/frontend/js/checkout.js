@@ -206,7 +206,7 @@ if (checkoutForm) {
       // =========================================
 
       const options = {
-        key: "rzp_test_Th1CmeN7wn6UYo",
+        key: "rzp_live_SPznEaO8vuxFX1",
 
         amount: razorpayOrder.amount,
 

@@ -218,7 +218,7 @@ function setupEbookBuyButtons() {
 
         console.log("E-Book Order Created:", data.order);
         const options = {
-          key: "rzp_test_Th1CmeN7wn6UYo",
+          key: "rzp_live_SPznEaO8vuxFX1",
           amount: data.order.amount,
           currency: data.order.currency,
           name: "HVAC Tutorial",
