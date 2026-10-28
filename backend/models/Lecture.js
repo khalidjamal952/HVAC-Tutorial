@@ -30,6 +30,11 @@ const lectureSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    videoQualities: {
+      type: Map,
+      of: String,
+      default: {},
+    },
     thumbnail: {
       type: String,
       default: "",

@@ -719,19 +719,47 @@ router.get("/video/:lectureId", authMiddleware, async (req, res) => {
         .status(403)
         .json({ message: "You have not purchased this course." });
 
-    if (isR2Key(lecture.video)) {
+    const requestedQuality = String(req.query.quality || "720p");
+
+    const allowedQualities = ["360p", "480p", "720p", "1080p"];
+
+    if (!allowedQualities.includes(requestedQuality)) {
+      return res.status(400).json({
+        message: "Invalid video quality.",
+      });
+    }
+
+    const qualityMap =
+      lecture.videoQualities instanceof Map
+        ? Object.fromEntries(lecture.videoQualities)
+        : lecture.videoQualities || {};
+
+    const selectedVideoKey = qualityMap[requestedQuality] || lecture.video;
+
+    if (isR2Key(selectedVideoKey)) {
       if (!isR2Configured()) {
-        return res
-          .status(503)
-          .json({ message: "Cloudflare R2 is not configured on the server." });
+        return res.status(503).json({
+          message: "Cloudflare R2 is not configured on the server.",
+        });
       }
+
       const url = await getSignedUrl(
         s3,
-        new GetObjectCommand({ Bucket: R2_BUCKET_NAME, Key: lecture.video }),
+        new GetObjectCommand({
+          Bucket: R2_BUCKET_NAME,
+          Key: selectedVideoKey,
+        }),
         { expiresIn: 3600 },
       );
+
       res.set("Cache-Control", "no-store");
-      return res.status(200).json({ url, expiresIn: 3600, type: "r2" });
+
+      return res.status(200).json({
+        url,
+        expiresIn: 3600,
+        type: "r2",
+        quality: requestedQuality,
+      });
     }
 
     // Backward compatibility for older records stored at /assets/videos/<filename>.

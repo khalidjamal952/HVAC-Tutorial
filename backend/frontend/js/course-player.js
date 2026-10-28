@@ -787,7 +787,11 @@ function renderLectures() {
 // LOAD LECTURE
 // =========================================
 
-function loadLecture() {
+async function loadLecture(
+  qualityOverride = null,
+  restoreTime = 0,
+  resumePlaying = false,
+) {
   const lecture = course.lectures[currentLectureIndex];
 
   // =========================================
@@ -861,12 +865,23 @@ function loadLecture() {
     videoSource.src = "";
     lectureVideo.load();
 
-    fetch("/api/lectures/video/" + encodeURIComponent(lecture.lectureId), {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
+    const videoQuality = document.getElementById("videoQuality");
+
+    const selectedQuality =
+      qualityOverride || (videoQuality ? videoQuality.value : "720p");
+
+    fetch(
+      "/api/lectures/video/" +
+        encodeURIComponent(lecture.lectureId) +
+        "?quality=" +
+        encodeURIComponent(selectedQuality),
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
       },
-    })
+    )
       .then(async function (response) {
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
@@ -895,14 +910,26 @@ function loadLecture() {
           videoSource.src = currentVideoObjectUrl;
           lectureVideo.load();
         }
-
         lectureVideo.addEventListener(
           "loadedmetadata",
           function () {
-            const savedTime = videoPositions[currentLectureIndex];
+            const savedTime =
+              restoreTime > 0
+                ? restoreTime
+                : videoPositions[currentLectureIndex];
 
-            if (savedTime !== undefined && savedTime < lectureVideo.duration) {
+            if (
+              savedTime !== undefined &&
+              savedTime >= 0 &&
+              savedTime < lectureVideo.duration
+            ) {
               lectureVideo.currentTime = savedTime;
+            }
+
+            if (resumePlaying) {
+              lectureVideo.play().catch(function (error) {
+                console.warn("Video autoplay blocked:", error);
+              });
             }
           },
           { once: true },
@@ -968,18 +995,37 @@ lectureVideo.addEventListener("pause", function () {
 });
 
 lectureVideo.addEventListener("ended", async function () {
-  if (!completedLectures.includes(currentLectureIndex)) {
-    completedLectures.push(currentLectureIndex);
+  const finishedIndex = currentLectureIndex;
 
-    updateProgress();
-    await saveProgressToBackend();
+  if (!completedLectures.includes(finishedIndex)) {
+    completedLectures.push(finishedIndex);
+  }
 
-    if (currentLectureIndex < course.lectures.length - 1) {
-      currentLectureIndex++;
-      loadLecture();
-    }
+  updateProgress();
+  renderLectures();
+
+  await saveProgressToBackend();
+
+  if (completedLectures.length === course.lectures.length) {
+    await createCertificate();
+  }
+
+  if (finishedIndex < course.lectures.length - 1) {
+    currentLectureIndex = finishedIndex + 1;
+    loadLecture();
+
+    lectureVideo.addEventListener(
+      "canplay",
+      function () {
+        lectureVideo.play().catch(function (error) {
+          console.warn("Autoplay blocked:", error);
+        });
+      },
+      { once: true },
+    );
   }
 });
+
 // =========================================
 // MARK LECTURE COMPLETED
 // =========================================
@@ -1086,3 +1132,15 @@ window.addEventListener("pageshow", function () {
     window.location.replace("login.html");
   }
 });
+
+const videoQualitySelect = document.getElementById("videoQuality");
+
+if (videoQualitySelect) {
+  videoQualitySelect.addEventListener("change", function () {
+    const currentTime = lectureVideo.currentTime;
+    const wasPlaying = !lectureVideo.paused;
+    const selectedQuality = videoQualitySelect.value;
+
+    loadLecture(selectedQuality, currentTime, wasPlaying);
+  });
+}
