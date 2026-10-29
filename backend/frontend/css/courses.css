@@ -657,7 +657,7 @@
 .course-description {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 1;
   overflow: hidden;
   line-height: 1.6;
   overflow-wrap: anywhere;
