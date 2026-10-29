@@ -1,4 +1,15 @@
 const express = require("express");
+const nodemailer = require("nodemailer");
+
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT) || 465,
+  secure: true,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 const crypto = require("crypto");
 const authMiddleware = require("../middleware/authMiddleware");
 const adminAuthMiddleware = require("../middleware/adminAuthMiddleware");
@@ -255,6 +266,45 @@ router.post("/razorpay/verify-payment", authMiddleware, async (req, res) => {
       );
     }
 
+    // Send course purchase confirmation email
+    try {
+      const courseList = orderCourses
+        .map(
+          (course) =>
+            `<li>${String(course.title || "Course").replace(
+              /[&<>"]/g,
+              (char) =>
+                ({
+                  "&": "&amp;",
+                  "<": "&lt;",
+                  ">": "&gt;",
+                  '"': "&quot;",
+                })[char],
+            )}</li>`,
+        )
+        .join("");
+
+      await transporter.sendMail({
+        from: `"HVAC Tutorial" <${process.env.SMTP_USER}>`,
+        to: order.customer.email,
+        subject: "Course Purchase Confirmation - HVAC Tutorial",
+        html: `
+      <h2>Thank you for your purchase!</h2>
+      <p>Hi ${String(order.customer.fullName || "Student")},</p>
+      <p>Your payment has been verified successfully.</p>
+      <h3>Purchased Courses:</h3>
+      <ul>${courseList}</ul>
+      <p><strong>Amount Paid:</strong> ₹${order.total}</p>
+      <p>You can log in to HVAC Tutorial to access your courses.</p>
+      <p>Regards,<br>HVAC Tutorial Support</p>
+      <p>Contact: support@hvactutorial.com</p>
+    `,
+      });
+
+      console.log("Purchase confirmation email sent to:", order.customer.email);
+    } catch (emailError) {
+      console.error("Purchase confirmation email failed:", emailError.message);
+    }
     res.status(200).json({
       message: "Payment verified and order created successfully.",
 
