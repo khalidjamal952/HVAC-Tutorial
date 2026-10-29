@@ -245,7 +245,7 @@ async function loadCourseDetails() {
       requirementsList.replaceChildren();
 
       const requirements = String(course.requirements || "")
-        .split(/\r?\n|,/)
+        .split(/\r?\n/)
         .map((item) => item.trim())
         .filter(Boolean);
 
