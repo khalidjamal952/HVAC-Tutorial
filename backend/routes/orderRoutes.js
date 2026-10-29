@@ -17,6 +17,14 @@ console.log("SMTP CONFIG CHECK:", {
   user: process.env.SMTP_USER,
   passConfigured: Boolean(process.env.SMTP_PASS),
 });
+
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("SMTP CONNECTION FAILED:", error.message);
+  } else {
+    console.log("SMTP CONNECTION SUCCESS:", success);
+  }
+});
 const crypto = require("crypto");
 const authMiddleware = require("../middleware/authMiddleware");
 const adminAuthMiddleware = require("../middleware/adminAuthMiddleware");
