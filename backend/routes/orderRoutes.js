@@ -282,6 +282,7 @@ router.post("/razorpay/verify-payment", authMiddleware, async (req, res) => {
     }
 
     // Send course purchase confirmation email
+    console.log("PURCHASE EMAIL BLOCK REACHED:", order.customer.email);
     try {
       const courseList = orderCourses
         .map(
