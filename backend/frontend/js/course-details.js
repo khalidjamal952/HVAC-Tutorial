@@ -168,7 +168,7 @@ async function loadCourseDetails() {
     if (learningList) {
       learningList.replaceChildren();
 
-      const requirements = String(course.requirements || "")
+      const outcomes = String(course.outcomes || "")
         .split(/\r?\n/)
         .map((item) => item.trim())
         .filter(Boolean);
