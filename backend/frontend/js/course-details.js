@@ -168,8 +168,8 @@ async function loadCourseDetails() {
     if (learningList) {
       learningList.replaceChildren();
 
-      const outcomes = String(course.outcomes || "")
-        .split(/\r?\n|,/)
+      const requirements = String(course.requirements || "")
+        .split(/\r?\n/)
         .map((item) => item.trim())
         .filter(Boolean);
 
@@ -257,6 +257,29 @@ async function loadCourseDetails() {
 
       if (requirements.length === 0) {
         requirementsList.textContent = "No specific requirements listed.";
+      }
+    }
+
+    /* Target Audience */
+    const audienceList = document.getElementById("courseAudienceList");
+
+    if (audienceList) {
+      audienceList.replaceChildren();
+
+      const audience = String(course.audience || "")
+        .split(/\r?\n/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+
+      audience.forEach((person) => {
+        const item = document.createElement("div");
+        item.textContent = "✓ " + person;
+        audienceList.appendChild(item);
+      });
+
+      if (audience.length === 0) {
+        audienceList.textContent =
+          "Target audience information will be updated soon.";
       }
     }
 
