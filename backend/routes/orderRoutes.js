@@ -11,20 +11,20 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-console.log("SMTP CONFIG CHECK:", {
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  user: process.env.SMTP_USER,
-  passConfigured: Boolean(process.env.SMTP_PASS),
-});
+// console.log("SMTP CONFIG CHECK:", {
+//   host: process.env.SMTP_HOST,
+//   port: process.env.SMTP_PORT,
+//   user: process.env.SMTP_USER,
+//   passConfigured: Boolean(process.env.SMTP_PASS),
+// });
 
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("SMTP CONNECTION FAILED:", error.message);
-  } else {
-    console.log("SMTP CONNECTION SUCCESS:", success);
-  }
-});
+// transporter.verify((error, success) => {
+//   if (error) {
+//     console.error("SMTP CONNECTION FAILED:", error.message);
+//   } else {
+//     console.log("SMTP CONNECTION SUCCESS:", success);
+//   }
+// });
 const crypto = require("crypto");
 const authMiddleware = require("../middleware/authMiddleware");
 const adminAuthMiddleware = require("../middleware/adminAuthMiddleware");
@@ -282,7 +282,7 @@ router.post("/razorpay/verify-payment", authMiddleware, async (req, res) => {
     }
 
     // Send course purchase confirmation email
-    console.log("PURCHASE EMAIL BLOCK REACHED:", order.customer.email);
+    // console.log("PURCHASE EMAIL BLOCK REACHED:", order.customer.email);
     try {
       const courseList = orderCourses
         .map(
