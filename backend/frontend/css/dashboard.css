@@ -499,37 +499,162 @@ body.dark-mode .dashboard-stat-card .stat-icon {
 ================================ */
 
 body.dark-mode .quick-actions h2 {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 body.dark-mode .quick-action-card {
-    background: #1e293b !important;
-    border-color: #334155 !important;
-    color: #e5e7eb !important;
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  color: #e5e7eb !important;
 }
 
 body.dark-mode .quick-action-card h3 {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 body.dark-mode .quick-action-card p {
-    color: #cbd5e1 !important;
+  color: #cbd5e1 !important;
 }
 
 body.dark-mode .quick-action-card > span {
-    background: #334155 !important;
-    color: #ffffff !important;
+  background: #334155 !important;
+  color: #ffffff !important;
 }
 
 body.dark-mode .quick-action-card:hover {
-    background: #243449 !important;
-    border-color: #475569 !important;
+  background: #243449 !important;
+  border-color: #475569 !important;
 }
 
 body.dark-mode .quick-action-card:hover h3 {
-    color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 body.dark-mode .quick-action-card:hover p {
-    color: #cbd5e1 !important;
+  color: #cbd5e1 !important;
+}
+
+/* =========================================
+   TABLET RESPONSIVE FIX
+========================================= */
+
+@media (min-width: 769px) and (max-width: 1100px) {
+  /* Dashboard container */
+  .dashboard-page .container {
+    width: 94%;
+    max-width: 100%;
+  }
+
+  /* Dashboard spacing */
+  .dashboard-page {
+    padding: 35px 0 55px;
+  }
+
+  /* Welcome section */
+  .dashboard-welcome h1 {
+    font-size: 29px;
+  }
+
+  /* Stats cards */
+  .dashboard-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .dashboard-stat-card {
+    padding: 18px;
+  }
+
+  /* Main dashboard grid */
+  .dashboard-grid {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.9fr);
+    gap: 18px;
+  }
+
+  .dashboard-card {
+    padding: 20px;
+    min-width: 0;
+  }
+
+  /* Course items */
+  .dashboard-course-item {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .dashboard-course-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .dashboard-course-info h3 {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+
+  .dashboard-course-item .dashboard-btn {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  /* Quick actions */
+  .quick-action-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .quick-action-card {
+    padding: 14px;
+  }
+}
+
+/* Tablet navbar */
+@media (min-width: 769px) and (max-width: 1100px) {
+  .navbar .nav-container {
+    gap: 12px;
+  }
+
+  .navbar .logo {
+    font-size: 20px;
+  }
+
+  .navbar .nav-menu {
+    gap: 12px;
+  }
+
+  .navbar .nav-menu a {
+    font-size: 13px;
+  }
+}
+
+/* =========================================
+   TABLET NAVBAR OPTIMIZATION
+========================================= */
+
+@media (min-width: 769px) and (max-width: 1100px) {
+  .navbar {
+    min-height: 75px;
+  }
+
+  .navbar .nav-container {
+    width: 96%;
+    gap: 8px;
+  }
+
+  .navbar .logo {
+    font-size: 18px;
+  }
+
+  .navbar .nav-menu {
+    gap: 10px;
+  }
+
+  .navbar .nav-menu a {
+    font-size: 12px;
+    padding: 8px 2px;
+  }
+
+  .navbar .menu-toggle {
+    display: none;
+  }
 }
