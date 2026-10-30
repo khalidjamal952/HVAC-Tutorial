@@ -116,6 +116,57 @@
               <button type="submit" class="auth-btn">Login</button>
             </form>
 
+            <!-- ================= LOGIN OTP FORM ================= -->
+
+            <form id="loginOtpForm" class="auth-form" style="display: none">
+              <div class="auth-header">
+                <div class="auth-icon">📧</div>
+                <h2>Verify Your Email</h2>
+                <p>
+                  Enter the 6-digit OTP sent to your registered email address.
+                </p>
+              </div>
+
+              <div class="form-group">
+                <label for="loginOtp">Email Verification OTP</label>
+
+                <input
+                  type="text"
+                  id="loginOtp"
+                  name="otp"
+                  placeholder="Enter 6-digit OTP"
+                  maxlength="6"
+                  inputmode="numeric"
+                  pattern="[0-9]{6}"
+                  autocomplete="one-time-code"
+                  required
+                />
+              </div>
+
+              <button type="submit" class="auth-btn">Verify OTP & Login</button>
+
+              <p style="text-align: center; margin-top: 15px">
+                OTP expires in 5 minutes.
+              </p>
+
+              <div style="text-align: center; margin-top: 15px">
+                <button
+                  type="button"
+                  id="resendLoginOtp"
+                  class="auth-btn"
+                  disabled
+                >
+                  Resend OTP (30s)
+                </button>
+
+                <p
+                  id="resendOtpMessage"
+                  style="margin-top: 10px"
+                  aria-live="polite"
+                ></p>
+              </div>
+            </form>
+
             <div class="auth-footer">
               <p>
                 Don't have an account?

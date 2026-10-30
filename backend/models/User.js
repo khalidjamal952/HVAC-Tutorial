@@ -30,19 +30,45 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
     otp: {
       type: String,
       default: "",
     },
 
-    otpExpires: {
+    otpVerified: {
+      type: Boolean,
+      default: false,
+    },
+    resetOtpAttempts: {
+      type: Number,
+      default: 0,
+    },
+    resetOtpResendAfter: {
       type: Date,
       default: null,
     },
 
-    otpVerified: {
-      type: Boolean,
-      default: false,
+    // Login OTP fields
+    loginOtp: {
+      type: String,
+      default: "",
+    },
+    loginOtpExpires: {
+      type: Date,
+      default: null,
+    },
+    loginOtpAttempts: {
+      type: Number,
+      default: 0,
+    },
+    loginOtpResendAfter: {
+      type: Date,
+      default: null,
+    },
+    otpExpires: {
+      type: Date,
+      default: null,
     },
 
     activeSessionId: {
