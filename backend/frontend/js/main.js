@@ -1,4 +1,4 @@
-// =========================
+﻿// =========================
 // MOBILE NAVIGATION
 // =========================
 
@@ -67,7 +67,7 @@ if (themeToggle) {
 
   if (savedTheme === "dark") {
     document.body.classList.add("dark-mode");
-    themeToggle.textContent = "â˜€ï¸";
+    themeToggle.textContent = "\u2600\uFE0F";
   }
 
   themeToggle.addEventListener("click", function () {
@@ -75,7 +75,7 @@ if (themeToggle) {
 
     if (document.body.classList.contains("dark-mode")) {
       localStorage.setItem("hvacTheme", "dark");
-      themeToggle.textContent = "â˜€ï¸";
+    themeToggle.textContent = "\u2600\uFE0F";
     } else {
       localStorage.setItem("hvacTheme", "light");
       themeToggle.textContent = "\uD83C\uDF19";
@@ -174,7 +174,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   // ==========================================
-  // LOGIN → LOGOUT
+  // LOGIN â†’ LOGOUT
   // ==========================================
 
   const logoutBtn = document.getElementById("logoutBtn");
