@@ -1,4 +1,4 @@
-const API_BASE_URL = "";
+﻿const API_BASE_URL = "";
 
 // =========================================
 // ELEMENTS
@@ -33,6 +33,27 @@ const ebookCategory = document.getElementById("ebookCategory");
 const ebookPrice = document.getElementById("ebookPrice");
 
 const ebookFile = document.getElementById("ebookFile");
+
+const ebookSelectedFile = document.getElementById("ebookSelectedFile");
+const ebookSelectedFileName = document.getElementById("ebookSelectedFileName");
+const ebookSelectedFileSize = document.getElementById("ebookSelectedFileSize");
+
+if (ebookFile) {
+  ebookFile.addEventListener("change", function () {
+    const file = this.files[0];
+
+    if (!file) {
+      ebookSelectedFile.style.display = "none";
+      return;
+    }
+
+    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+
+    ebookSelectedFileName.textContent = file.name;
+    ebookSelectedFileSize.textContent = `${fileSizeMB} MB`;
+    ebookSelectedFile.style.display = "flex";
+  });
+}
 
 let allEbooks = [];
 
@@ -96,7 +117,6 @@ function renderEbooks(ebooks) {
   ebooks.forEach(function (ebook) {
     const row = document.createElement("tr");
 
-    const fileUrl = `${API_BASE_URL}${ebook.filePath}`;
 
     row.innerHTML = `
       <td>
@@ -112,7 +132,7 @@ function renderEbooks(ebooks) {
       </td>
 
       <td>
-        ₹${Number(ebook.price || 0)}
+        \u20B9${Number(ebook.price || 0)}
       </td>
 
       <td>
@@ -124,14 +144,9 @@ function renderEbooks(ebooks) {
       <td>
         <div class="ebook-actions">
 
-          <a
-            href="${fileUrl}"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="admin-view-btn"
-          >
+          <button type="button" class="admin-view-btn" data-id="${ebook._id}">
             View
-          </a>
+          </button>
 
           <button
             type="button"
@@ -156,6 +171,56 @@ function renderEbooks(ebooks) {
     ebookTableBody.appendChild(row);
   });
 
+  // View E-Book PDF securely
+  const viewButtons = ebookTableBody.querySelectorAll(".admin-view-btn");
+
+  viewButtons.forEach(function (button) {
+    button.addEventListener("click", async function () {
+      const ebookId = button.dataset.id;
+      const pdfWindow = window.open("", "_blank");
+
+      if (!pdfWindow) {
+        alert("Please allow pop-ups to preview the PDF.");
+        return;
+      }
+
+      try {
+        pdfWindow.document.write("Loading PDF preview...");
+
+        const response = await fetch(
+          `${API_BASE_URL}/api/ebooks/admin/${ebookId}/preview`,
+          {
+            method: "GET",
+            credentials: "include"
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Unable to load PDF preview.");
+        }
+
+        const contentType = response.headers.get("content-type") || "";
+
+        if (contentType.includes("application/json")) {
+          const data = await response.json();
+
+          if (!data.url) {
+            throw new Error("PDF preview URL not received.");
+          }
+
+          pdfWindow.location.href = data.url;
+        } else {
+          const blob = await response.blob();
+          const blobUrl = URL.createObjectURL(blob);
+          pdfWindow.location.href = blobUrl;
+        }
+      } catch (error) {
+        pdfWindow.close();
+        alert(error.message || "PDF preview failed.");
+        console.error("E-book preview error:", error);
+      }
+    });
+  });
   // Edit buttons
   const editButtons = ebookTableBody.querySelectorAll(".admin-edit-btn");
 
@@ -317,31 +382,33 @@ if (ebookForm) {
       return;
     }
 
-    // New E-Book must have PDF
+    // New E-Book must have a supported file
     if (!ebookId && !file) {
-      alert("Please select a PDF file.");
-
+      alert("Please select a supported file.");
       return;
     }
 
-    // Check PDF
+    // Validate supported file formats
     if (file) {
       const extension = file.name.split(".").pop().toLowerCase();
 
-      if (extension !== "pdf" || file.type !== "application/pdf") {
-        alert("Only PDF files are allowed.");
+      const allowedExtensions = [
+        "pdf", "doc", "docx", "ppt", "pptx",
+        "xls", "xlsx", "jpg", "jpeg", "png",
+        "zip", "dwg", "dxf", "dwt", "dwf"
+      ];
 
+      if (!allowedExtensions.includes(extension)) {
+        alert("Unsupported file format. Please select an allowed file.");
         return;
       }
 
-      // 20 MB limit
-      if (file.size > 20 * 1024 * 1024) {
-        alert("PDF size must be less than 20 MB.");
-
+      // Maximum 300 MB
+      if (file.size > 300 * 1024 * 1024) {
+        alert("File size must be 300 MB or less.");
         return;
       }
     }
-
     const formData = new FormData();
 
     formData.append("title", title);
@@ -363,21 +430,68 @@ if (ebookForm) {
 
       const method = ebookId ? "PUT" : "POST";
 
-      const response = await fetch(url, {
-        method: method,
+      const progressContainer = document.getElementById("ebookUploadProgress");
+      const progressBar = document.getElementById("ebookProgressBar");
+      const progressPercent = document.getElementById("ebookUploadPercent");
+      const progressStatus = document.getElementById("ebookUploadStatus");
 
-        credentials: "include",
+      if (progressContainer) progressContainer.style.display = "block";
+      if (progressBar) progressBar.style.width = "0%";
+      if (progressPercent) progressPercent.textContent = "0%";
+      if (progressStatus) progressStatus.textContent = "Starting upload...";
 
-        body: formData,
+      const uploadResult = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+
+        xhr.open(method, url);
+        xhr.withCredentials = true;
+
+        xhr.upload.addEventListener("progress", (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+
+            if (progressBar) progressBar.style.width = `${percent}%`;
+            if (progressPercent) progressPercent.textContent = `${percent}%`;
+
+            if (progressStatus) {
+              progressStatus.textContent =
+                percent === 100 ? "Processing file on server..." : "Uploading file...";
+            }
+          }
+        });
+
+        xhr.onload = () => {
+          let data = {};
+
+          try {
+            data = JSON.parse(xhr.responseText);
+          } catch (error) {
+            data = { message: "Invalid server response." };
+          }
+
+          resolve({
+            ok: xhr.status >= 200 && xhr.status < 300,
+            data,
+          });
+        };
+
+        xhr.onerror = () => reject(new Error("Network error during upload."));
+        xhr.onabort = () => reject(new Error("Upload cancelled."));
+
+        xhr.send(formData);
       });
 
-      const data = await response.json();
+      const data = uploadResult.data;
 
-      if (!response.ok) {
+      if (!uploadResult.ok) {
+        if (progressStatus) progressStatus.textContent = "Upload failed.";
         alert(data.message || "E-Book could not be saved.");
-
         return;
       }
+
+      if (progressBar) progressBar.style.width = "100%";
+      if (progressPercent) progressPercent.textContent = "100%";
+      if (progressStatus) progressStatus.textContent = "Upload completed successfully!";
 
       alert(
         ebookId
@@ -480,3 +594,11 @@ if (ebookModal) {
 // =========================================
 
 loadEbooks();
+
+
+
+
+
+
+
+

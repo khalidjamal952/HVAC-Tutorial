@@ -1,8 +1,11 @@
-const express = require("express");
+﻿const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const Razorpay = require("razorpay");
+const { GetObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { s3, R2_BUCKET_NAME, isR2Configured } = require("../config/r2");
 
 const authMiddleware = require("../middleware/authMiddleware");
 
@@ -249,6 +252,42 @@ router.get("/:ebookId/download", authMiddleware, async (req, res) => {
       });
     }
 
+    const fileName = path.basename(ebook.fileName || `${ebook.title}.pdf`);
+    const isPdf = path.extname(fileName).toLowerCase() === ".pdf";
+    const requestedDownload = req.query.action === "download";
+    const disposition = isPdf && !requestedDownload ? "inline" : "attachment";
+    const legacyAction = disposition === "inline" ? "read" : "download";
+
+    // R2 STORAGE
+    if (ebook.filePath.startsWith("ebooks/")) {
+      if (!isR2Configured() || !s3) {
+        return res.status(503).json({
+          message: "Cloudflare R2 is not configured.",
+        });
+      }
+
+      const command = new GetObjectCommand({
+        Bucket: R2_BUCKET_NAME,
+        Key: ebook.filePath,
+        ResponseContentType: isPdf ? "application/pdf" : "application/octet-stream",
+        ResponseContentDisposition: `${disposition}; filename="${fileName.replace(/["\\]/g, "_")}"`,
+      });
+
+      const url = await getSignedUrl(s3, command, {
+        expiresIn: 600,
+      });
+
+      res.set("Cache-Control", "no-store");
+
+      return res.status(200).json({
+        success: true,
+        url,
+        fileName,
+        expiresIn: 600,
+      });
+    }
+
+    // LEGACY LOCAL STORAGE
     const filePath = path.join(
       __dirname,
       "../..",
@@ -261,12 +300,81 @@ router.get("/:ebookId/download", authMiddleware, async (req, res) => {
       });
     }
 
-    return res.download(filePath, ebook.fileName || `${ebook.title}.pdf`);
+    res.set("Cache-Control", "no-store");
+
+    return res.status(200).json({
+      success: true,
+      url: `${req.protocol}://${req.get("host")}/api/ebook-purchases/${ebook._id}/legacy-file?action=${legacyAction}`,
+      fileName,
+      legacy: true,
+    });
   } catch (error) {
     console.error("E-Book Download Error:", error);
 
     return res.status(500).json({
-      message: "Unable to download E-Book.",
+      message: "Unable to access E-Book.",
+    });
+  }
+});
+
+// ========================================
+// LEGACY LOCAL PDF DELIVERY
+// ========================================
+
+router.get("/:ebookId/legacy-file", authMiddleware, async (req, res) => {
+  try {
+    const purchase = await EbookPurchase.findOne({
+      user: req.user.userId,
+      ebook: req.params.ebookId,
+      paymentStatus: "Paid",
+    });
+
+    if (!purchase) {
+      return res.status(403).json({
+        message: "Please purchase this E-Book first.",
+      });
+    }
+
+    const ebook = await Ebook.findById(req.params.ebookId);
+
+    if (!ebook || !ebook.filePath.startsWith("/assets/ebooks/")) {
+      return res.status(404).json({
+        message: "Legacy E-Book not found.",
+      });
+    }
+
+    const fileName = path.basename(ebook.fileName || `${ebook.title}.pdf`);
+    const filePath = path.join(
+      __dirname,
+      "../..",
+      "assets",
+      "ebooks",
+      path.basename(ebook.filePath),
+    );
+
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({
+        message: "E-Book PDF file not found.",
+      });
+    }
+
+    res.set("Cache-Control", "no-store");
+
+    const isPdf = path.extname(fileName).toLowerCase() === ".pdf";
+
+    if (!isPdf || req.query.action === "download") {
+      return res.download(filePath, fileName);
+    }
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `inline; filename="${fileName.replace(/["\\]/g, "_")}"`);
+
+    return res.sendFile(filePath);
+  } catch (error) {
+    console.error("Legacy E-Book Delivery Error:", error);
+
+    return res.status(500).json({
+      message: "Unable to access E-Book.",
     });
   }
 });
@@ -295,3 +403,8 @@ router.get("/:ebookId/purchased", authMiddleware, async (req, res) => {
 });
 
 module.exports = router;
+
+
+
+
+

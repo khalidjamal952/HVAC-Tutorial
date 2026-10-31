@@ -1,4 +1,4 @@
-// =========================================
+﻿// =========================================
 // ADMIN PAGE SECURITY
 // =========================================
 const adminPage =
@@ -52,6 +52,7 @@ if (adminLoginForm) {
     try {
       const response = await fetch("/api/admin/login", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -147,6 +148,7 @@ if (adminSetupForm) {
     try {
       const response = await fetch("/api/admin/register", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -646,7 +648,7 @@ if (adminCoursesTableBody) {
                     </td>
 
                     <td class="course-price-cell">
-                        ₹${course.price}
+                        \u20B9${course.price}
                     </td>
 
                     <td class="course-student-cell">
@@ -958,6 +960,7 @@ if (adminCoursesTableBody) {
       try {
         const response = await fetch("/api/categories", {
           method: "POST",
+        credentials: "include",
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
@@ -1202,6 +1205,7 @@ if (adminCoursesTableBody) {
 
           const response = await fetch("/api/courses/admin", {
             method: "POST",
+        credentials: "include",
             credentials: "include",
             headers: {},
             body: formData,
@@ -1402,7 +1406,7 @@ function renderAdminOrders() {
               </td>
 
               <td>
-                  ₹${amount}
+                  \u20B9${amount}
               </td>
 
               <td>
@@ -1676,7 +1680,7 @@ async function renderAdminLectures() {
 
       const icon = document.createElement("span");
       icon.className = "lecture-folder-icon";
-      icon.textContent = "📁";
+      icon.textContent = "ðŸ“";
 
       const title = document.createElement("strong");
       title.textContent = course.title || "Untitled Course";
@@ -1746,7 +1750,7 @@ async function renderAdminLectures() {
   const backButton = document.createElement("button");
   backButton.type = "button";
   backButton.className = "lecture-back-btn";
-  backButton.textContent = "← Back to Courses";
+  backButton.textContent = "â† Back to Courses";
 
   backButton.addEventListener("click", () => {
     selectedLectureCourseId = null;
@@ -1760,7 +1764,7 @@ async function renderAdminLectures() {
 
   const heading = document.createElement("h3");
   heading.className = "lecture-folder-heading";
-  heading.textContent = `📁 ${selectedCourse.title}`;
+  heading.textContent = `ðŸ“ ${selectedCourse.title}`;
 
   backCell.append(backButton, heading);
   backRow.appendChild(backCell);
@@ -1798,7 +1802,7 @@ async function renderAdminLectures() {
     courseCell.textContent = selectedCourse.title;
 
     const videoCell = document.createElement("td");
-    videoCell.textContent = "🎥 Video";
+    videoCell.textContent = "ðŸŽ¥ Video";
 
     const actionsCell = document.createElement("td");
     const actions = document.createElement("div");
@@ -2027,12 +2031,13 @@ if (lectureForm) {
 
     const setProgress = (percent, message) => {
       progressBar.style.width = `${percent}%`;
-      progressText.textContent = `${message} — ${Math.round(percent)}%`;
+      progressText.textContent = `${message} â€” ${Math.round(percent)}%`;
     };
 
     const request = async (url, body) => {
       const response = await fetch(url, {
         method: "POST",
+        credentials: "include",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
@@ -2743,6 +2748,7 @@ if (liveClassForm) {
       else {
         const response = await fetch("/api/live-classes/admin", {
           method: "POST",
+        credentials: "include",
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
@@ -3145,6 +3151,7 @@ if (adminLogoutBtn) {
       await fetch("/api/admin/logout", {
         method: "POST",
         credentials: "include",
+        credentials: "include",
       });
     } catch (error) {
       console.error("Admin Logout Error:", error);
@@ -3278,7 +3285,7 @@ if (document.getElementById("adminCourseCount")) {
       .then(function (data) {
         if (data.totalRevenue !== undefined) {
           adminRevenue.textContent =
-            "₹" + Number(data.totalRevenue).toLocaleString("en-IN");
+            "\u20B9" + Number(data.totalRevenue).toLocaleString("en-IN");
         }
       })
       .catch(function (error) {
@@ -3323,11 +3330,11 @@ if (setupPasswordToggle && setupAdminPassword) {
   setupPasswordToggle.addEventListener("click", function () {
     if (setupAdminPassword.type === "password") {
       setupAdminPassword.type = "text";
-      setupPasswordToggle.textContent = "🙈";
+      setupPasswordToggle.textContent = "ðŸ™ˆ";
       setupPasswordToggle.setAttribute("aria-label", "Hide password");
     } else {
       setupAdminPassword.type = "password";
-      setupPasswordToggle.textContent = "👁️";
+      setupPasswordToggle.textContent = "ðŸ‘ï¸";
       setupPasswordToggle.setAttribute("aria-label", "Show password");
     }
   });
@@ -3345,11 +3352,11 @@ if (setupConfirmPasswordToggle && setupAdminConfirmPassword) {
   setupConfirmPasswordToggle.addEventListener("click", function () {
     if (setupAdminConfirmPassword.type === "password") {
       setupAdminConfirmPassword.type = "text";
-      setupConfirmPasswordToggle.textContent = "🙈";
+      setupConfirmPasswordToggle.textContent = "ðŸ™ˆ";
       setupConfirmPasswordToggle.setAttribute("aria-label", "Hide password");
     } else {
       setupAdminConfirmPassword.type = "password";
-      setupConfirmPasswordToggle.textContent = "👁️";
+      setupConfirmPasswordToggle.textContent = "ðŸ‘ï¸";
       setupConfirmPasswordToggle.setAttribute("aria-label", "Show password");
     }
   });
@@ -3365,11 +3372,11 @@ if (adminLoginPasswordToggle && adminLoginPassword) {
   adminLoginPasswordToggle.addEventListener("click", function () {
     if (adminLoginPassword.type === "password") {
       adminLoginPassword.type = "text";
-      adminLoginPasswordToggle.textContent = "🙈";
+      adminLoginPasswordToggle.textContent = "ðŸ™ˆ";
       adminLoginPasswordToggle.setAttribute("aria-label", "Hide password");
     } else {
       adminLoginPassword.type = "password";
-      adminLoginPasswordToggle.textContent = "👁️";
+      adminLoginPasswordToggle.textContent = "ðŸ‘ï¸";
       adminLoginPasswordToggle.setAttribute("aria-label", "Show password");
     }
   });
@@ -3389,11 +3396,11 @@ if (adminNewPasswordToggle && adminNewPassword) {
   adminNewPasswordToggle.addEventListener("click", function () {
     if (adminNewPassword.type === "password") {
       adminNewPassword.type = "text";
-      adminNewPasswordToggle.textContent = "🙈";
+      adminNewPasswordToggle.textContent = "ðŸ™ˆ";
       adminNewPasswordToggle.setAttribute("aria-label", "Hide password");
     } else {
       adminNewPassword.type = "password";
-      adminNewPasswordToggle.textContent = "👁️";
+      adminNewPasswordToggle.textContent = "ðŸ‘ï¸";
       adminNewPasswordToggle.setAttribute("aria-label", "Show password");
     }
   });
@@ -3409,11 +3416,11 @@ if (adminConfirmPasswordToggle && adminConfirmPassword) {
   adminConfirmPasswordToggle.addEventListener("click", function () {
     if (adminConfirmPassword.type === "password") {
       adminConfirmPassword.type = "text";
-      adminConfirmPasswordToggle.textContent = "🙈";
+      adminConfirmPasswordToggle.textContent = "ðŸ™ˆ";
       adminConfirmPasswordToggle.setAttribute("aria-label", "Hide password");
     } else {
       adminConfirmPassword.type = "password";
-      adminConfirmPasswordToggle.textContent = "👁️";
+      adminConfirmPasswordToggle.textContent = "ðŸ‘ï¸";
       adminConfirmPasswordToggle.setAttribute("aria-label", "Show password");
     }
   });
@@ -3444,6 +3451,7 @@ if (adminForgotPasswordForm) {
     try {
       const response = await fetch("/api/admin/forgot-password", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -3538,6 +3546,7 @@ if (adminResetPasswordForm) {
     try {
       const response = await fetch("/api/admin/reset-password", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -3564,3 +3573,6 @@ if (adminResetPasswordForm) {
     }
   });
 }
+
+
+

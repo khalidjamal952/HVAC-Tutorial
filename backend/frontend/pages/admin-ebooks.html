@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -21,7 +21,7 @@
       <div class="container nav-container">
         <a href="admin.html" class="logo"> HVAC<span>Tutorial</span> </a>
 
-        <button class="menu-toggle" id="menuToggle">☰</button>
+        <button class="menu-toggle" id="menuToggle">â˜°</button>
 
         <nav class="nav-menu">
           <a href="admin.html"> Dashboard </a>
@@ -69,7 +69,7 @@
 
         <div class="admin-stats-grid">
           <div class="admin-stat-card">
-            <div class="admin-stat-icon">📚</div>
+            <div class="admin-stat-icon">&#128218;</div>
 
             <div>
               <span> Total E-Books </span>
@@ -125,7 +125,7 @@
           <!-- EMPTY -->
 
           <div id="ebooksEmpty" class="admin-empty" style="display: none">
-            <div class="admin-empty-icon">📚</div>
+            <div class="admin-empty-icon">&#128218;</div>
 
             <h3>No E-Books Found</h3>
 
@@ -148,9 +148,9 @@
             <p>Enter E-Book details below.</p>
           </div>
 
-          <button type="button" class="admin-modal-close" id="closeEbookModal">
-            ×
-          </button>
+          <button type="button" class="admin-modal-close" id="closeEbookModal" aria-label="Close">
+  &#215;
+</button>
         </div>
 
         <form id="ebookForm">
@@ -205,11 +205,26 @@
           </div>
 
           <div class="admin-form-group">
-            <label for="ebookFile"> PDF File </label>
+            <label for="ebookFile"> Upload E-Book File </label>
 
-            <input type="file" id="ebookFile" accept=".pdf,application/pdf" />
+            <div id="ebookSelectedFile" class="ebook-selected-file" style="display:none;">
+  <span id="ebookSelectedFileName"></span>
+  <span id="ebookSelectedFileSize"></span>
+</div>
 
-            <small> Upload a PDF file for this E-Book. </small>
+<input type="file" id="ebookFile" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.dwg,.dxf,.dwt,.dwf" />
+
+            <small> Upload PDF, Word, PowerPoint, Excel, Image, ZIP or AutoCAD files (Maximum size: 300 MB). </small>
+          </div>
+
+          <div id="ebookUploadProgress" class="ebook-upload-progress" style="display: none;">
+            <div class="ebook-upload-progress-info">
+              <span id="ebookUploadStatus">Uploading file...</span>
+              <strong id="ebookUploadPercent">0%</strong>
+            </div>
+            <div class="ebook-progress-track">
+              <div id="ebookProgressBar" class="ebook-progress-fill"></div>
+            </div>
           </div>
 
           <div class="admin-form-actions">
@@ -288,7 +303,7 @@
         <div class="admin-footer-bottom">
 
             <p>
-                © <span id="currentYear"></span>
+                Â© <span id="currentYear"></span>
                 HVAC Tutorial. All rights reserved.
             </p>
 
@@ -310,3 +325,10 @@
     <script src="../js/admin-ebooks.js"></script>
   </body>
 </html>
+
+
+
+
+
+
+

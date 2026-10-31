@@ -620,3 +620,70 @@
     font-size: 12px;
   }
 }
+
+/* E-BOOK UPLOAD PROGRESS */
+.ebook-upload-progress {
+  margin: 18px 0;
+  padding: 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.ebook-upload-progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: #334155;
+  font-size: 13px;
+}
+
+.ebook-upload-progress-info strong {
+  color: #2563eb;
+}
+
+.ebook-progress-track {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  background: #e2e8f0;
+  border-radius: 20px;
+}
+
+.ebook-progress-fill {
+  width: 0%;
+  height: 100%;
+  background: #2563eb;
+  border-radius: 20px;
+  transition: width 0.2s ease;
+}
+
+
+/* SELECTED E-BOOK FILE INFO */
+.ebook-selected-file {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  color: #1e40af;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+#ebookSelectedFileName {
+  font-weight: 600;
+}
+
+#ebookSelectedFileSize {
+  white-space: nowrap;
+  font-weight: 700;
+}
+

@@ -1,4 +1,4 @@
-// =========================
+﻿// =========================
 // MOBILE NAVIGATION
 // =========================
 
@@ -67,7 +67,7 @@ if (themeToggle) {
 
   if (savedTheme === "dark") {
     document.body.classList.add("dark-mode");
-    themeToggle.textContent = "☀️";
+    themeToggle.textContent = "â˜€ï¸";
   }
 
   themeToggle.addEventListener("click", function () {
@@ -75,10 +75,10 @@ if (themeToggle) {
 
     if (document.body.classList.contains("dark-mode")) {
       localStorage.setItem("hvacTheme", "dark");
-      themeToggle.textContent = "☀️";
+      themeToggle.textContent = "â˜€ï¸";
     } else {
       localStorage.setItem("hvacTheme", "light");
-      themeToggle.textContent = "🌙";
+      themeToggle.textContent = "ðŸŒ™";
     }
   });
 }
@@ -177,38 +177,35 @@ document.addEventListener("DOMContentLoaded", async function () {
   // LOGIN → LOGOUT
   // ==========================================
 
-  const navLinks = navMenu.querySelectorAll("a");
+  const logoutBtn = document.getElementById("logoutBtn");
 
-  navLinks.forEach(function (link) {
-    const text = link.textContent.trim();
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async function (event) {
+      event.preventDefault();
 
-    // ==========================================
-    // LOGGED-IN USER
-    // ==========================================
+      logoutBtn.textContent = "Logging out...";
+      logoutBtn.style.pointerEvents = "none";
 
-    if (isLoggedIn && (text === "Login" || text === "Logout")) {
-      link.textContent = "Logout";
-      link.href = "#";
+      try {
+        const response = await fetch("/api/auth/logout", {
+          method: "POST",
+          credentials: "include",
+        });
 
-      link.addEventListener("click", async function (event) {
-        event.preventDefault();
-
-        try {
-          await fetch("/api/auth/logout", {
-            method: "POST",
-            credentials: "include",
-          });
-        } catch (error) {
-          console.error("Logout Error:", error);
+        if (!response.ok) {
+          console.error("Logout API failed:", response.status);
         }
-
+      } catch (error) {
+        console.error("Logout Error:", error);
+      } finally {
         localStorage.removeItem("hvacToken");
         localStorage.removeItem("hvacCurrentUser");
         localStorage.removeItem("hvacRememberMe");
         localStorage.removeItem("hvacRedirectAfterLogin");
 
         window.location.href = "../index.html";
-      });
-    }
-  });
+      }
+    });
+  }
 });
+

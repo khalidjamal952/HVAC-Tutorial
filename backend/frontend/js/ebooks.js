@@ -65,15 +65,27 @@ async function renderEbooks(ebooks) {
 
     card.className = "ebook-card";
 
+    const ebookType = String(
+      ebook.type || ebook.fileName?.split(".").pop() || "PDF"
+    ).replace(/^\./, "").toUpperCase();
+
+    const ebookIcons = {
+      PDF: "📕",
+      DOC: "📘", DOCX: "📘",
+      PPT: "📊", PPTX: "📊",
+      XLS: "📈", XLSX: "📈",
+      JPG: "🖼️", JPEG: "🖼️", PNG: "🖼️",
+      ZIP: "🗜️",
+      DWG: "📐", DXF: "📐", DWT: "📐", DWF: "📐"
+    };
+
+    const ebookIcon = ebookIcons[ebookType] || "📁";
+
     card.innerHTML = `
       <div class="ebook-cover">
-        <div class="ebook-pdf-icon">
-          📕
-        </div>
+        <div class="ebook-pdf-icon">${ebookIcon}</div>
 
-        <span class="ebook-file-type">
-          PDF
-        </span>
+        <span class="ebook-file-type">${escapeHtml(ebookType)}</span>
       </div>
 
       <div class="ebook-card-content">
@@ -150,18 +162,20 @@ async function renderEbooks(ebooks) {
 }
 
 async function checkEbookPurchase(ebookId) {
-  // const token = localStorage.getItem("hvacToken");
+  const token = localStorage.getItem("hvacToken");
 
-  // if (!token) {
-  //   return false;
-  // }
+  if (!token) {
+    return false;
+  }
 
   try {
     const response = await fetch(
       `${API_BASE_URL}/api/ebook-purchases/${ebookId}/purchased`,
       {
         method: "GET",
-        credentials: "include",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
       },
     );
 
@@ -184,13 +198,13 @@ function setupEbookBuyButtons() {
     button.addEventListener("click", async function () {
       const ebookId = button.dataset.ebookId;
 
-      // const token = localStorage.getItem("hvacToken");
+      const token = localStorage.getItem("hvacToken");
 
-      // if (!token) {
-      //   alert("Please login before purchasing an E-Book.");
-      //   window.location.href = "login.html";
-      //   return;
-      // }
+      if (!token) {
+        alert("Please login before purchasing an E-Book.");
+        window.location.href = "login.html";
+        return;
+      }
 
       try {
         const response = await fetch(
@@ -199,8 +213,8 @@ function setupEbookBuyButtons() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: "Bearer " + token,
             },
-            credentials: "include",
             body: JSON.stringify({
               ebookId: ebookId,
             }),
@@ -228,7 +242,7 @@ function setupEbookBuyButtons() {
 
             try {
               console.log("STARTING E-BOOK PAYMENT VERIFICATION...");
-              // const token = localStorage.getItem("hvacToken");
+              const token = localStorage.getItem("hvacToken");
 
               const verifyResponse = await fetch(
                 `${API_BASE_URL}/api/ebook-purchases/verify-payment`,
@@ -236,8 +250,8 @@ function setupEbookBuyButtons() {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
+                    Authorization: "Bearer " + token,
                   },
-                  credentials: "include",
                   body: JSON.stringify({
                     razorpay_order_id: response.razorpay_order_id,
                     razorpay_payment_id: response.razorpay_payment_id,
@@ -283,19 +297,21 @@ function setupEbookBuyButtons() {
   readButtons.forEach(function (button) {
     button.addEventListener("click", async function () {
       const ebookId = button.dataset.ebookId;
-      // const token = localStorage.getItem("hvacToken");
+      const token = localStorage.getItem("hvacToken");
 
-      // if (!token) {
-      //   alert("Please login first.");
-      //   return;
-      // }
+      if (!token) {
+        alert("Please login first.");
+        return;
+      }
 
       try {
         const response = await fetch(
           `${API_BASE_URL}/api/ebook-purchases/${ebookId}/download`,
           {
             method: "GET",
-            credentials: "include",
+            headers: {
+              Authorization: "Bearer " + token,
+            },
           },
         );
 
@@ -323,19 +339,21 @@ function setupEbookBuyButtons() {
   downloadButtons.forEach(function (button) {
     button.addEventListener("click", async function () {
       const ebookId = button.dataset.ebookId;
-      // const token = localStorage.getItem("hvacToken");
+      const token = localStorage.getItem("hvacToken");
 
-      // if (!token) {
-      //   alert("Please login first.");
-      //   return;
-      // }
+      if (!token) {
+        alert("Please login first.");
+        return;
+      }
 
       try {
         const response = await fetch(
           `${API_BASE_URL}/api/ebook-purchases/${ebookId}/download`,
           {
             method: "GET",
-            credentials: "include",
+            headers: {
+              Authorization: "Bearer " + token,
+            },
           },
         );
 
