@@ -1,4 +1,4 @@
-﻿// =========================
+// =========================
 // MOBILE NAVIGATION
 // =========================
 
@@ -78,7 +78,7 @@ if (themeToggle) {
       themeToggle.textContent = "â˜€ï¸";
     } else {
       localStorage.setItem("hvacTheme", "light");
-      themeToggle.textContent = "ðŸŒ™";
+      themeToggle.textContent = "\uD83C\uDF19";
     }
   });
 }
