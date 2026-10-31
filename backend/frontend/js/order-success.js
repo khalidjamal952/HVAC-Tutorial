@@ -17,20 +17,18 @@ let lastOrder = null;
 // =========================================
 
 async function loadLastOrder() {
-  const token = localStorage.getItem("hvacToken");
+  // const token = localStorage.getItem("hvacToken");
 
-  if (!token) {
-    window.location.href = "login.html";
-    return;
-  }
+  // if (!token) {
+  //   window.location.href = "login.html";
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/orders", {
       method: "GET",
 
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();

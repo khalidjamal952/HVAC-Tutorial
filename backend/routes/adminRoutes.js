@@ -1,6 +1,16 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT) || 465,
+  secure: true,
+  auth: {
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+  },
+});
 
 const Admin = require("../models/Admin");
 const AdminSetup = require("../models/AdminSetup");
@@ -218,6 +228,7 @@ router.post("/login", async (req, res) => {
         adminId: admin._id,
         email: admin.email,
         role: admin.role,
+        tokenVersion: admin.tokenVersion,
       },
       process.env.JWT_SECRET,
       {
@@ -225,9 +236,16 @@ router.post("/login", async (req, res) => {
       },
     );
 
-    res.status(200).json({
+    res.cookie("hvacAdminToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({
       message: "Admin login successful.",
-      token: token,
       admin: {
         id: admin._id,
         name: admin.name,
@@ -249,7 +267,9 @@ router.post("/login", async (req, res) => {
 // ==========================================
 router.get("/me", adminAuthMiddleware, async (req, res) => {
   try {
-    const admin = await Admin.findById(req.admin.adminId).select("-password");
+    const admin = await Admin.findById(req.admin.adminId).select(
+      "-password -resetPasswordToken -resetPasswordExpires",
+    );
 
     if (!admin) {
       return res.status(404).json({
@@ -301,25 +321,46 @@ router.post("/forgot-password", async (req, res) => {
     // Generate secure random token
     const resetToken = crypto.randomBytes(32).toString("hex");
 
+    // Hash reset token before storing it in database
+    const hashedResetToken = crypto
+      .createHash("sha256")
+      .update(resetToken)
+      .digest("hex");
+
     // Token expires in 15 minutes
-    admin.resetPasswordToken = resetToken;
+    admin.resetPasswordToken = hashedResetToken;
     admin.resetPasswordExpires = new Date(Date.now() + 15 * 60 * 1000);
 
     await admin.save();
+    const resetUrl = `${process.env.FRONTEND_URL || "https://hvactutorial.com"}/pages/admin-reset-password.html?token=${resetToken}`;
+    try {
+      await transporter.sendMail({
+        from: `"HVAC Tutorial" <${process.env.SMTP_USER}>`,
+        to: admin.email,
+        subject: "Admin Password Reset",
+        html: `
+      <h2>Password Reset Request</h2>
+      <p>Hello ${admin.name},</p>
+      <p>Click below to reset your admin password:</p>
+      <a href="${resetUrl}">Reset Password</a>
+      <p>This link will expire in 15 minutes.</p>
+    `,
+      });
+    } catch (emailError) {
+      console.error("Admin Password Reset Email Error:", emailError.message);
 
-    const resetUrl =
-      "http://127.0.0.1:5500/frontend/pages/admin-reset-password.html?token=" +
-      resetToken;
+      admin.resetPasswordToken = "";
+      admin.resetPasswordExpires = null;
+      await admin.save();
 
-    // Development testing only
-    console.log("=================================");
-    console.log("ADMIN PASSWORD RESET URL:");
-    console.log(resetUrl);
-    console.log("=================================");
+      return res.status(500).json({
+        message: "Unable to send password reset email. Please try again later.",
+      });
+    }
 
     res.status(200).json({
-      message: "Password reset link generated successfully.",
-      resetUrl: resetUrl,
+      message:
+        "If this email is registered, a password reset link has been sent.",
     });
   } catch (error) {
     console.error("Admin Forgot Password Error:", error);
@@ -374,13 +415,14 @@ router.post("/reset-password", async (req, res) => {
       });
     }
 
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
     const admin = await Admin.findOne({
-      resetPasswordToken: token,
+      resetPasswordToken: hashedToken,
       resetPasswordExpires: {
         $gt: new Date(),
       },
     });
-
     if (!admin) {
       return res.status(400).json({
         message: "Invalid or expired password reset link.",
@@ -390,6 +432,7 @@ router.post("/reset-password", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     admin.password = hashedPassword;
+    admin.tokenVersion += 1;
 
     admin.resetPasswordToken = "";
     admin.resetPasswordExpires = null;
@@ -403,6 +446,35 @@ router.post("/reset-password", async (req, res) => {
     console.error("Admin Reset Password Error:", error);
 
     res.status(500).json({
+      message: "Server error.",
+    });
+  }
+});
+
+// ==========================================
+// ADMIN LOGOUT
+// ==========================================
+
+router.post("/logout", adminAuthMiddleware, async (req, res) => {
+  try {
+    await Admin.findByIdAndUpdate(req.admin.adminId, {
+      $inc: { tokenVersion: 1 },
+    });
+
+    res.clearCookie("hvacAdminToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
+
+    return res.status(200).json({
+      message: "Admin logout successful.",
+    });
+  } catch (error) {
+    console.error("Admin Logout Error:", error);
+
+    return res.status(500).json({
       message: "Server error.",
     });
   }

@@ -28,18 +28,16 @@ const myCoursesEmpty = document.getElementById("myCoursesEmpty");
 let purchasedCourses = [];
 
 async function loadPurchasedCourses() {
-  const token = localStorage.getItem("hvacToken");
+  // const token = localStorage.getItem("hvacToken");
 
-  if (!token) {
-    return;
-  }
+  // if (!token) {
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/orders", {
       method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();
@@ -171,16 +169,15 @@ if (uniqueCourses.length > 0 && myCoursesGrid) {
 
     let savedProgress = 0;
 
-    const token = localStorage.getItem("hvacToken");
+    // const token = localStorage.getItem("hvacToken");
 
-    if (token) {
+    // if (token)
+    //  {
       try {
         const response = await fetch("/api/progress/" + course.id, {
           method: "GET",
 
-          headers: {
-            Authorization: "Bearer " + token,
-          },
+         credentials: "include",
         });
 
         const data = await response.json();
@@ -191,7 +188,7 @@ if (uniqueCourses.length > 0 && myCoursesGrid) {
       } catch (error) {
         console.error("My Courses Progress Error:", error);
       }
-    }
+    // }
 
     // =====================================
     // CREATE COURSE CARD

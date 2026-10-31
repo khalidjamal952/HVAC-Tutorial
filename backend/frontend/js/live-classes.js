@@ -22,19 +22,17 @@ const completedClassesEmpty = document.getElementById("completedClassesEmpty");
 let liveClasses = [];
 
 async function loadLiveClasses() {
-  const token = localStorage.getItem("hvacToken");
+  // const token = localStorage.getItem("hvacToken");
 
-  if (!token) {
-    window.location.href = "login.html";
-    return;
-  }
+  // if (!token) {
+  //   window.location.href = "login.html";
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/live-classes", {
       method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();

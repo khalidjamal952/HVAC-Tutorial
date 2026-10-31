@@ -38,19 +38,17 @@ const logoutBtn = document.getElementById("logoutBtn");
 // ========================================
 
 async function loadProfileFromBackend() {
-  const token = localStorage.getItem("hvacToken");
+  // const token = localStorage.getItem("hvacToken");
 
-  if (!token) {
-    window.location.href = "login.html";
-    return;
-  }
+  // if (!token) {
+  //   window.location.href = "login.html";
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/user/profile", {
       method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();
@@ -153,21 +151,21 @@ if (profileForm) {
       return;
     }
 
-    const token = localStorage.getItem("hvacToken");
+    // const token = localStorage.getItem("hvacToken");
 
-    if (!token) {
-      alert("Please login again.");
-      window.location.href = "login.html";
-      return;
-    }
+    // if (!token) {
+    //   alert("Please login again.");
+    //   window.location.href = "login.html";
+    //   return;
+    // }
 
     try {
       const response = await fetch("/api/user/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
         },
+        credentials: "include",
         body: JSON.stringify({
           name: updatedName,
           email: updatedEmail,

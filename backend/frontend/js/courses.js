@@ -60,19 +60,19 @@ async function loadCourses() {
     }
     // LOAD COUPONS
     try {
-      const token = localStorage.getItem("hvacToken");
+      // const token = localStorage.getItem("hvacToken");
 
-      if (!token) {
-        allCourses = allCourses.map(function (course) {
-          return {
-            ...course,
-            coupon: null,
-          };
-        });
+      // if (!token) {
+      //   allCourses = allCourses.map(function (course) {
+      //     return {
+      //       ...course,
+      //       coupon: null,
+      //     };
+      //   });
 
-        renderCourses();
-        return;
-      }
+      //   renderCourses();
+      //   return;
+      // }
 
       const coursesWithCoupons = [];
 
@@ -81,9 +81,7 @@ async function loadCourses() {
           const couponResponse = await fetch(
             `/api/coupons/available/${course.id}`,
             {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+              credentials: "include",
             },
           );
 

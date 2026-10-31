@@ -36,18 +36,16 @@ const printCertificateBtn = document.getElementById("printCertificateBtn");
 
 if (certificatesGrid && certificatesEmpty) {
   async function loadCompletedCourses() {
-    const token = localStorage.getItem("hvacToken");
+    // const token = localStorage.getItem("hvacToken");
 
-    if (!token) {
-      return;
-    }
+    // if (!token) {
+    //   return;
+    // }
 
     try {
       const response = await fetch("/api/certificates/my", {
         method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+        credentials: "include",
       });
 
       const data = await response.json();
@@ -75,9 +73,7 @@ if (certificatesGrid && certificatesEmpty) {
               "/api/progress/" + certificate.courseId,
               {
                 method: "GET",
-                headers: {
-                  Authorization: "Bearer " + token,
-                },
+                credentials: "include",
               },
             );
 
@@ -156,19 +152,17 @@ if (certificatesGrid && certificatesEmpty) {
 // =========================================
 
 async function loadCertificateFromBackend(courseId) {
-  const token = localStorage.getItem("hvacToken");
+  // const token = localStorage.getItem("hvacToken");
 
-  if (!token) {
-    return;
-  }
+  // if (!token) {
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/certificates/my", {
       method: "GET",
 
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();

@@ -25,6 +25,10 @@ const adminSchema = new mongoose.Schema(
       type: String,
       default: "admin",
     },
+    tokenVersion: {
+      type: Number,
+      default: 0,
+    },
 
     resetPasswordToken: {
       type: String,
@@ -38,7 +42,7 @@ const adminSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 const Admin = mongoose.model("Admin", adminSchema);

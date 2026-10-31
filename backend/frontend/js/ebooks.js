@@ -150,20 +150,18 @@ async function renderEbooks(ebooks) {
 }
 
 async function checkEbookPurchase(ebookId) {
-  const token = localStorage.getItem("hvacToken");
+  // const token = localStorage.getItem("hvacToken");
 
-  if (!token) {
-    return false;
-  }
+  // if (!token) {
+  //   return false;
+  // }
 
   try {
     const response = await fetch(
       `${API_BASE_URL}/api/ebook-purchases/${ebookId}/purchased`,
       {
         method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+        credentials: "include",
       },
     );
 
@@ -186,13 +184,13 @@ function setupEbookBuyButtons() {
     button.addEventListener("click", async function () {
       const ebookId = button.dataset.ebookId;
 
-      const token = localStorage.getItem("hvacToken");
+      // const token = localStorage.getItem("hvacToken");
 
-      if (!token) {
-        alert("Please login before purchasing an E-Book.");
-        window.location.href = "login.html";
-        return;
-      }
+      // if (!token) {
+      //   alert("Please login before purchasing an E-Book.");
+      //   window.location.href = "login.html";
+      //   return;
+      // }
 
       try {
         const response = await fetch(
@@ -201,8 +199,8 @@ function setupEbookBuyButtons() {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
             },
+            credentials: "include",
             body: JSON.stringify({
               ebookId: ebookId,
             }),
@@ -230,7 +228,7 @@ function setupEbookBuyButtons() {
 
             try {
               console.log("STARTING E-BOOK PAYMENT VERIFICATION...");
-              const token = localStorage.getItem("hvacToken");
+              // const token = localStorage.getItem("hvacToken");
 
               const verifyResponse = await fetch(
                 `${API_BASE_URL}/api/ebook-purchases/verify-payment`,
@@ -238,8 +236,8 @@ function setupEbookBuyButtons() {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
                   },
+                  credentials: "include",
                   body: JSON.stringify({
                     razorpay_order_id: response.razorpay_order_id,
                     razorpay_payment_id: response.razorpay_payment_id,
@@ -285,21 +283,19 @@ function setupEbookBuyButtons() {
   readButtons.forEach(function (button) {
     button.addEventListener("click", async function () {
       const ebookId = button.dataset.ebookId;
-      const token = localStorage.getItem("hvacToken");
+      // const token = localStorage.getItem("hvacToken");
 
-      if (!token) {
-        alert("Please login first.");
-        return;
-      }
+      // if (!token) {
+      //   alert("Please login first.");
+      //   return;
+      // }
 
       try {
         const response = await fetch(
           `${API_BASE_URL}/api/ebook-purchases/${ebookId}/download`,
           {
             method: "GET",
-            headers: {
-              Authorization: "Bearer " + token,
-            },
+            credentials: "include",
           },
         );
 
@@ -327,21 +323,19 @@ function setupEbookBuyButtons() {
   downloadButtons.forEach(function (button) {
     button.addEventListener("click", async function () {
       const ebookId = button.dataset.ebookId;
-      const token = localStorage.getItem("hvacToken");
+      // const token = localStorage.getItem("hvacToken");
 
-      if (!token) {
-        alert("Please login first.");
-        return;
-      }
+      // if (!token) {
+      //   alert("Please login first.");
+      //   return;
+      // }
 
       try {
         const response = await fetch(
           `${API_BASE_URL}/api/ebook-purchases/${ebookId}/download`,
           {
             method: "GET",
-            headers: {
-              Authorization: "Bearer " + token,
-            },
+            credentials: "include",
           },
         );
 

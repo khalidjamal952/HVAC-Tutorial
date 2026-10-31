@@ -1,28 +1,19 @@
 // =========================================
 // GET CURRENT USER FROM BACKEND
+// HTTP ONLY COOKIE AUTHENTICATION
 // =========================================
 
 async function loadCurrentUserFromBackend() {
-  const token = localStorage.getItem("hvacToken");
-
-  if (!token) {
-    window.location.href = "login.html";
-    return null;
-  }
-
   try {
     const response = await fetch("/api/user/profile", {
       method: "GET",
-
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      localStorage.removeItem("hvacToken");
+      localStorage.removeItem("hvacCurrentUser");
       window.location.href = "login.html";
       return null;
     }
@@ -33,14 +24,9 @@ async function loadCurrentUserFromBackend() {
     return data.user;
   } catch (error) {
     console.error("Backend User Fetch Error:", error);
-
     return null;
   }
 }
-
-// =========================================
-// DASHBOARD AUTHENTICATION
-// =========================================
 
 // =========================================
 // DASHBOARD INITIALIZATION
@@ -73,14 +59,9 @@ async function initializeDashboard() {
   let orders = [];
 
   try {
-    const token = localStorage.getItem("hvacToken");
-
     const response = await fetch("/api/orders", {
       method: "GET",
-
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();
@@ -235,86 +216,69 @@ async function initializeDashboard() {
 
     let courseCountForProgress = 0;
 
-    const token = localStorage.getItem("hvacToken");
+    try {
+      const progressResults = await Promise.all(
+        uniqueCourses.map(async function (course) {
+          try {
+            const response = await fetch("/api/progress/" + course.id, {
+              method: "GET",
+              credentials: "include",
+            });
 
-    if (token) {
-      try {
-        const progressResults = await Promise.all(
-          uniqueCourses.map(async function (course) {
-            try {
-              const response = await fetch("/api/progress/" + course.id, {
-                method: "GET",
+            const data = await response.json();
 
-                headers: {
-                  Authorization: "Bearer " + token,
-                },
-              });
-
-              const data = await response.json();
-
-              if (response.ok && data.progress) {
-                return Number(data.progress.progress) || 0;
-              }
-
-              return 0;
-            } catch (error) {
-              console.error("Overall Progress Load Error:", error);
-
-              return 0;
+            if (response.ok && data.progress) {
+              return Number(data.progress.progress) || 0;
             }
-          }),
-        );
 
-        progressResults.forEach(function (progress) {
-          totalProgress += progress;
-
-          courseCountForProgress++;
-        });
-
-        const overallProgress =
-          courseCountForProgress > 0
-            ? Math.round(totalProgress / courseCountForProgress)
-            : 0;
-
-        progressPercent.textContent = overallProgress + "%";
-
-        const learningProgressCircle = document.getElementById(
-          "learningProgressCircle",
-        );
-
-        if (learningProgressCircle) {
-          learningProgressCircle.textContent = overallProgress + "%";
-        }
-
-        // =========================================
-        // PROGRESS MESSAGE
-        // =========================================
-
-        const progressTitle = document.getElementById("progressTitle");
-
-        const progressMessage = document.getElementById("progressMessage");
-
-        if (progressTitle && progressMessage) {
-          if (overallProgress >= 100) {
-            progressTitle.textContent = "Course Completed! 🎉";
-
-            progressMessage.textContent =
-              "Congratulations! You have successfully completed your course.";
-          } else if (overallProgress > 0) {
-            progressTitle.textContent = "Keep Learning!";
-
-            progressMessage.textContent =
-              "Continue your course to reach 100% completion.";
-          } else {
-            progressTitle.textContent = "Start your learning";
-
-            progressMessage.textContent =
-              "Your course progress will appear here.";
+            return 0;
+          } catch (error) {
+            console.error("Overall Progress Load Error:", error);
+            return 0;
           }
-        }
-      } catch (error) {
-        console.error("Dashboard Overall Progress Error:", error);
+        }),
+      );
+
+      progressResults.forEach(function (progress) {
+        totalProgress += progress;
+        courseCountForProgress++;
+      });
+
+      const overallProgress =
+        courseCountForProgress > 0
+          ? Math.round(totalProgress / courseCountForProgress)
+          : 0;
+
+      progressPercent.textContent = overallProgress + "%";
+
+      const learningProgressCircle = document.getElementById(
+        "learningProgressCircle",
+      );
+
+      if (learningProgressCircle) {
+        learningProgressCircle.textContent = overallProgress + "%";
       }
+
+      const progressTitle = document.getElementById("progressTitle");
+      const progressMessage = document.getElementById("progressMessage");
+
+      if (progressTitle && progressMessage) {
+        if (overallProgress >= 100) {
+          progressTitle.textContent = "Course Completed! 🎉";
+          progressMessage.textContent =
+            "Congratulations! You have successfully completed your course.";
+        } else if (overallProgress > 0) {
+          progressTitle.textContent = "Keep Learning!";
+          progressMessage.textContent =
+            "Continue your course to reach 100% completion.";
+        } else {
+          progressTitle.textContent = "Start your learning";
+          progressMessage.textContent =
+            "Your course progress will appear here.";
+        }
+      }
+    } catch (error) {
+      console.error("Dashboard Overall Progress Error:", error);
     }
   }
   // =========================================
@@ -330,44 +294,75 @@ async function initializeDashboard() {
   if (completedLessonsCount) {
     let totalCompletedLessons = 0;
 
-    const token = localStorage.getItem("hvacToken");
+    // const token = localStorage.getItem("hvacToken");
 
-    if (token) {
-      try {
-        const progressResults = await Promise.all(
-          uniqueCourses.map(async function (course) {
-            try {
-              const response = await fetch("/api/progress/" + course.id, {
-                method: "GET",
+    // if (token) {
+    //   try {
+    //     const progressResults = await Promise.all(
+    //       uniqueCourses.map(async function (course) {
+    //         try {
+    //           const response = await fetch("/api/progress/" + course.id, {
+    //             method: "GET",
 
-                headers: {
-                  Authorization: "Bearer " + token,
-                },
-              });
+    //             headers: {
+    //               Authorization: "Bearer " + token,
+    //             },
+    //           });
 
-              const data = await response.json();
+    //           const data = await response.json();
 
-              if (response.ok && data.progress) {
-                return data.progress.completedLectures?.length || 0;
-              }
+    //           if (response.ok && data.progress) {
+    //             return data.progress.completedLectures?.length || 0;
+    //           }
 
-              return 0;
-            } catch (error) {
-              console.error("Progress Load Error:", error);
+    //           return 0;
+    //         } catch (error) {
+    //           console.error("Progress Load Error:", error);
 
-              return 0;
+    //           return 0;
+    //         }
+    //       }),
+    //     );
+
+    //     progressResults.forEach(function (completedCount) {
+    //       totalCompletedLessons += completedCount;
+    //     });
+
+    //     completedLessonsCount.textContent = totalCompletedLessons;
+    //   } catch (error) {
+    //     console.error("Dashboard Progress Error:", error);
+    //   }
+    // }
+    try {
+      const progressResults = await Promise.all(
+        uniqueCourses.map(async function (course) {
+          try {
+            const response = await fetch("/api/progress/" + course.id, {
+              method: "GET",
+              credentials: "include",
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.progress) {
+              return data.progress.completedLectures?.length || 0;
             }
-          }),
-        );
 
-        progressResults.forEach(function (completedCount) {
-          totalCompletedLessons += completedCount;
-        });
+            return 0;
+          } catch (error) {
+            console.error("Progress Load Error:", error);
+            return 0;
+          }
+        }),
+      );
 
-        completedLessonsCount.textContent = totalCompletedLessons;
-      } catch (error) {
-        console.error("Dashboard Progress Error:", error);
-      }
+      progressResults.forEach(function (completedCount) {
+        totalCompletedLessons += completedCount;
+      });
+
+      completedLessonsCount.textContent = totalCompletedLessons;
+    } catch (error) {
+      console.error("Dashboard Progress Error:", error);
     }
   }
 
@@ -380,48 +375,46 @@ async function initializeDashboard() {
   if (certificateCount) {
     let completedCourses = 0;
 
-    const token = localStorage.getItem("hvacToken");
+    // const token = localStorage.getItem("hvacToken");
 
-    if (token) {
-      try {
-        const certificateResults = await Promise.all(
-          uniqueCourses.map(async function (course) {
-            try {
-              const response = await fetch("/api/progress/" + course.id, {
-                method: "GET",
-                headers: {
-                  Authorization: "Bearer " + token,
-                },
-              });
+    // if (token) {
+    try {
+      const certificateResults = await Promise.all(
+        uniqueCourses.map(async function (course) {
+          try {
+            const response = await fetch("/api/progress/" + course.id, {
+              method: "GET",
+              credentials: "include",
+            });
 
-              const data = await response.json();
+            const data = await response.json();
 
-              if (response.ok && data.progress) {
-                return Number(data.progress.progress) >= 100;
-              }
-
-              return false;
-            } catch (error) {
-              console.error("Certificate Count Error:", error);
-
-              return false;
+            if (response.ok && data.progress) {
+              return Number(data.progress.progress) >= 100;
             }
-          }),
-        );
 
-        certificateResults.forEach(function (isCompleted) {
-          if (isCompleted) {
-            completedCourses++;
+            return false;
+          } catch (error) {
+            console.error("Certificate Count Error:", error);
+
+            return false;
           }
-        });
+        }),
+      );
 
-        certificateCount.textContent = completedCourses;
-      } catch (error) {
-        console.error("Certificate Count Load Error:", error);
+      certificateResults.forEach(function (isCompleted) {
+        if (isCompleted) {
+          completedCourses++;
+        }
+      });
 
-        certificateCount.textContent = "0";
-      }
+      certificateCount.textContent = completedCourses;
+    } catch (error) {
+      console.error("Certificate Count Load Error:", error);
+
+      certificateCount.textContent = "0";
     }
+    // }
   }
   // =========================================
   // DISPLAY MY COURSES
@@ -448,26 +441,40 @@ async function initializeDashboard() {
       // GET COURSE PROGRESS
       // =========================================
 
-      const token = localStorage.getItem("hvacToken");
+      // const token = localStorage.getItem("hvacToken");
 
-      if (token) {
-        try {
-          const response = await fetch("/api/progress/" + course.id, {
-            method: "GET",
+      // if (token) {
+      //   try {
+      //     const response = await fetch("/api/progress/" + course.id, {
+      //       method: "GET",
 
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          });
+      //       headers: {
+      //         Authorization: "Bearer " + token,
+      //       },
+      //     });
 
-          const data = await response.json();
+      //     const data = await response.json();
 
-          if (response.ok && data.progress) {
-            progress = Number(data.progress.progress) || 0;
-          }
-        } catch (error) {
-          console.error("Course Progress Load Error:", error);
+      //     if (response.ok && data.progress) {
+      //       progress = Number(data.progress.progress) || 0;
+      //     }
+      //   } catch (error) {
+      //     console.error("Course Progress Load Error:", error);
+      //   }
+      // }
+      try {
+        const response = await fetch("/api/progress/" + course.id, {
+          method: "GET",
+          credentials: "include",
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.progress) {
+          progress = Number(data.progress.progress) || 0;
         }
+      } catch (error) {
+        console.error("Course Progress Load Error:", error);
       }
 
       // =========================================
@@ -555,7 +562,7 @@ async function initializeDashboard() {
 const logoutBtn = document.getElementById("logoutBtn");
 
 if (logoutBtn) {
-  logoutBtn.addEventListener("click", function (event) {
+  logoutBtn.addEventListener("click", async function (event) {
     event.preventDefault();
 
     const confirmLogout = confirm("Are you sure you want to logout?");
@@ -563,12 +570,20 @@ if (logoutBtn) {
     if (!confirmLogout) {
       return;
     }
-    // Remove logged-in user
-    localStorage.removeItem("hvacCurrentUser");
-    localStorage.removeItem("hvacToken");
 
-    // Redirect to login
-    window.location.href = "login.html";
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("Logout Error:", error);
+    } finally {
+      localStorage.removeItem("hvacCurrentUser");
+      localStorage.removeItem("hvacToken");
+
+      window.location.href = "login.html";
+    }
   });
 }
 
@@ -580,11 +595,21 @@ initializeDashboard();
 // PREVENT BACK-BUTTON ACCESS AFTER LOGOUT
 // =========================================
 
-window.addEventListener("pageshow", function () {
-  const user = localStorage.getItem("hvacCurrentUser");
-  const authToken = localStorage.getItem("hvacToken");
+window.addEventListener("pageshow", async function () {
+  try {
+    const response = await fetch("/api/user/profile", {
+      method: "GET",
+      credentials: "include",
+    });
 
-  if (!user || !authToken) {
+    if (!response.ok) {
+      localStorage.removeItem("hvacCurrentUser");
+      localStorage.removeItem("hvacToken");
+
+      window.location.replace("login.html");
+    }
+  } catch (error) {
+    console.error("Authentication Check Error:", error);
     window.location.replace("login.html");
   }
 });

@@ -87,7 +87,7 @@ if (themeToggle) {
 // NAVBAR LOGIN / LOGOUT
 // ========================================
 document.addEventListener("DOMContentLoaded", async function () {
-  const token = localStorage.getItem("hvacToken");
+  const isLoggedIn = !!localStorage.getItem("hvacCurrentUser");
 
   const navMenu = document.querySelector(".nav-menu");
 
@@ -101,13 +101,11 @@ document.addEventListener("DOMContentLoaded", async function () {
 
   let hasPurchasedCourse = false;
 
-  if (token) {
+  if (isLoggedIn) {
     try {
       const response = await fetch("/api/orders", {
         method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+        credentials: "include",
       });
 
       const data = await response.json();
@@ -141,7 +139,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   // ADD MY COURSES ONLY IF COURSE PURCHASED
   // ==========================================
 
-  if (token && hasPurchasedCourse) {
+  if (isLoggedIn && hasPurchasedCourse) {
     const existingMyCourses = Array.from(navMenu.querySelectorAll("a")).find(
       function (link) {
         return link.textContent.trim() === "My Courses";
@@ -188,24 +186,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     // LOGGED-IN USER
     // ==========================================
 
-    if (token && (text === "Login" || text === "Logout")) {
+    if (isLoggedIn && (text === "Login" || text === "Logout")) {
       link.textContent = "Logout";
       link.href = "#";
 
       link.addEventListener("click", async function (event) {
         event.preventDefault();
 
-        const token = localStorage.getItem("hvacToken");
-
         try {
-          if (token) {
-            await fetch("/api/auth/logout", {
-              method: "POST",
-              headers: {
-                Authorization: "Bearer " + token,
-              },
-            });
-          }
+          await fetch("/api/auth/logout", {
+            method: "POST",
+            credentials: "include",
+          });
         } catch (error) {
           console.error("Logout Error:", error);
         }

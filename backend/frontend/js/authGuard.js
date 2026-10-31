@@ -1,22 +1,32 @@
 // =========================================
-// AUTH GUARD
+// AUTH GUARD - HTTP ONLY COOKIE AUTH
 // =========================================
-const token = localStorage.getItem("hvacToken");
 
-function checkAuthentication() {
-  const currentToken = localStorage.getItem("hvacToken");
+async function checkAuthentication() {
+  try {
+    const response = await fetch("/api/user/profile", {
+      method: "GET",
+      credentials: "include",
+    });
 
-  if (!currentToken) {
-    const currentPage = window.location.pathname + window.location.search;
+    if (!response.ok) {
+      const currentPage = window.location.pathname + window.location.search;
 
-    localStorage.setItem("hvacRedirectAfterLogin", currentPage);
+      localStorage.setItem("hvacRedirectAfterLogin", currentPage);
+
+      window.location.replace("login.html");
+    }
+  } catch (error) {
+    console.error("Authentication Check Error:", error);
 
     window.location.replace("login.html");
   }
 }
 
+// Initial authentication check
 checkAuthentication();
 
+// Check again when page is restored from browser cache
 window.addEventListener("pageshow", function () {
   checkAuthentication();
 });

@@ -11,10 +11,22 @@ const adminPage =
   window.location.pathname.includes("admin-certificates.html") ||
   window.location.pathname.includes("admin-coupons.html");
 
-const adminToken = localStorage.getItem("hvacAdminToken");
+if (adminPage) {
+  (async function () {
+    try {
+      const response = await fetch("/api/admin/me", {
+        method: "GET",
+        credentials: "include",
+      });
 
-if (adminPage && !adminToken) {
-  window.location.href = "admin-login.html";
+      if (!response.ok) {
+        window.location.href = "admin-login.html";
+      }
+    } catch (error) {
+      console.error("Admin Authentication Error:", error);
+      window.location.href = "admin-login.html";
+    }
+  })();
 }
 // =========================================
 // ADMIN LOGIN
@@ -55,9 +67,6 @@ if (adminLoginForm) {
         alert(data.message || "Invalid admin email or password.");
         return;
       }
-
-      // Save admin JWT token
-      localStorage.setItem("hvacAdminToken", data.token);
 
       alert("Admin login successful!");
 
@@ -190,21 +199,11 @@ if (studentsTableBody) {
   // =====================================
   // LOAD STUDENTS FROM BACKEND
   // =====================================
-
   async function loadStudents() {
-    const adminToken = localStorage.getItem("hvacAdminToken");
-
-    if (!adminToken) {
-      console.error("Admin token not found.");
-      return;
-    }
-
     try {
       const response = await fetch("/api/user/admin/students", {
         method: "GET",
-        headers: {
-          Authorization: "Bearer " + adminToken,
-        },
+        credentials: "include",
       });
 
       const data = await response.json();
@@ -222,7 +221,6 @@ if (studentsTableBody) {
       console.error("Backend Students Error:", error);
     }
   }
-
   // =====================================
   // DISPLAY STUDENTS
   // =====================================
@@ -302,16 +300,17 @@ if (studentsTableBody) {
           return;
         }
 
-        const adminToken = localStorage.getItem("hvacAdminToken");
+        // const adminToken = localStorage.getItem("hvacAdminToken");
 
         try {
           const response = await fetch(
             "/api/user/admin/students/" + studentId,
             {
               method: "DELETE",
-              headers: {
-                Authorization: "Bearer " + adminToken,
-              },
+              credentials: "include",
+              // headers: {
+              //   Authorization: "Bearer " + adminToken,
+              // },
             },
           );
 
@@ -737,14 +736,10 @@ if (adminCoursesTableBody) {
           return;
         }
 
-        const adminToken = localStorage.getItem("hvacAdminToken");
-
         try {
           const response = await fetch("/api/courses/admin/" + courseId, {
             method: "DELETE",
-            headers: {
-              Authorization: "Bearer " + adminToken,
-            },
+            credentials: "include",
           });
 
           const data = await response.json();
@@ -953,19 +948,20 @@ if (adminCoursesTableBody) {
         return;
       }
 
-      const adminToken = localStorage.getItem("hvacAdminToken");
+      // const adminToken = localStorage.getItem("hvacAdminToken");
 
-      if (!adminToken) {
-        alert("Admin authentication required. Please login again.");
-        return;
-      }
+      // if (!adminToken) {
+      //   alert("Admin authentication required. Please login again.");
+      //   return;
+      // }
 
       try {
         const response = await fetch("/api/categories", {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + adminToken,
+            // Authorization: "Bearer " + adminToken,
           },
           body: JSON.stringify({
             name: categoryName.trim(),
@@ -1130,7 +1126,7 @@ if (adminCoursesTableBody) {
 
       const editingId = courseForm.dataset.editingId;
 
-      const adminToken = localStorage.getItem("hvacAdminToken");
+      // const adminToken = localStorage.getItem("hvacAdminToken");
 
       try {
         // =============================
@@ -1140,9 +1136,9 @@ if (adminCoursesTableBody) {
         if (editingId) {
           const response = await fetch("/api/courses/admin/" + editingId, {
             method: "PUT",
+            credentials: "include",
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer " + adminToken,
             },
 
             body: JSON.stringify({
@@ -1206,9 +1202,8 @@ if (adminCoursesTableBody) {
 
           const response = await fetch("/api/courses/admin", {
             method: "POST",
-            headers: {
-              Authorization: "Bearer " + adminToken,
-            },
+            credentials: "include",
+            headers: {},
             body: formData,
           });
 
@@ -1251,18 +1246,19 @@ const orderSearch = document.getElementById("orderSearch");
 let allOrders = [];
 
 async function loadAdminOrders() {
-  const token = localStorage.getItem("hvacAdminToken");
+  // const token = localStorage.getItem("hvacAdminToken");
 
-  if (!token) {
-    console.error("Admin token not found.");
-    return;
-  }
+  // if (!token) {
+  //   console.error("Admin token not found.");
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/orders/admin/all", {
       method: "GET",
+      credentials: "include",
       headers: {
-        Authorization: "Bearer " + token,
+        // Authorization: "Bearer " + token,
       },
     });
 
@@ -1469,18 +1465,19 @@ document.addEventListener("click", async function (event) {
     return;
   }
 
-  const token = localStorage.getItem("hvacAdminToken");
+  // const token = localStorage.getItem("hvacAdminToken");
 
-  if (!token) {
-    alert("Admin authentication required.");
-    return;
-  }
+  // if (!token) {
+  //   alert("Admin authentication required.");
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/orders/admin/" + orderId, {
       method: "DELETE",
+      credentials: "include",
       headers: {
-        Authorization: "Bearer " + token,
+        // Authorization: "Bearer " + token,
       },
     });
 
@@ -1544,18 +1541,19 @@ let selectedLectureCourseId = null;
 // LOAD LECTURES
 // =========================
 async function loadAdminLectures() {
-  const adminToken = localStorage.getItem("hvacAdminToken");
+  // const adminToken = localStorage.getItem("hvacAdminToken");
 
-  if (!adminToken) {
-    alert("Admin authentication required. Please login again.");
-    return;
-  }
+  // if (!adminToken) {
+  //   alert("Admin authentication required. Please login again.");
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/lectures/admin", {
       method: "GET",
+      credentials: "include",
       headers: {
-        Authorization: "Bearer " + adminToken,
+        // Authorization: "Bearer " + adminToken,
       },
     });
 
@@ -1937,26 +1935,27 @@ if (lectureForm) {
     const description = lectureDescription.value.trim();
     const videoFile = lectureVideo.files[0];
     const thumbnailFile = lectureThumbnail.files[0];
-    const adminToken = localStorage.getItem("hvacAdminToken");
+    // const adminToken = localStorage.getItem("hvacAdminToken");
 
     if (!courseId || !number || !title) {
       alert("Please fill all lecture details.");
       return;
     }
 
-    if (!adminToken) {
-      alert("Admin authentication required. Please login again.");
-      return;
-    }
+    // if (!adminToken) {
+    //   alert("Admin authentication required. Please login again.");
+    //   return;
+    // }
 
     // Edit existing lecture
     if (editingLectureId) {
       try {
         const response = await fetch("/api/lectures/" + editingLectureId, {
           method: "PUT",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + adminToken,
+            // Authorization: "Bearer " + adminToken,
           },
           body: JSON.stringify({
             courseId,
@@ -2034,9 +2033,10 @@ if (lectureForm) {
     const request = async (url, body) => {
       const response = await fetch(url, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + adminToken,
+          // Authorization: "Bearer " + adminToken,
         },
         body: JSON.stringify(body),
       });
@@ -2231,18 +2231,12 @@ async function deleteLecture(id) {
     return;
   }
 
-  const adminToken = localStorage.getItem("hvacAdminToken");
-
-  if (!adminToken) {
-    alert("Admin authentication required. Please login again.");
-    return;
-  }
-
   try {
     const response = await fetch("/api/lectures/" + id, {
       method: "DELETE",
+      credentials: "include",
       headers: {
-        Authorization: "Bearer " + adminToken,
+        // Authorization: "Bearer " + adminToken,
       },
     });
 
@@ -2351,18 +2345,19 @@ let editingLiveClassId = null;
 // =========================
 
 async function loadAdminLiveClasses() {
-  const adminToken = localStorage.getItem("hvacAdminToken");
+  // const adminToken = localStorage.getItem("hvacAdminToken");
 
-  if (!adminToken) {
-    console.error("Admin token not found.");
-    return;
-  }
+  // if (!adminToken) {
+  //   console.error("Admin token not found.");
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/live-classes/admin", {
       method: "GET",
+      credentials: "include",
       headers: {
-        Authorization: "Bearer " + adminToken,
+        // Authorization: "Bearer " + adminToken,
       },
     });
 
@@ -2705,13 +2700,6 @@ if (liveClassForm) {
       return;
     }
 
-    const adminToken = localStorage.getItem("hvacAdminToken");
-
-    if (!adminToken) {
-      alert("Admin authentication required. Please login again.");
-      return;
-    }
-
     try {
       // =========================
       // EDIT
@@ -2722,9 +2710,10 @@ if (liveClassForm) {
           "/api/live-classes/admin/" + editingLiveClassId,
           {
             method: "PUT",
+            credentials: "include",
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer " + adminToken,
+              // Authorization: "Bearer " + adminToken,
             },
             body: JSON.stringify({
               title: title,
@@ -2754,9 +2743,10 @@ if (liveClassForm) {
       else {
         const response = await fetch("/api/live-classes/admin", {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + adminToken,
+            // Authorization: "Bearer " + adminToken,
           },
           body: JSON.stringify({
             title: title,
@@ -2805,18 +2795,19 @@ async function deleteLiveClass(id) {
     return;
   }
 
-  const adminToken = localStorage.getItem("hvacAdminToken");
+  // const adminToken = localStorage.getItem("hvacAdminToken");
 
-  if (!adminToken) {
-    alert("Admin authentication required. Please login again.");
-    return;
-  }
+  // if (!adminToken) {
+  //   alert("Admin authentication required. Please login again.");
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/live-classes/admin/" + id, {
       method: "DELETE",
+      credentials: "include",
       headers: {
-        Authorization: "Bearer " + adminToken,
+        // Authorization: "Bearer " + adminToken,
       },
     });
 
@@ -2898,19 +2889,20 @@ let allCertificates = [];
 async function loadAdminCertificates() {
   allCertificates = [];
 
-  const adminToken = localStorage.getItem("hvacAdminToken");
+  // const adminToken = localStorage.getItem("hvacAdminToken");
 
-  if (!adminToken) {
-    console.error("Admin token not found.");
-    renderAdminCertificates();
-    return;
-  }
+  // if (!adminToken) {
+  //   console.error("Admin token not found.");
+  //   renderAdminCertificates();
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/certificates/admin/all", {
       method: "GET",
+      credentials: "include",
       headers: {
-        Authorization: "Bearer " + adminToken,
+        // Authorization: "Bearer " + adminToken,
       },
     });
 
@@ -3108,18 +3100,19 @@ document.addEventListener("click", async function (event) {
     return;
   }
 
-  const token = localStorage.getItem("hvacAdminToken");
+  // const token = localStorage.getItem("hvacAdminToken");
 
-  if (!token) {
-    alert("Admin authentication required.");
-    return;
-  }
+  // if (!token) {
+  //   alert("Admin authentication required.");
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/certificates/admin/" + certificateId, {
       method: "DELETE",
+      credentials: "include",
       headers: {
-        Authorization: "Bearer " + token,
+        // Authorization: "Bearer " + token,
       },
     });
 
@@ -3142,15 +3135,25 @@ document.addEventListener("click", async function (event) {
 // =========================================
 // ADMIN LOGOUT
 // =========================================
-
 const adminLogoutBtn = document.getElementById("adminLogoutBtn");
 
 if (adminLogoutBtn) {
-  adminLogoutBtn.addEventListener("click", function (event) {
+  adminLogoutBtn.addEventListener("click", async function (event) {
     event.preventDefault();
+
+    try {
+      await fetch("/api/admin/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("Admin Logout Error:", error);
+    }
 
     // Remove admin authentication data
     localStorage.removeItem("hvacAdminToken");
+    localStorage.removeItem("hvacAdminLoggedIn");
+    localStorage.removeItem("hvacAdmin");
 
     // Redirect to admin login
     window.location.href = "admin-login.html";
@@ -3197,13 +3200,14 @@ if (document.getElementById("adminCourseCount")) {
 
   // TOTAL STUDENTS FROM BACKEND
 
-  const studentsAdminToken = localStorage.getItem("hvacAdminToken");
+  // const studentsAdminToken = localStorage.getItem("hvacAdminToken");
 
-  if (adminStudentCount && studentsAdminToken) {
+  if (adminStudentCount) {
     fetch("/api/user/admin/students", {
       method: "GET",
+      credentials: "include",
       headers: {
-        Authorization: "Bearer " + studentsAdminToken,
+        // Authorization: "Bearer " + studentsAdminToken,
       },
     })
       .then(function (response) {
@@ -3225,13 +3229,14 @@ if (document.getElementById("adminCourseCount")) {
 
   // TOTAL ORDERS FROM BACKEND
 
-  const adminToken = localStorage.getItem("hvacAdminToken");
+  // const adminToken = localStorage.getItem("hvacAdminToken");
 
-  if (adminOrderCount && adminToken) {
+  if (adminOrderCount) {
     fetch("/api/orders/admin/all", {
       method: "GET",
+      credentials: "include",
       headers: {
-        Authorization: "Bearer " + adminToken,
+        // Authorization: "Bearer " + adminToken,
       },
     })
       .then(function (response) {
@@ -3259,11 +3264,12 @@ if (document.getElementById("adminCourseCount")) {
   // TOTAL REVENUE FROM BACKEND
   const adminRevenue = document.getElementById("adminRevenue");
 
-  if (adminRevenue && adminToken) {
+  if (adminRevenue) {
     fetch("/api/orders/admin/revenue", {
       method: "GET",
+      credentials: "include",
       headers: {
-        Authorization: "Bearer " + adminToken,
+        // Authorization: "Bearer " + adminToken,
       },
     })
       .then(function (response) {
@@ -3284,12 +3290,13 @@ if (document.getElementById("adminCourseCount")) {
   // TOTAL CERTIFICATES FROM BACKEND
   // const adminToken = localStorage.getItem("hvacAdminToken");
 
-  if (adminCertificateCount && adminToken) {
+  if (adminCertificateCount)
     fetch("/api/certificates/admin/all", {
       method: "GET",
-      headers: {
-        Authorization: "Bearer " + adminToken,
-      },
+      credentials: "include",
+      // headers: {
+      //   Authorization: "Bearer " + adminToken,
+      // },
     })
       .then(function (response) {
         return response.json();
@@ -3306,7 +3313,6 @@ if (document.getElementById("adminCourseCount")) {
 
         adminCertificateCount.textContent = "0";
       });
-  }
 }
 
 const setupPasswordToggle = document.getElementById("setupPasswordToggle");

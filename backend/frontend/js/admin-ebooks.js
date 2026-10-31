@@ -1,4 +1,3 @@
-
 const API_BASE_URL = "";
 
 // =========================================
@@ -36,14 +35,6 @@ const ebookPrice = document.getElementById("ebookPrice");
 const ebookFile = document.getElementById("ebookFile");
 
 let allEbooks = [];
-
-// =========================================
-// ADMIN TOKEN
-// =========================================
-
-function getAdminToken() {
-  return localStorage.getItem("hvacAdminToken");
-}
 
 // =========================================
 // LOAD E-BOOKS
@@ -298,15 +289,15 @@ if (ebookForm) {
   ebookForm.addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    const token = getAdminToken();
+    // const token = getAdminToken();
 
-    if (!token) {
-      alert("Admin session expired. Please login again.");
+    // if (!token) {
+    //   alert("Admin session expired. Please login again.");
 
-      window.location.href = "admin-login.html";
+    //   window.location.href = "admin-login.html";
 
-      return;
-    }
+    //   return;
+    // }
 
     const title = ebookTitle.value.trim();
 
@@ -375,9 +366,7 @@ if (ebookForm) {
       const response = await fetch(url, {
         method: method,
 
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+        credentials: "include",
 
         body: formData,
       });
@@ -418,23 +407,16 @@ async function deleteEbook(id) {
     return;
   }
 
-  const token = getAdminToken();
-
-  if (!token) {
-    alert("Admin session expired. Please login again.");
-
-    window.location.href = "admin-login.html";
-
-    return;
-  }
+  const response = await fetch(`${API_BASE_URL}/api/ebooks/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
 
   try {
     const response = await fetch(`${API_BASE_URL}/api/ebooks/${id}`, {
       method: "DELETE",
 
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();

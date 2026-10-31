@@ -9,6 +9,7 @@ const orderRoutes = require("./routes/orderRoutes");
 const courseRoutes = require("./routes/courseRoutes");
 const progressRoutes = require("./routes/progressRoutes");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const express = require("express");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
@@ -21,8 +22,15 @@ const ratingRoutes = require("./routes/ratingRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "https://hvactutorial.com",
+    credentials: true,
+  }),
+);
+
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/assets/videos", function (req, res, next) {
   return res.status(403).json({

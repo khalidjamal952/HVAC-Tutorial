@@ -159,14 +159,14 @@ if (checkoutForm) {
 
     const finalTotal = Math.max(total - discount, 0);
 
-    // GET TOKEN
-    const token = localStorage.getItem("hvacToken");
+    // // GET TOKEN
+    // const token = localStorage.getItem("hvacToken");
 
-    if (!token) {
-      alert("Please login before making payment.");
-      window.location.href = "login.html";
-      return;
-    }
+    // if (!token) {
+    //   alert("Please login before making payment.");
+    //   window.location.href = "login.html";
+    //   return;
+    // }
 
     try {
       // =========================================
@@ -179,8 +179,8 @@ if (checkoutForm) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
         },
+        credentials: "include",
         body: JSON.stringify({
           amount: finalTotal,
           courseId: firstCourse.id,
@@ -240,9 +240,8 @@ if (checkoutForm) {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
-                  Authorization: "Bearer " + token,
                 },
-
+                credentials: "include",
                 body: JSON.stringify({
                   razorpay_order_id: paymentResponse.razorpay_order_id,
 
@@ -333,15 +332,15 @@ if (applyCouponBtn) {
       return;
     }
 
-    const token = localStorage.getItem("hvacToken");
+    // const token = localStorage.getItem("hvacToken");
 
-    if (!token) {
-      alert("Please login before applying a coupon.");
+    // if (!token) {
+    //   alert("Please login before applying a coupon.");
 
-      window.location.href = "login.html";
+    //   window.location.href = "login.html";
 
-      return;
-    }
+    //   return;
+    // }
 
     const cart = getCheckoutCart();
 
@@ -361,13 +360,10 @@ if (applyCouponBtn) {
 
       const response = await fetch("/api/coupons/validate", {
         method: "POST",
-
         headers: {
           "Content-Type": "application/json",
-
-          Authorization: "Bearer " + token,
         },
-
+        credentials: "include",
         body: JSON.stringify({
           code: code,
 

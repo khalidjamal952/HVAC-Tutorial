@@ -34,31 +34,21 @@ const adminCouponTotal = document.getElementById("adminCouponTotal");
 const adminCouponSearch = document.getElementById("adminCouponSearch");
 
 /* =========================
-   ADMIN TOKEN
-========================= */
-
-function getAdminToken() {
-  return localStorage.getItem("hvacAdminToken");
-}
-
-/* =========================
    LOAD COURSES
 ========================= */
 
 async function loadCoursesForCoupons() {
-  const token = getAdminToken();
+  // const token = getAdminToken();
 
-  if (!token) {
-    window.location.href = "admin-login.html";
-    return;
-  }
+  // if (!token) {
+  //   window.location.href = "admin-login.html";
+  //   return;
+  // }
 
   try {
     const response = await fetch(`${API_BASE_URL}/api/courses`, {
       method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();
@@ -90,19 +80,17 @@ async function loadCoursesForCoupons() {
 ========================= */
 
 async function loadCoupons() {
-  const token = getAdminToken();
+  // const token = getAdminToken();
 
-  if (!token) {
-    window.location.href = "admin-login.html";
-    return;
-  }
+  // if (!token) {
+  //   window.location.href = "admin-login.html";
+  //   return;
+  // }
 
   try {
     const response = await fetch(`${API_BASE_URL}/api/coupons/admin`, {
       method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();
@@ -270,12 +258,12 @@ function closeCouponModalHandler() {
 couponForm.addEventListener("submit", async function (event) {
   event.preventDefault();
 
-  const token = getAdminToken();
+  // const token = getAdminToken();
 
-  if (!token) {
-    window.location.href = "admin-login.html";
-    return;
-  }
+  // if (!token) {
+  //   window.location.href = "admin-login.html";
+  //   return;
+  // }
 
   const selectedCourse = couponCourse.value.trim();
 
@@ -315,8 +303,8 @@ couponForm.addEventListener("submit", async function (event) {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: "Bearer " + token,
           },
+          credentials: "include",
           body: JSON.stringify(payload),
         },
       );
@@ -325,8 +313,8 @@ couponForm.addEventListener("submit", async function (event) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
         },
+        credentials: "include",
         body: JSON.stringify(payload),
       });
     }
@@ -387,16 +375,14 @@ adminCouponsTableBody.addEventListener("click", async function (event) {
       return;
     }
 
-    const token = getAdminToken();
+    // const token = getAdminToken();
 
     try {
       const response = await fetch(
         `${API_BASE_URL}/api/coupons/admin/${couponId}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: "Bearer " + token,
-          },
+          credentials: "include",
         },
       );
 

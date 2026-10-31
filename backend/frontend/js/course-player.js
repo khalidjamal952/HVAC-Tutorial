@@ -9,7 +9,7 @@
 const currentUser = JSON.parse(localStorage.getItem("hvacCurrentUser"));
 
 // const token = localStorage.getItem("hvacToken");
-if (!currentUser || !localStorage.getItem("hvacToken")) {
+if (!currentUser) {
   window.location.href = "login.html";
 }
 // =========================================
@@ -25,19 +25,17 @@ const courseId = urlParams.get("id") || "hvac-fundamentals";
 // =========================================
 
 async function checkCourseAccess() {
-  const token = localStorage.getItem("hvacToken");
+  // const token = localStorage.getItem("hvacToken");
 
-  if (!token) {
-    window.location.replace("login.html");
-    return false;
-  }
+  // if (!token) {
+  //   window.location.replace("login.html");
+  //   return false;
+  // }
 
   try {
     const response = await fetch("/api/orders/access/" + courseId, {
       method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();
@@ -465,12 +463,12 @@ const progressKey = "hvacProgress_" + currentUser.id + "_" + courseId;
 // =========================================
 
 async function saveProgressToBackend() {
-  const token = localStorage.getItem("hvacToken");
+  // const token = localStorage.getItem("hvacToken");
 
-  if (!token) {
-    console.log("No authentication token found.");
-    return;
-  }
+  // if (!token) {
+  //   console.log("No authentication token found.");
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/progress", {
@@ -478,8 +476,8 @@ async function saveProgressToBackend() {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
       },
+      credentials: "include",
 
       body: JSON.stringify({
         courseId: courseId,
@@ -510,12 +508,12 @@ async function saveProgressToBackend() {
 // =========================================
 
 async function createCertificate() {
-  const token = localStorage.getItem("hvacToken");
+  // const token = localStorage.getItem("hvacToken");
 
-  if (!token) {
-    console.log("No authentication token found.");
-    return;
-  }
+  // if (!token) {
+  //   console.log("No authentication token found.");
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/certificates", {
@@ -523,8 +521,8 @@ async function createCertificate() {
 
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
       },
+      credentials: "include",
 
       body: JSON.stringify({
         courseId: courseId,
@@ -555,19 +553,16 @@ let videoPositions = {};
 // =========================================
 
 async function loadProgressFromBackend() {
-  const token = localStorage.getItem("hvacToken");
+  // const token = localStorage.getItem("hvacToken");
 
-  if (!token) {
-    return;
-  }
+  // if (!token) {
+  //   return;
+  // }
 
   try {
     const response = await fetch("/api/progress/" + courseId, {
       method: "GET",
-
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();
@@ -623,12 +618,12 @@ async function loadLecturesFromBackend() {
       }
     }
 
-    const token = localStorage.getItem("hvacToken");
+    // const token = localStorage.getItem("hvacToken");
 
-    if (!token) {
-      console.log("No authentication token found.");
-      return false;
-    }
+    // if (!token) {
+    //   console.log("No authentication token found.");
+    //   return false;
+    // }
 
     // =========================================
     // FETCH COURSE LECTURES
@@ -636,9 +631,7 @@ async function loadLecturesFromBackend() {
 
     const response = await fetch("/api/lectures/course/" + courseId, {
       method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
+      credentials: "include",
     });
 
     const data = await response.json();
@@ -854,7 +847,7 @@ async function loadLecture(
   // =========================================
 
   if (lecture.video) {
-    const token = localStorage.getItem("hvacToken");
+    // const token = localStorage.getItem("hvacToken");
 
     // Clear previous Blob URL to prevent memory leaks.
     if (currentVideoObjectUrl) {
@@ -877,9 +870,7 @@ async function loadLecture(
         encodeURIComponent(selectedQuality),
       {
         method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+        credentials: "include",
       },
     )
       .then(async function (response) {
@@ -1109,14 +1100,22 @@ initializeCoursePlayer();
 const logoutBtn = document.getElementById("logoutBtn");
 
 if (logoutBtn) {
-  logoutBtn.addEventListener("click", function (event) {
+  logoutBtn.addEventListener("click", async function (event) {
     event.preventDefault();
 
-    localStorage.removeItem("hvacToken");
-    localStorage.removeItem("hvacCurrentUser");
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (error) {
+      console.error("Logout Error:", error);
+    } finally {
+      localStorage.removeItem("hvacToken");
+      localStorage.removeItem("hvacCurrentUser");
 
-    // window.location.href = "login.html";
-    window.location.replace("login.html");
+      window.location.replace("login.html");
+    }
   });
 }
 
@@ -1124,11 +1123,21 @@ if (logoutBtn) {
 // PREVENT BACK-BUTTON ACCESS AFTER LOGOUT
 // =========================================
 
-window.addEventListener("pageshow", function () {
-  const user = localStorage.getItem("hvacCurrentUser");
-  const authToken = localStorage.getItem("hvacToken");
+window.addEventListener("pageshow", async function () {
+  try {
+    const response = await fetch("/api/user/profile", {
+      method: "GET",
+      credentials: "include",
+    });
 
-  if (!user || !authToken) {
+    if (!response.ok) {
+      localStorage.removeItem("hvacCurrentUser");
+      localStorage.removeItem("hvacToken");
+
+      window.location.replace("login.html");
+    }
+  } catch (error) {
+    console.error("Authentication Check Error:", error);
     window.location.replace("login.html");
   }
 });

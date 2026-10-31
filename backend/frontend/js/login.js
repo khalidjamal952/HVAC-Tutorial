@@ -204,12 +204,14 @@ if (loginOtpForm) {
 
       const response = await fetch("/api/auth/verify-login-otp", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           email: loginEmailForOtp,
           otp,
+          rememberMe: rememberMeForOtp,
         }),
       });
 
@@ -220,13 +222,13 @@ if (loginOtpForm) {
         return;
       }
 
-      if (!data.token || !data.user) {
+      if (!data.user) {
         alert("Invalid server response. Please try again.");
         return;
       }
 
       // Save JWT token only after OTP verification
-      localStorage.setItem("hvacToken", data.token);
+      // localStorage.setItem("hvacToken", data.token);
 
       const currentUser = {
         id: data.user.id,

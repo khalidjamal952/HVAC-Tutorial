@@ -152,6 +152,7 @@ router.post("/verify-login-otp", async (req, res) => {
   try {
     const email = req.body.email?.trim().toLowerCase();
     const { otp } = req.body;
+    const rememberMe = req.body.rememberMe === true;
 
     if (!email || !otp) {
       return res.status(400).json({
@@ -214,6 +215,9 @@ router.post("/verify-login-otp", async (req, res) => {
 
     await user.save();
 
+    // Remember Me: 30 days; otherwise existing 7-day JWT validity
+    const tokenExpiry = rememberMe ? "30d" : "7d";
+
     const token = jwt.sign(
       {
         userId: user._id,
@@ -221,13 +225,21 @@ router.post("/verify-login-otp", async (req, res) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "7d",
+        expiresIn: tokenExpiry,
       },
     );
 
+    // Set secure HttpOnly cookie
+    res.cookie("hvacToken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      ...(rememberMe ? { maxAge: 30 * 24 * 60 * 60 * 1000 } : {}),
+    });
+
     return res.status(200).json({
       message: "Login successful.",
-      token: token,
       user: {
         id: user._id,
         name: user.name,
@@ -701,31 +713,48 @@ router.post("/reset-password", async (req, res) => {
 // ==========================================
 // STUDENT LOGOUT
 // ==========================================
+
 router.post("/logout", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId);
 
     if (!user) {
+      res.clearCookie("hvacToken", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+      });
+
       return res.status(404).json({
         message: "User not found",
       });
     }
 
     // Clear active device session
-    user.activeSessionId = null;
+    user.activeSessionId = "";
     await user.save();
 
-    res.status(200).json({
+    // Clear authentication cookie
+    res.clearCookie("hvacToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+    });
+
+    return res.status(200).json({
       message: "Logout successful",
     });
   } catch (error) {
     console.error("Logout Error:", error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Server error",
     });
   }
 });
+
 router.get("/profile", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.user.userId).select("-password");
@@ -753,53 +782,60 @@ router.get("/profile", authMiddleware, async (req, res) => {
 // ADMIN LOGIN
 // =========================================
 
-router.post("/admin-login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
+// router.post("/admin-login", async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({
-        message: "Email and password are required",
-      });
-    }
+//     if (!email || !password) {
+//       return res.status(400).json({
+//         message: "Email and password are required",
+//       });
+//     }
 
-    const adminEmail = process.env.ADMIN_EMAIL;
-    const adminPassword = process.env.ADMIN_PASSWORD;
+//     const adminEmail = process.env.ADMIN_EMAIL;
+//     const adminPassword = process.env.ADMIN_PASSWORD;
 
-    if (
-      email.trim().toLowerCase() !== adminEmail.toLowerCase() ||
-      password !== adminPassword
-    ) {
-      return res.status(401).json({
-        message: "Invalid admin email or password",
-      });
-    }
+//     if (
+//       email.trim().toLowerCase() !== adminEmail.toLowerCase() ||
+//       password !== adminPassword
+//     ) {
+//       return res.status(401).json({
+//         message: "Invalid admin email or password",
+//       });
+//     }
 
-    const token = jwt.sign(
-      {
-        role: "admin",
-        email: adminEmail,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "7d",
-      },
-    );
+//     const token = jwt.sign(
+//       {
+//         role: "admin",
+//         email: adminEmail,
+//       },
+//       process.env.JWT_SECRET,
+//       {
+//         expiresIn: "7d",
+//       },
+//     );
+//     res.cookie("hvacAdminToken", token, {
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === "production",
+//       sameSite: "lax",
+//       path: "/",
+//       maxAge: 7 * 24 * 60 * 60 * 1000,
+//     });
 
-    res.status(200).json({
-      message: "Admin login successful",
-      token: token,
-      admin: {
-        email: adminEmail,
-        role: "admin",
-      },
-    });
-  } catch (error) {
-    console.error("Admin Login Error:", error);
+//     return res.status(200).json({
+//       message: "Admin login successful",
+//       token: token,
+//       admin: {
+//         email: adminEmail,
+//         role: "admin",
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Admin Login Error:", error);
 
-    res.status(500).json({
-      message: "Server error",
-    });
-  }
-});
+//     res.status(500).json({
+//       message: "Server error",
+//     });
+//   }
+// });
 module.exports = router;

@@ -508,13 +508,13 @@ if (submitRatingBtn) {
       return;
     }
 
-    const token = localStorage.getItem("hvacToken");
+    // const token = localStorage.getItem("hvacToken");
 
-    if (!token) {
-      alert("Please login to rate this course.");
-      window.location.href = "login.html";
-      return;
-    }
+    // if (!token) {
+    //   alert("Please login to rate this course.");
+    //   window.location.href = "login.html";
+    //   return;
+    // }
 
     const review = ratingReview ? ratingReview.value.trim() : "";
 
@@ -526,8 +526,8 @@ if (submitRatingBtn) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
         },
+        credentials: "include",
         body: JSON.stringify({
           rating: selectedRating,
           review: review,
