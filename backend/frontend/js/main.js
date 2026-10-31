@@ -209,3 +209,41 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 });
 
+
+// =========================================
+// HVAC 3D MOUSE FOLLOW INTERACTION
+// =========================================
+
+document.addEventListener("DOMContentLoaded", function () {
+  const card = document.querySelector(".hvac-card");
+
+  if (!card) return;
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return;
+  }
+
+  if (window.matchMedia("(pointer: coarse)").matches) {
+    return;
+  }
+
+  card.addEventListener("mousemove", function (event) {
+    const rect = card.getBoundingClientRect();
+
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+
+    const rotateY = (x - 0.5) * 22;
+    const rotateX = (0.5 - y) * 22;
+
+    card.style.animation = "none";
+    card.style.transform =
+      `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px) scale(1.03)`;
+  });
+
+  card.addEventListener("mouseleave", function () {
+    card.style.transform = "";
+    card.style.animation = "";
+  });
+});
+
