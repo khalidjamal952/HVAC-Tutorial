@@ -587,4 +587,46 @@ router.post(
     }
   },
 );
+
+// ========================================
+// RECENT COURSE PURCHASE NOTIFICATIONS
+// ========================================
+router.get("/recent-course-purchases", async (req, res) => {
+  try {
+    const paidOrders = await Order.find({
+      status: "Paid",
+      "courses.0": { $exists: true },
+    })
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .select("customer.fullName courses.title createdAt")
+      .lean();
+
+    const notifications = paidOrders.flatMap((order) => {
+      const fullName = String(order.customer?.fullName || "").trim();
+      const firstName = fullName.split(/\s+/)[0] || "A student";
+
+      return (order.courses || []).map((course) => ({
+        studentName: firstName,
+        courseName: course.title,
+        purchasedAt: order.createdAt,
+      }));
+    });
+
+    res.set("Cache-Control", "no-store");
+
+    return res.status(200).json({
+      success: true,
+      notifications,
+    });
+  } catch (error) {
+    console.error("Course Purchase Notifications Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      notifications: [],
+      message: "Unable to load purchase notifications.",
+    });
+  }
+});
 module.exports = router;

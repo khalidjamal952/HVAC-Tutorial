@@ -10,7 +10,7 @@ const router = express.Router();
    GET AVAILABLE COUPONS - STUDENT
 ========================= */
 
-router.get("/available/:courseId", authMiddleware, async (req, res) => {
+router.get("/available/:courseId", async (req, res) => {
   try {
     const { courseId } = req.params;
 
@@ -21,7 +21,7 @@ router.get("/available/:courseId", authMiddleware, async (req, res) => {
       startDate: { $lte: now },
       expiryDate: { $gte: now },
       $or: [{ courseIds: { $size: 0 } }, { courseIds: courseId }],
-    }).sort({
+    }).select("code discountType discountValue minOrderAmount maxDiscount startDate expiryDate courseIds").sort({
       createdAt: -1,
     });
 

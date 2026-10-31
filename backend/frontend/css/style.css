@@ -1331,33 +1331,34 @@ body.dark-mode .course-card .badge {
   border-color: #475569 !important;
 }
 
+
 /* Dark Mode - Courses Hero Badge */
 
 body.dark-mode .courses-badge {
-  background: #dbeafe !important;
-  color: #2563eb !important;
-  border-color: #bfdbfe !important;
+    background: #dbeafe !important;
+    color: #2563eb !important;
+    border-color: #bfdbfe !important;
 }
 
 /* Course price and button spacing */
 
 .course-card .course-price {
-  margin-right: 8px !important;
+    margin-right: 8px !important;
 }
 
 .course-card .course-btn {
-  margin-left: 0 !important;
-  margin-top: 6px !important;
+    margin-left: 0 !important;
+    margin-top: 6px !important;
 }
 
 .feature-card {
-  text-decoration: none;
-  color: inherit;
-  display: block;
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
 .feature-card:hover {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 /* ===============================
@@ -1365,23 +1366,23 @@ body.dark-mode .courses-badge {
 ================================ */
 
 .feature-grid .feature-card {
-  position: relative !important;
-  z-index: 10 !important;
-  display: block !important;
-  cursor: pointer !important;
-  pointer-events: auto !important;
-  text-decoration: none !important;
-  color: inherit !important;
+    position: relative !important;
+    z-index: 10 !important;
+    display: block !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    text-decoration: none !important;
+    color: inherit !important;
 }
 
 .feature-grid .feature-card:hover {
-  text-decoration: none !important;
+    text-decoration: none !important;
 }
 
 /* Dark mode - Hero badge text */
 
 body.dark-mode .hero-badge {
-  color: #60a5fa !important;
+    color: #60a5fa !important;
 }
 
 /* =========================================
@@ -1389,6 +1390,7 @@ body.dark-mode .hero-badge {
 ========================================= */
 
 @media (max-width: 768px) {
+
   .navbar .nav-container {
     position: relative;
     flex-wrap: nowrap !important;
@@ -1448,6 +1450,7 @@ body.dark-mode .hero-badge {
 ========================================= */
 
 @media (max-width: 768px) {
+
   .navbar .nav-container {
     position: relative;
     flex-wrap: nowrap !important;
@@ -1512,6 +1515,7 @@ body.dark-mode .hero-badge {
 /* FINAL MOBILE NAVBAR TEXT COLOR FIX */
 
 @media (max-width: 768px) {
+
   .navbar .nav-menu a,
   .dark-mode .navbar .nav-menu a,
   .dark-mode .header .nav-menu a {
@@ -1524,102 +1528,21 @@ body.dark-mode .hero-badge {
     color: #2563eb !important;
     background: #eff6ff !important;
   }
-}
 
-/* HVAC Tutorial Navbar Logo */
-.navbar .logo {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
 }
-
-.navbar .logo img {
-  display: block;
-  width: 220px;
-  height: 60px;
-  object-fit: contain;
-  object-position: left center;
-}
-
-@media (max-width: 768px) {
-  .navbar .logo img {
-    width: 170px;
-    height: 48px;
-  }
-}
-
-/* Responsive Navbar Logo */
-.navbar .logo {
-  display: flex;
-  align-items: center;
-  flex-shrink: 1;
-  min-width: 0;
-}
-
-.navbar .logo img {
-  display: block;
-  width: 220px;
-  max-width: 100%;
-  height: 60px;
-  object-fit: contain;
-  object-position: left center;
-}
-
-@media (max-width: 768px) {
-  .navbar .logo img {
-    width: 160px;
-    height: 48px;
+/* Desktop Navbar Logo and Menu Spacing Fix */
+@media (min-width: 851px) {
+  .navbar > .logo {
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    min-width: max-content !important;
+    white-space: nowrap !important;
+    margin-right: 16px;
   }
 
-  .navbar .nav-container {
-    gap: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .navbar .logo img {
-    width: 125px;
-    height: 42px;
-  }
-
-  .navbar .nav-container {
-    gap: 6px;
-  }
-
-  .navbar .menu-toggle {
-    flex-shrink: 0;
-  }
-}
-
-/* Mobile Navbar Logo Fix */
-@media (max-width: 480px) {
-  .navbar .nav-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-
-  .navbar .logo {
-    flex: 0 1 auto;
+  .navbar > .nav-menu {
+    gap: 12px !important;
     min-width: 0;
-    max-width: calc(100% - 55px);
-  }
-
-  .navbar .logo img {
-    display: block;
-    width: 155px;
-    max-width: 100%;
-    height: 48px;
-    object-fit: contain;
-    object-position: left center;
-  }
-
-  .navbar .menu-toggle {
-    flex-shrink: 0;
-    margin-left: auto;
   }
 }
 
@@ -1852,3 +1775,256 @@ body.dark-mode .hero-badge {
   }
 }
 
+
+/* =========================================
+   LIVE COURSE PURCHASE NOTIFICATION
+========================================= */
+
+.purchase-notification {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  width: 340px;
+  max-width: calc(100vw - 32px);
+  padding: 18px;
+  background: #ffffff;
+  color: #1e293b;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 15px 45px rgba(0, 0, 0, 0.18);
+  z-index: 99999;
+  font-family: inherit;
+  animation: purchaseNotificationIn 0.45s ease both;
+}
+
+.purchase-notification-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 23px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.purchase-notification-close:hover {
+  color: #ef4444;
+}
+
+.purchase-notification-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 18px;
+  margin-bottom: 16px;
+}
+
+.purchase-notification-header strong {
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.purchase-notification-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.purchase-notification-time {
+  margin-left: auto;
+  color: #94a3b8;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.purchase-notification-body {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.purchase-notification-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #eff6ff;
+  font-size: 23px;
+}
+
+.purchase-notification-details {
+  min-width: 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.purchase-notification-details strong {
+  display: block;
+  margin-bottom: 3px;
+  color: #0f172a;
+  font-size: 14px;
+}
+
+.purchase-notification-details p {
+  margin: 4px 0 0;
+  color: #2563eb;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.purchase-notification-footer {
+  margin-top: 15px;
+  padding-top: 11px;
+  border-top: 1px solid #e2e8f0;
+  color: #16a34a;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+@keyframes purchaseNotificationIn {
+  from {
+    opacity: 0;
+    transform: translateX(-25px) translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .purchase-notification {
+    left: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+    padding: 15px;
+  }
+}
+
+body.dark-mode .purchase-notification {
+  background: #1e293b;
+  color: #e2e8f0;
+  border-color: #334155;
+}
+
+body.dark-mode .purchase-notification-header strong,
+body.dark-mode .purchase-notification-details strong {
+  color: #f8fafc;
+}
+
+body.dark-mode .purchase-notification-footer {
+  border-color: #334155;
+}
+
+
+/* HVAC Tutorial Navbar Logo */
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.navbar .logo img {
+  display: block;
+  width: 220px;
+  height: 60px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+@media (max-width: 768px) {
+  .navbar .logo img {
+    width: 170px;
+    height: 48px;
+  }
+}
+
+/* Responsive Navbar Logo */
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.navbar .logo img {
+  display: block;
+  width: 220px;
+  max-width: 100%;
+  height: 60px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+@media (max-width: 768px) {
+  .navbar .logo img {
+    width: 160px;
+    height: 48px;
+  }
+
+  .navbar .nav-container {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar .logo img {
+    width: 125px;
+    height: 42px;
+  }
+
+  .navbar .nav-container {
+    gap: 6px;
+  }
+
+  .navbar .menu-toggle {
+    flex-shrink: 0;
+  }
+}
+
+/* Mobile Navbar Logo Fix */
+@media (max-width: 480px) {
+  .navbar .nav-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .navbar .logo {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: calc(100% - 55px);
+  }
+
+  .navbar .logo img {
+    display: block;
+    width: 155px;
+    max-width: 100%;
+    height: 48px;
+    object-fit: contain;
+    object-position: left center;
+  }
+
+  .navbar .menu-toggle {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+}
+
+
+
+}

@@ -247,3 +247,135 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 
+
+// ========================================
+// LIVE COURSE PURCHASE NOTIFICATIONS
+// ========================================
+document.addEventListener("DOMContentLoaded", function () {
+  const popup = document.getElementById("purchaseNotification");
+  const nameElement = document.getElementById("purchaseStudentName");
+  const courseElement = document.getElementById("purchaseCourseName");
+  const closeButton = document.getElementById("closePurchaseNotification");
+
+  if (!popup || !nameElement || !courseElement) return;
+
+  const seenPurchases = new Set();
+  const notificationQueue = [];
+
+  let isShowing = false;
+  let hideTimer = null;
+
+  function getPurchaseKey(item) {
+    return [
+      item.studentName,
+      item.courseName,
+      item.purchasedAt
+    ].join("|");
+  }
+
+  function hideNotification() {
+    popup.classList.remove("show");
+
+    setTimeout(function () {
+      popup.style.display = "none";
+      isShowing = false;
+      showNextNotification();
+    }, 550);
+  }
+
+  function showNextNotification() {
+    if (isShowing || notificationQueue.length === 0) return;
+
+    const item = notificationQueue.shift();
+
+    nameElement.textContent = item.studentName || "A student";
+    courseElement.textContent = item.courseName || "a course";
+
+    popup.style.display = "block";
+
+    requestAnimationFrame(function () {
+      popup.classList.add("show");
+    });
+
+    isShowing = true;
+
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(hideNotification, 6500);
+  }
+
+  if (closeButton) {
+    closeButton.addEventListener("click", function () {
+      clearTimeout(hideTimer);
+      hideNotification();
+    });
+  }
+
+  async function loadPurchaseNotifications(isFirstLoad = false) {
+    try {
+      const response = await fetch(
+        "/api/orders/recent-course-purchases",
+        { cache: "no-store" }
+      );
+
+      if (!response.ok) return;
+
+      const data = await response.json();
+
+      if (!data.success || !Array.isArray(data.notifications)) return;
+
+      const purchases = data.notifications
+        .filter(function (item) {
+          return item.studentName && item.courseName && item.purchasedAt;
+        })
+        .sort(function (a, b) {
+          return new Date(b.purchasedAt) - new Date(a.purchasedAt);
+        });
+
+      if (isFirstLoad) {
+        purchases.forEach(function (item) {
+          seenPurchases.add(getPurchaseKey(item));
+        });
+
+        const latestPurchase = purchases[0];
+
+        if (
+          latestPurchase &&
+          Date.now() - new Date(latestPurchase.purchasedAt).getTime()
+            <= 24 * 60 * 60 * 1000
+        ) {
+          notificationQueue.push(latestPurchase);
+          showNextNotification();
+        }
+
+        return;
+      }
+
+      const newPurchases = [];
+
+      purchases.forEach(function (item) {
+        const key = getPurchaseKey(item);
+
+        if (!seenPurchases.has(key)) {
+          seenPurchases.add(key);
+          newPurchases.push(item);
+        }
+      });
+
+      newPurchases.reverse().forEach(function (item) {
+        notificationQueue.push(item);
+      });
+
+      showNextNotification();
+
+    } catch (error) {
+      console.error("Purchase Notification Error:", error);
+    }
+  }
+
+  loadPurchaseNotifications(true);
+
+  setInterval(function () {
+    loadPurchaseNotifications(false);
+  }, 30000);
+});
+

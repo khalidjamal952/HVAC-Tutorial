@@ -321,6 +321,24 @@
       </div>
     </footer>
 
+    <!-- LIVE COURSE PURCHASE NOTIFICATION -->
+    <div id="purchaseNotification" class="purchase-notification" aria-live="polite" aria-atomic="true" style="display: none;">
+      <button type="button" id="closePurchaseNotification" class="purchase-notification-close" aria-label="Close notification">&times;</button>
+      <div class="purchase-notification-header">
+        <span class="purchase-notification-check">&#10003;</span>
+        <strong>New Course Purchase</strong>
+        <span class="purchase-notification-time">Just now</span>
+      </div>
+      <div class="purchase-notification-body">
+        <div class="purchase-notification-icon">&#127891;</div>
+        <div class="purchase-notification-details">
+          <strong id="purchaseStudentName"></strong>
+          <span>purchased</span>
+          <p id="purchaseCourseName"></p>
+        </div>
+      </div>
+      <div class="purchase-notification-footer">Verified successful purchase</div>
+    </div>
     <script src="js/main.js"></script>
   </body>
 </html>
