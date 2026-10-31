@@ -159,9 +159,12 @@ async function checkEbookPurchase(ebookId) {
       },
     );
 
-    if (!response.ok) return false;
-
     const data = await response.json();
+
+    if (!response.ok) {
+      return false;
+    }
+
     return data.purchased === true;
   } catch (error) {
     console.error("Check E-Book Purchase Error:", error);
@@ -185,19 +188,15 @@ function setupEbookBuyButtons() {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ ebookId: ebookId }),
+            body: JSON.stringify({
+              ebookId: ebookId,
+            }),
           },
         );
 
         const data = await response.json();
 
         if (!response.ok) {
-          if (response.status === 401) {
-            alert("Please login before purchasing an E-Book.");
-            window.location.href = "login.html";
-            return;
-          }
-
           alert(data.message || "Unable to create payment order.");
           return;
         }
@@ -212,8 +211,12 @@ function setupEbookBuyButtons() {
           description: "E-Book Purchase",
           order_id: data.order.id,
 
-          handler: async function (paymentResponse) {
+          handler: async function (response) {
+            console.log("E-Book Payment Response:", response);
+
             try {
+              console.log("STARTING E-BOOK PAYMENT VERIFICATION...");
+
               const verifyResponse = await fetch(
                 `${API_BASE_URL}/api/ebook-purchases/verify-payment`,
                 {
@@ -223,9 +226,9 @@ function setupEbookBuyButtons() {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
-                    razorpay_order_id: paymentResponse.razorpay_order_id,
-                    razorpay_payment_id: paymentResponse.razorpay_payment_id,
-                    razorpay_signature: paymentResponse.razorpay_signature,
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_signature: response.razorpay_signature,
                   }),
                 },
               );
@@ -238,6 +241,7 @@ function setupEbookBuyButtons() {
               }
 
               console.log("E-Book Payment Verified:", verifyData);
+
               alert("Payment successful! E-Book purchased successfully.");
               renderEbooks(allEbooks);
             } catch (error) {
@@ -284,6 +288,7 @@ function setupEbookBuyButtons() {
 
         const blob = await response.blob();
         const pdfUrl = URL.createObjectURL(blob);
+
         window.open(pdfUrl, "_blank");
 
         setTimeout(function () {
@@ -336,6 +341,7 @@ function setupEbookBuyButtons() {
     });
   });
 }
+
 // SEARCH
 // =========================================
 
