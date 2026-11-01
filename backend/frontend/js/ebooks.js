@@ -65,27 +65,15 @@ async function renderEbooks(ebooks) {
 
     card.className = "ebook-card";
 
-    const ebookType = String(
-      ebook.type || ebook.fileName?.split(".").pop() || "PDF"
-    ).replace(/^\./, "").toUpperCase();
-
-    const ebookIcons = {
-      PDF: "📕",
-      DOC: "📘", DOCX: "📘",
-      PPT: "📊", PPTX: "📊",
-      XLS: "📈", XLSX: "📈",
-      JPG: "🖼️", JPEG: "🖼️", PNG: "🖼️",
-      ZIP: "🗜️",
-      DWG: "📐", DXF: "📐", DWT: "📐", DWF: "📐"
-    };
-
-    const ebookIcon = ebookIcons[ebookType] || "📁";
-
     card.innerHTML = `
       <div class="ebook-cover">
-        <div class="ebook-pdf-icon">${ebookIcon}</div>
+        <div class="ebook-pdf-icon">
+          📕
+        </div>
 
-        <span class="ebook-file-type">${escapeHtml(ebookType)}</span>
+        <span class="ebook-file-type">
+          PDF
+        </span>
       </div>
 
       <div class="ebook-card-content">
@@ -162,20 +150,12 @@ async function renderEbooks(ebooks) {
 }
 
 async function checkEbookPurchase(ebookId) {
-  const token = localStorage.getItem("hvacToken");
-
-  if (!token) {
-    return false;
-  }
-
   try {
     const response = await fetch(
       `${API_BASE_URL}/api/ebook-purchases/${ebookId}/purchased`,
       {
         method: "GET",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
+        credentials: "include",
       },
     );
 
@@ -191,6 +171,7 @@ async function checkEbookPurchase(ebookId) {
     return false;
   }
 }
+
 function setupEbookBuyButtons() {
   const buyButtons = document.querySelectorAll(".ebook-buy-btn");
 
@@ -198,22 +179,14 @@ function setupEbookBuyButtons() {
     button.addEventListener("click", async function () {
       const ebookId = button.dataset.ebookId;
 
-      const token = localStorage.getItem("hvacToken");
-
-      if (!token) {
-        alert("Please login before purchasing an E-Book.");
-        window.location.href = "login.html";
-        return;
-      }
-
       try {
         const response = await fetch(
           `${API_BASE_URL}/api/ebook-purchases/create-order`,
           {
             method: "POST",
+            credentials: "include",
             headers: {
               "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
             },
             body: JSON.stringify({
               ebookId: ebookId,
@@ -229,6 +202,7 @@ function setupEbookBuyButtons() {
         }
 
         console.log("E-Book Order Created:", data.order);
+
         const options = {
           key: "rzp_live_SPznEaO8vuxFX1",
           amount: data.order.amount,
@@ -242,15 +216,14 @@ function setupEbookBuyButtons() {
 
             try {
               console.log("STARTING E-BOOK PAYMENT VERIFICATION...");
-              const token = localStorage.getItem("hvacToken");
 
               const verifyResponse = await fetch(
                 `${API_BASE_URL}/api/ebook-purchases/verify-payment`,
                 {
                   method: "POST",
+                  credentials: "include",
                   headers: {
                     "Content-Type": "application/json",
-                    Authorization: "Bearer " + token,
                   },
                   body: JSON.stringify({
                     razorpay_order_id: response.razorpay_order_id,
@@ -273,7 +246,6 @@ function setupEbookBuyButtons() {
               renderEbooks(allEbooks);
             } catch (error) {
               console.error("E-Book Payment Verification Error:", error);
-
               alert("Unable to verify payment.");
             }
           },
@@ -291,27 +263,20 @@ function setupEbookBuyButtons() {
       }
     });
   });
+
   const readButtons = document.querySelectorAll(".ebook-read-btn");
   const downloadButtons = document.querySelectorAll(".ebook-download-btn");
 
   readButtons.forEach(function (button) {
     button.addEventListener("click", async function () {
       const ebookId = button.dataset.ebookId;
-      const token = localStorage.getItem("hvacToken");
-
-      if (!token) {
-        alert("Please login first.");
-        return;
-      }
 
       try {
         const response = await fetch(
           `${API_BASE_URL}/api/ebook-purchases/${ebookId}/download`,
           {
             method: "GET",
-            headers: {
-              Authorization: "Bearer " + token,
-            },
+            credentials: "include",
           },
         );
 
@@ -339,21 +304,13 @@ function setupEbookBuyButtons() {
   downloadButtons.forEach(function (button) {
     button.addEventListener("click", async function () {
       const ebookId = button.dataset.ebookId;
-      const token = localStorage.getItem("hvacToken");
-
-      if (!token) {
-        alert("Please login first.");
-        return;
-      }
 
       try {
         const response = await fetch(
           `${API_BASE_URL}/api/ebook-purchases/${ebookId}/download`,
           {
             method: "GET",
-            headers: {
-              Authorization: "Bearer " + token,
-            },
+            credentials: "include",
           },
         );
 
@@ -384,7 +341,7 @@ function setupEbookBuyButtons() {
     });
   });
 }
-// =========================================
+
 // SEARCH
 // =========================================
 
