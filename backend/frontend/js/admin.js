@@ -1,4 +1,4 @@
-﻿// =========================================
+// =========================================
 // ADMIN PAGE SECURITY
 // =========================================
 const adminPage =
@@ -1680,7 +1680,7 @@ async function renderAdminLectures() {
 
       const icon = document.createElement("span");
       icon.className = "lecture-folder-icon";
-      icon.textContent = "ðŸ“";
+      icon.textContent = "\uD83D\uDCC1";
 
       const title = document.createElement("strong");
       title.textContent = course.title || "Untitled Course";

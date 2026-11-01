@@ -68,7 +68,7 @@ async function renderEbooks(ebooks) {
     card.innerHTML = `
       <div class="ebook-cover">
         <div class="ebook-pdf-icon">
-          📕
+          &#128213;
         </div>
 
         <span class="ebook-file-type">
@@ -133,7 +133,7 @@ async function renderEbooks(ebooks) {
                   class="ebook-buy-btn"
                   data-ebook-id="${ebook._id}"
                 >
-                  💳 Buy Now
+                  &#128179; Buy Now
                 </button>
               `
           }
