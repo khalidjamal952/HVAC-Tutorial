@@ -710,7 +710,7 @@ router.get("/video/:lectureId", authMiddleware, async (req, res) => {
 
     const order = await Order.findOne({
       user: req.user.userId,
-      status: { $in: ["Paid", "Completed", "Success", "Successful"] },
+      status: { $in: ["Paid", "Completed", "Success", "Successful", "Migrated"] },
       "courses.id": lecture.courseId,
     });
 
@@ -851,7 +851,7 @@ router.get("/video/:lectureId", authMiddleware, async (req, res) => {
   }
 });
 
-// PUBLIC COURSE PREVIEW — METADATA ONLY
+// PUBLIC COURSE PREVIEW - METADATA ONLY
 router.get("/course/:courseId/preview", async (req, res) => {
   try {
     const courseId = req.params.courseId;
@@ -878,7 +878,7 @@ router.get("/course/:courseId", authMiddleware, async (req, res) => {
 
     const order = await Order.findOne({
       user: req.user.userId,
-      status: { $in: ["Paid", "Completed", "Success", "Successful"] },
+      status: { $in: ["Paid", "Completed", "Success", "Successful", "Migrated"] },
       "courses.id": courseId,
     });
 
@@ -911,7 +911,7 @@ router.get("/course/:courseId", authMiddleware, async (req, res) => {
     const courseId = req.params.courseId;
     const order = await Order.findOne({
       user: req.user.userId,
-      status: { $in: ["Paid", "Completed", "Success", "Successful"] },
+      status: { $in: ["Paid", "Completed", "Success", "Successful", "Migrated"] },
       "courses.id": courseId,
     });
 

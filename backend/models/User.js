@@ -71,6 +71,19 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
 
+    passwordSetupTokenHash: {
+      type: String,
+      default: "",
+    },
+    passwordSetupExpires: {
+      type: Date,
+      default: null,
+    },
+    passwordSetupRequired: {
+      type: Boolean,
+      default: false,
+    },
+
     activeSessionId: {
       type: String,
       default: "",

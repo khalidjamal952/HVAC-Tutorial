@@ -508,7 +508,7 @@ router.get("/access/:courseId", authMiddleware, async (req, res) => {
       user: req.user.userId,
 
       status: {
-        $in: ["Paid", "Completed", "Success", "Successful"],
+        $in: ["Paid", "Completed", "Success", "Successful", "Migrated"],
       },
 
       "courses.id": courseId,
@@ -548,7 +548,7 @@ router.post(
 
       const paidOrders = await Order.find({
         status: {
-          $in: ["Paid", "Completed", "Success", "Successful"],
+          $in: ["Paid", "Completed", "Success", "Successful", "Migrated"],
         },
       });
 

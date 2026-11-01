@@ -196,6 +196,101 @@ const studentSearch = document.getElementById("studentSearch");
 // =========================================
 
 if (studentsTableBody) {
+  // =====================================
+  // ADD LEGACY STUDENT
+  // =====================================
+
+  const addStudentForm = document.getElementById("addStudentForm");
+  const studentCourse = document.getElementById("studentCourse");
+  const addStudentMessage = document.getElementById("addStudentMessage");
+  const addStudentBtn = document.getElementById("addStudentBtn");
+
+  async function loadStudentCourses() {
+    if (!studentCourse) return;
+
+    try {
+      const response = await fetch("/api/courses");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Unable to load courses.");
+      }
+
+      const courses = Array.isArray(data.courses) ? data.courses : [];
+      studentCourse.innerHTML = '<option value="">Select a course</option>';
+
+      courses.forEach(function (course) {
+        const option = document.createElement("option");
+        option.value = course.id;
+        option.textContent = course.title;
+        studentCourse.appendChild(option);
+      });
+
+      if (courses.length === 0) {
+        studentCourse.innerHTML = '<option value="">No courses available</option>';
+      }
+    } catch (error) {
+      console.error("Load Student Courses Error:", error);
+      studentCourse.innerHTML = '<option value="">Unable to load courses</option>';
+    }
+  }
+
+  if (addStudentForm) {
+    addStudentForm.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const studentData = {
+        name: document.getElementById("studentName").value.trim(),
+        email: document.getElementById("studentEmail").value.trim(),
+        phone: document.getElementById("studentPhone").value.trim(),
+        city: document.getElementById("studentCity").value.trim(),
+        courseId: studentCourse.value,
+      };
+
+      if (Object.values(studentData).some(value => !value)) {
+        addStudentMessage.textContent = "Please fill in all fields.";
+        addStudentMessage.className = "auth-message error";
+        return;
+      }
+
+      addStudentBtn.disabled = true;
+      addStudentBtn.textContent = "Creating Student...";
+      addStudentMessage.textContent = "";
+      addStudentMessage.className = "auth-message";
+
+      try {
+        const response = await fetch("/api/user/admin/students", {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(studentData),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Unable to create student.");
+        }
+
+        addStudentMessage.textContent = data.message;
+        addStudentMessage.className = "auth-message success";
+        addStudentForm.reset();
+        await loadStudents();
+      } catch (error) {
+        console.error("Create Student Error:", error);
+        addStudentMessage.textContent = error.message;
+        addStudentMessage.className = "auth-message error";
+      } finally {
+        addStudentBtn.disabled = false;
+        addStudentBtn.textContent = "Create Student Account";
+      }
+    });
+  }
+
+  loadStudentCourses();
+
   let students = [];
 
   // =====================================

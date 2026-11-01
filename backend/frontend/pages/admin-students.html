@@ -49,6 +49,47 @@
           <p>View and manage registered HVAC Tutorial students.</p>
         </div>
 
+
+        <!-- ADD LEGACY STUDENT -->
+        <div class="admin-management-section" style="margin-bottom: 25px;">
+          <h2>Add Legacy Student</h2>
+          <p>Create an account for an existing WordPress course buyer.</p>
+
+          <form id="addStudentForm">
+            <div class="admin-form-group">
+              <label for="studentName">Full Name</label>
+              <input type="text" id="studentName" placeholder="Enter full name" required />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="studentEmail">Email Address</label>
+              <input type="email" id="studentEmail" placeholder="Enter email address" required />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="studentPhone">Phone Number</label>
+              <input type="tel" id="studentPhone" placeholder="Enter phone number" required />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="studentCity">City</label>
+              <input type="text" id="studentCity" placeholder="Enter city" required />
+            </div>
+
+            <div class="admin-form-group">
+              <label for="studentCourse">Select Course</label>
+              <select id="studentCourse" required>
+                <option value="">Loading courses...</option>
+              </select>
+            </div>
+
+            <button type="submit" class="admin-primary-btn" id="addStudentBtn">
+              Create Student Account
+            </button>
+
+            <div id="addStudentMessage" class="auth-message"></div>
+          </form>
+        </div>
         <!-- STUDENT TOOLBAR -->
 
         <section class="admin-management-section">

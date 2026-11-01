@@ -50,7 +50,7 @@ async function loadPurchasedCourses() {
     if (Array.isArray(data.orders)) {
       data.orders.forEach(function (order) {
         // Only Paid orders unlock courses
-        if (order.status === "Paid" && Array.isArray(order.courses)) {
+        if (["Paid", "Migrated"].includes(order.status) && Array.isArray(order.courses)) {
           purchasedCourses = purchasedCourses.concat(order.courses);
         }
       });

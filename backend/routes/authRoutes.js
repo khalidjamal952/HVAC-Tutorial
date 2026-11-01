@@ -1,4 +1,4 @@
-const authMiddleware = require("../middleware/authMiddleware");
+﻿const authMiddleware = require("../middleware/authMiddleware");
 const jwt = require("jsonwebtoken");
 const express = require("express");
 const bcrypt = require("bcryptjs");
@@ -838,4 +838,63 @@ router.get("/profile", authMiddleware, async (req, res) => {
 //     });
 //   }
 // });
+
+// SET PASSWORD FOR MANUALLY CREATED STUDENTS
+router.post("/setup-password", async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({
+        message: "Token and password are required.",
+      });
+    }
+
+    const strongPassword =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+
+    if (!strongPassword.test(password)) {
+      return res.status(400).json({
+        message:
+          "Password must contain at least 8 characters, uppercase, lowercase, number and special character.",
+      });
+    }
+
+    const tokenHash = crypto
+      .createHash("sha256")
+      .update(token)
+      .digest("hex");
+
+    const user = await User.findOne({
+      passwordSetupTokenHash: tokenHash,
+      passwordSetupRequired: true,
+      passwordSetupExpires: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid or expired password setup link.",
+      });
+    }
+
+    user.password = await bcrypt.hash(password, 10);
+
+    user.passwordSetupTokenHash = "";
+    user.passwordSetupExpires = null;
+    user.passwordSetupRequired = false;
+    user.activeSessionId = "";
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "Password set successfully. Please login.",
+    });
+  } catch (error) {
+    console.error("Student Password Setup Error:", error);
+
+    return res.status(500).json({
+      message: "Unable to set password. Please try again.",
+    });
+  }
+});
 module.exports = router;
