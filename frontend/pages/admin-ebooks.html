@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -21,7 +21,7 @@
       <div class="container nav-container">
         <a href="admin.html" class="logo"> HVAC<span>Tutorial</span> </a>
 
-        <button class="menu-toggle" id="menuToggle">☰</button>
+        <button class="menu-toggle" id="menuToggle">â˜°</button>
 
         <nav class="nav-menu">
           <a href="admin.html"> Dashboard </a>
@@ -69,7 +69,7 @@
 
         <div class="admin-stats-grid">
           <div class="admin-stat-card">
-            <div class="admin-stat-icon">📚</div>
+            <div class="admin-stat-icon">ðŸ“š</div>
 
             <div>
               <span> Total E-Books </span>
@@ -125,7 +125,7 @@
           <!-- EMPTY -->
 
           <div id="ebooksEmpty" class="admin-empty" style="display: none">
-            <div class="admin-empty-icon">📚</div>
+            <div class="admin-empty-icon">ðŸ“š</div>
 
             <h3>No E-Books Found</h3>
 
@@ -149,7 +149,7 @@
           </div>
 
           <button type="button" class="admin-modal-close" id="closeEbookModal">
-            ×
+            Ã—
           </button>
         </div>
 
@@ -208,6 +208,25 @@
             <label for="ebookFile"> PDF File </label>
 
             <input type="file" id="ebookFile" accept=".pdf,application/pdf" />
+
+            <small>Upload the main E-Book PDF.</small>
+
+            <div class="admin-form-group" style="margin-top:15px;">
+              <label for="ebookSupportFiles">Support Documents Folder (PDFs)</label>
+              <input
+                type="file"
+                id="ebookSupportFiles"
+                accept=".pdf,application/pdf"
+                multiple
+                webkitdirectory
+                directory
+              />
+              <small id="ebookSupportFileInfo" style="display:none;">
+                Selected: <span id="ebookSupportFileCount">0</span> PDFs |
+                Total size: <span id="ebookSupportTotalSize">0 MB</span>
+              </small>
+              <small>Select a folder containing PDF support documents. Maximum 100 PDFs.</small>
+            </div>
 
             <small> Upload a PDF file for this E-Book. </small>
           </div>
@@ -288,7 +307,7 @@
         <div class="admin-footer-bottom">
 
             <p>
-                © <span id="currentYear"></span>
+                Â© <span id="currentYear"></span>
                 HVAC Tutorial. All rights reserved.
             </p>
 
@@ -310,3 +329,4 @@
     <script src="../js/admin-ebooks.js"></script>
   </body>
 </html>
+

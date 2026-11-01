@@ -379,6 +379,137 @@ router.get("/:ebookId/legacy-file", authMiddleware, async (req, res) => {
   }
 });
 // ========================================
+// SECURE SUPPORT DOCUMENT LIST
+// ========================================
+
+router.get("/:ebookId/support-documents", authMiddleware, async (req, res) => {
+  try {
+    const purchase = await EbookPurchase.findOne({
+      user: req.user.userId,
+      ebook: req.params.ebookId,
+      paymentStatus: "Paid",
+    });
+
+    if (!purchase) {
+      return res.status(403).json({
+        message: "Please purchase this E-Book first.",
+      });
+    }
+
+    const ebook = await Ebook.findById(req.params.ebookId);
+
+    if (!ebook) {
+      return res.status(404).json({
+        message: "E-Book not found.",
+      });
+    }
+
+    const documents = (ebook.supportDocuments || []).map((doc) => ({
+      id: doc._id.toString(),
+      fileName: path.basename(doc.fileName || "support-document.pdf"),
+      size: doc.size || 0,
+      mimeType: doc.mimeType || "application/pdf",
+    }));
+
+    return res.status(200).json({
+      success: true,
+      documents,
+    });
+  } catch (error) {
+    console.error("Support Document List Error:", error);
+
+    return res.status(500).json({
+      message: "Unable to load support documents.",
+    });
+  }
+});
+
+
+// ========================================
+// SECURE SUPPORT DOCUMENT READ / DOWNLOAD
+// ========================================
+
+router.get(
+  "/:ebookId/support-documents/:documentId",
+  authMiddleware,
+  async (req, res) => {
+    try {
+      const purchase = await EbookPurchase.findOne({
+        user: req.user.userId,
+        ebook: req.params.ebookId,
+        paymentStatus: "Paid",
+      });
+
+      if (!purchase) {
+        return res.status(403).json({
+          message: "Please purchase this E-Book first.",
+        });
+      }
+
+      const ebook = await Ebook.findById(req.params.ebookId);
+
+      if (!ebook) {
+        return res.status(404).json({
+          message: "E-Book not found.",
+        });
+      }
+
+      const document = ebook.supportDocuments?.id(req.params.documentId);
+
+      if (!document || !document.filePath) {
+        return res.status(404).json({
+          message: "Support document not found.",
+        });
+      }
+
+      if (
+        !document.filePath.startsWith("ebooks/support/") ||
+        !isR2Configured() ||
+        !s3
+      ) {
+        return res.status(404).json({
+          message: "Support document is unavailable.",
+        });
+      }
+
+      const fileName = path.basename(
+        document.fileName || "support-document.pdf",
+      );
+
+      const disposition =
+        req.query.action === "download" ? "attachment" : "inline";
+
+      const command = new GetObjectCommand({
+        Bucket: R2_BUCKET_NAME,
+        Key: document.filePath,
+        ResponseContentType: "application/pdf",
+        ResponseContentDisposition:
+          `${disposition}; filename="${fileName.replace(/["\\]/g, "_")}"`,
+      });
+
+      const url = await getSignedUrl(s3, command, {
+        expiresIn: 600,
+      });
+
+      res.set("Cache-Control", "no-store");
+
+      return res.status(200).json({
+        success: true,
+        url,
+        fileName,
+        expiresIn: 600,
+      });
+    } catch (error) {
+      console.error("Support Document Access Error:", error);
+
+      return res.status(500).json({
+        message: "Unable to access support document.",
+      });
+    }
+  },
+);
+
+// ========================================
 // CHECK E-BOOK PURCHASE
 // ========================================
 
@@ -403,6 +534,7 @@ router.get("/:ebookId/purchased", authMiddleware, async (req, res) => {
 });
 
 module.exports = router;
+
 
 
 

@@ -41,6 +41,31 @@ const ebookSchema = new mongoose.Schema(
       required: true,
     },
 
+    supportDocuments: [
+      {
+        fileName: {
+          type: String,
+          required: true
+        },
+        filePath: {
+          type: String,
+          required: true
+        },
+        relativePath: {
+          type: String,
+          default: ""
+        },
+        mimeType: {
+          type: String,
+          default: "application/pdf"
+        },
+        size: {
+          type: Number,
+          default: 0
+        }
+      }
+    ],
+
     status: {
       type: String,
       default: "Active",

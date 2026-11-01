@@ -1,4 +1,4 @@
-// const API_BASE_URL = "";
+﻿// const API_BASE_URL = "";
 const API_BASE_URL = "";
 
 // =========================================
@@ -35,7 +35,68 @@ const ebookPrice = document.getElementById("ebookPrice");
 
 const ebookFile = document.getElementById("ebookFile");
 
+const ebookSupportFiles = document.getElementById("ebookSupportFiles");
+
+const ebookSupportFileInfo = document.getElementById("ebookSupportFileInfo");
+
+const ebookSupportFileCount = document.getElementById("ebookSupportFileCount");
+
+const ebookSupportTotalSize = document.getElementById("ebookSupportTotalSize");
+
+if (ebookSupportFiles) {
+  ebookSupportFiles.addEventListener("change", function () {
+    const selectedFiles = Array.from(ebookSupportFiles.files || []);
+    const pdfFiles = selectedFiles.filter((file) =>
+      file.name.toLowerCase().endsWith(".pdf") &&
+      file.type === "application/pdf"
+    );
+
+    const invalidCount = selectedFiles.length - pdfFiles.length;
+
+    if (invalidCount > 0) {
+      alert("Only PDF support documents are allowed. Non-PDF files will be ignored.");
+    }
+
+    if (pdfFiles.length > 100) {
+      alert("Maximum 100 support PDFs are allowed.");
+    }
+
+    const totalBytes = pdfFiles.reduce((total, file) => total + file.size, 0);
+    const totalMB = (totalBytes / (1024 * 1024)).toFixed(2);
+
+    if (ebookSupportFileInfo) {
+      ebookSupportFileInfo.style.display = pdfFiles.length ? "block" : "none";
+    }
+
+    if (ebookSupportFileCount) {
+      ebookSupportFileCount.textContent = Math.min(pdfFiles.length, 100);
+    }
+
+    if (ebookSupportTotalSize) {
+      ebookSupportTotalSize.textContent = `${totalMB} MB`;
+    }
+  });
+}
+
 let allEbooks = [];
+
+function resetSupportFolderInfo() {
+  if (ebookSupportFiles) {
+    ebookSupportFiles.value = "";
+  }
+
+  if (ebookSupportFileInfo) {
+    ebookSupportFileInfo.style.display = "none";
+  }
+
+  if (ebookSupportFileCount) {
+    ebookSupportFileCount.textContent = "0";
+  }
+
+  if (ebookSupportTotalSize) {
+    ebookSupportTotalSize.textContent = "0 MB";
+  }
+}
 
 // =========================================
 // ADMIN TOKEN
@@ -121,7 +182,7 @@ function renderEbooks(ebooks) {
       </td>
 
       <td>
-        ₹${Number(ebook.price || 0)}
+        â‚¹${Number(ebook.price || 0)}
       </td>
 
       <td>
@@ -205,6 +266,7 @@ function openAddEbookModal() {
   if (!ebookModal || !ebookForm) return;
 
   ebookForm.reset();
+  resetSupportFolderInfo();
 
   if (ebookIdInput) {
     ebookIdInput.value = "";
@@ -228,6 +290,7 @@ function closeEbookModalWindow() {
 
   if (ebookForm) {
     ebookForm.reset();
+  resetSupportFolderInfo();
   }
 
   if (ebookIdInput) {
@@ -260,6 +323,7 @@ if (cancelEbookBtn) {
 // =========================================
 
 async function editEbook(id) {
+  resetSupportFolderInfo();
   const ebook = allEbooks.find(function (item) {
     return item._id === id;
   });
@@ -318,6 +382,12 @@ if (ebookForm) {
 
     const file = ebookFile.files[0];
 
+    const selectedSupportFiles = Array.from(
+      ebookSupportFiles?.files || [],
+    ).filter((supportFile) =>
+      supportFile.name.toLowerCase().endsWith(".pdf"),
+    );
+
     const ebookId = ebookIdInput.value.trim();
 
     if (!title || !description || !category) {
@@ -351,6 +421,20 @@ if (ebookForm) {
       }
     }
 
+    if (selectedSupportFiles.length > 100) {
+      alert("You can upload a maximum of 100 support PDFs.");
+      return;
+    }
+
+    const oversizedSupportFile = selectedSupportFiles.find(
+      (supportFile) => supportFile.size > 300 * 1024 * 1024,
+    );
+
+    if (oversizedSupportFile) {
+      alert(`Support PDF "${oversizedSupportFile.name}" exceeds 300 MB.`);
+      return;
+    }
+
     const formData = new FormData();
 
     formData.append("title", title);
@@ -364,6 +448,15 @@ if (ebookForm) {
     if (file) {
       formData.append("pdf", file);
     }
+
+    // Append support PDFs independently of the main PDF.
+    selectedSupportFiles.forEach((supportFile) => {
+      formData.append(
+        "supportDocuments",
+        supportFile,
+        supportFile.webkitRelativePath || supportFile.name,
+      );
+    });
 
     try {
       const url = ebookId
@@ -498,3 +591,7 @@ if (ebookModal) {
 // =========================================
 
 loadEbooks();
+
+
+
+

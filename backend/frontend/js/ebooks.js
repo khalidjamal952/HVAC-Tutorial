@@ -32,7 +32,7 @@ async function loadEbooks() {
     if (ebooksGrid) {
       ebooksGrid.innerHTML = `
         <div class="ebooks-error">
-          <div class="empty-icon">⚠️</div>
+          <div class="empty-icon">ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¯ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â</div>
           <h3>Unable to Load E-Books</h3>
           <p>Please try again later.</p>
         </div>
@@ -61,15 +61,17 @@ async function renderEbooks(ebooks) {
   for (const ebook of ebooks) {
     const isPurchased = await checkEbookPurchase(ebook._id);
 
+    const supportDocuments = isPurchased
+      ? await loadSupportDocuments(ebook._id)
+      : [];
+
     const card = document.createElement("article");
 
     card.className = "ebook-card";
 
     card.innerHTML = `
       <div class="ebook-cover">
-        <div class="ebook-pdf-icon">
-          &#128213;
-        </div>
+        <div class="ebook-pdf-icon">PDF</div>
 
         <span class="ebook-file-type">
           PDF
@@ -92,15 +94,13 @@ async function renderEbooks(ebooks) {
 
         <div class="ebook-meta">
 
-          <span>
-            📄 ${escapeHtml(ebook.type || "PDF")}
-          </span>
+          <span>PDF Document</span>
 
           <span>
             ${
               Number(ebook.price || 0) === 0
                 ? "Free"
-                : "₹" + Number(ebook.price)
+                : "INR " + Number(ebook.price)
             }
           </span>
 
@@ -116,7 +116,7 @@ async function renderEbooks(ebooks) {
                   class="ebook-read-btn"
                   data-ebook-id="${ebook._id}"
                 >
-                  📖 Read PDF
+                  Read PDF
                 </button>
 
                 <button
@@ -124,7 +124,7 @@ async function renderEbooks(ebooks) {
                   class="ebook-download-btn"
                   data-ebook-id="${ebook._id}"
                 >
-                  ⬇ Download PDF
+                  Download PDF
                 </button>
               `
               : `
@@ -143,12 +143,71 @@ async function renderEbooks(ebooks) {
       </div>
     `;
 
+    if (isPurchased && supportDocuments.length > 0) {
+      const supportSection = document.createElement("div");
+      supportSection.className = "ebook-support-documents";
+
+      supportSection.innerHTML = `
+        <h4>Support Documents (${supportDocuments.length})</h4>
+
+        <details class="support-documents-toggle">
+          <summary>
+            <span class="support-toggle-label">Read More</span>
+          </summary>
+
+          <div class="support-documents-list">
+            ${supportDocuments.map((doc) => `
+              <div class="ebook-support-item">
+                <span class="support-document-name">${escapeHtml(doc.fileName)}</span>
+                <button type="button"
+                  class="support-doc-read-btn"
+                  data-ebook-id="${escapeHtml(ebook._id)}"
+                  data-document-id="${escapeHtml(doc.id)}">
+                  Read
+                </button>
+                <button type="button"
+                  class="support-doc-download-btn"
+                  data-ebook-id="${escapeHtml(ebook._id)}"
+                  data-document-id="${escapeHtml(doc.id)}">
+                  Download
+                </button>
+              </div>
+            `).join("")}
+          </div>
+        </details>
+      `;
+
+      card.querySelector(".ebook-card-content").appendChild(supportSection);
+    }
     ebooksGrid.appendChild(card);
   }
 
   setupEbookBuyButtons();
 }
 
+async function loadSupportDocuments(ebookId) {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/ebook-purchases/${ebookId}/support-documents`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      console.error("Support Documents Error:", data.message);
+      return [];
+    }
+
+    return data.documents || [];
+  } catch (error) {
+    console.error("Load Support Documents Error:", error);
+    return [];
+  }
+}
 async function checkEbookPurchase(ebookId) {
   try {
     const response = await fetch(
@@ -267,9 +326,16 @@ function setupEbookBuyButtons() {
   const readButtons = document.querySelectorAll(".ebook-read-btn");
   const downloadButtons = document.querySelectorAll(".ebook-download-btn");
 
+  // READ E-BOOK
   readButtons.forEach(function (button) {
     button.addEventListener("click", async function () {
       const ebookId = button.dataset.ebookId;
+      const previewWindow = window.open("", "_blank");
+
+      if (!previewWindow) {
+        alert("Please allow pop-ups to read the E-Book.");
+        return;
+      }
 
       try {
         const response = await fetch(
@@ -280,60 +346,51 @@ function setupEbookBuyButtons() {
           },
         );
 
-        if (!response.ok) {
-          const data = await response.json();
+        const data = await response.json();
+
+        if (!response.ok || !data.success || !data.url) {
+          previewWindow.close();
           alert(data.message || "Unable to open E-Book.");
           return;
         }
 
-        const blob = await response.blob();
-        const pdfUrl = URL.createObjectURL(blob);
-
-        window.open(pdfUrl, "_blank");
-
-        setTimeout(function () {
-          URL.revokeObjectURL(pdfUrl);
-        }, 60000);
+        previewWindow.location.href = data.url;
       } catch (error) {
+        previewWindow.close();
         console.error("Read E-Book Error:", error);
         alert("Unable to open E-Book.");
       }
     });
   });
 
+  // DOWNLOAD E-BOOK
   downloadButtons.forEach(function (button) {
     button.addEventListener("click", async function () {
       const ebookId = button.dataset.ebookId;
 
       try {
         const response = await fetch(
-          `${API_BASE_URL}/api/ebook-purchases/${ebookId}/download`,
+          `${API_BASE_URL}/api/ebook-purchases/${ebookId}/download?action=download`,
           {
             method: "GET",
             credentials: "include",
           },
         );
 
-        if (!response.ok) {
-          const data = await response.json();
+        const data = await response.json();
+
+        if (!response.ok || !data.success || !data.url) {
           alert(data.message || "Unable to download E-Book.");
           return;
         }
 
-        const blob = await response.blob();
-        const downloadUrl = URL.createObjectURL(blob);
-
         const link = document.createElement("a");
-        link.href = downloadUrl;
-        link.download = "ebook.pdf";
+        link.href = data.url;
+        link.download = data.fileName || "ebook.pdf";
 
         document.body.appendChild(link);
         link.click();
         link.remove();
-
-        setTimeout(function () {
-          URL.revokeObjectURL(downloadUrl);
-        }, 60000);
       } catch (error) {
         console.error("Download E-Book Error:", error);
         alert("Unable to download E-Book.");
@@ -342,6 +399,77 @@ function setupEbookBuyButtons() {
   });
 }
 
+// SUPPORT PDF EVENTS - EVENT DELEGATION
+
+if (ebooksGrid) {
+  ebooksGrid.addEventListener("click", async function (event) {
+    const readButton = event.target.closest(".support-doc-read-btn");
+    const downloadButton = event.target.closest(".support-doc-download-btn");
+
+    if (!readButton && !downloadButton) return;
+
+    const button = readButton || downloadButton;
+    const ebookId = button.dataset.ebookId;
+    const documentId = button.dataset.documentId;
+
+    if (readButton) {
+      const previewWindow = window.open("", "_blank");
+
+      if (!previewWindow) {
+        alert("Please allow pop-ups to read the support PDF.");
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/api/ebook-purchases/${ebookId}/support-documents/${documentId}`,
+          { method: "GET", credentials: "include" }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success || !data.url) {
+          previewWindow.close();
+          alert(data.message || "Unable to open support PDF.");
+          return;
+        }
+
+        previewWindow.location.href = data.url;
+      } catch (error) {
+        previewWindow.close();
+        console.error("Read Support PDF Error:", error);
+        alert("Unable to open support PDF.");
+      }
+    }
+
+    if (downloadButton) {
+      try {
+        const response = await fetch(
+          `${API_BASE_URL}/api/ebook-purchases/${ebookId}/support-documents/${documentId}?action=download`,
+          { method: "GET", credentials: "include" }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success || !data.url) {
+          alert(data.message || "Unable to download support PDF.");
+          return;
+        }
+
+        const link = document.createElement("a");
+        link.href = data.url;
+        link.download = data.fileName || "support-document.pdf";
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } catch (error) {
+        console.error("Download Support PDF Error:", error);
+        alert("Unable to download support PDF.");
+      }
+    }
+  });
+}
 // SEARCH
 // =========================================
 

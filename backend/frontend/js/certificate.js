@@ -1,4 +1,4 @@
-// =========================================
+﻿// =========================================
 // CERTIFICATE AUTHENTICATION
 // =========================================
 
@@ -25,6 +25,7 @@ const certificatesEmpty = document.getElementById("certificatesEmpty");
 const studentName = document.getElementById("studentName");
 
 const courseName = document.getElementById("courseName");
+const certificateDescription = document.getElementById("certificateDescription");
 
 const certificateId = document.getElementById("certificateId");
 
@@ -108,7 +109,7 @@ if (certificatesGrid && certificatesEmpty) {
 
           certificateCard.innerHTML = `
       <div class="certificate-icon">
-        🏆
+        ðŸ†
       </div>
 
       <h2>
@@ -194,6 +195,9 @@ async function loadCertificateFromBackend(courseId) {
 
     // Course Name
     courseName.textContent = certificate.courseName || "--";
+    if (certificateDescription && certificate.courseDescription) {
+      certificateDescription.textContent = certificate.courseDescription;
+    }
 
     // Certificate ID
     certificateId.textContent = certificate.certificateId || "--";
@@ -438,3 +442,5 @@ if (verificationForm) {
     }
   });
 }
+
+

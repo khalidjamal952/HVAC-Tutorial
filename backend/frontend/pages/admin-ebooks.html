@@ -216,6 +216,31 @@
 <input type="file" id="ebookFile" accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.jpg,.jpeg,.png,.zip,.dwg,.dxf,.dwt,.dwf" />
 
             <small> Upload PDF, Word, PowerPoint, Excel, Image, ZIP or AutoCAD files (Maximum size: 300 MB). </small>
+
+<div class="admin-form-group" style="margin-top: 18px;">
+  <label for="ebookSupportFiles">
+    Upload Support Documents Folder (PDFs)
+  </label>
+
+  <input
+    type="file"
+    id="ebookSupportFiles"
+    accept=".pdf,application/pdf"
+    multiple
+    webkitdirectory
+    directory
+  />
+
+  <small>
+    Select a folder containing multiple PDF support documents.
+    All PDFs will be included with this E-Book purchase.
+  </small>
+
+  <div id="ebookSupportFileInfo" style="display: none; margin-top: 10px;">
+    <strong id="ebookSupportFileCount">0 PDFs selected</strong>
+    <span id="ebookSupportTotalSize"></span>
+  </div>
+</div>
           </div>
 
           <div id="ebookUploadProgress" class="ebook-upload-progress" style="display: none;">

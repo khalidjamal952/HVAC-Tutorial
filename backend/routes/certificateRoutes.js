@@ -1,9 +1,10 @@
-const express = require("express");
+﻿const express = require("express");
 const authMiddleware = require("../middleware/authMiddleware");
 const adminAuthMiddleware = require("../middleware/adminAuthMiddleware");
 const Certificate = require("../models/Certificate");
 const Progress = require("../models/Progress");
 const Lecture = require("../models/Lecture");
+const Course = require("../models/Course");
 
 const router = express.Router();
 
@@ -89,7 +90,21 @@ router.get("/my", authMiddleware, async (req, res) => {
         completionDate: -1,
       });
 
-    // Send certificates to frontend
+    const certificatesWithCourseDetails = await Promise.all(
+      certificates.map(async function (certificate) {
+        const course = await Course.findOne({
+          id: certificate.courseId,
+        }).select("description category title");
+
+        return {
+          ...certificate.toObject(),
+          courseDescription: course ? course.description : "",
+          courseCategory: course ? course.category : "",
+        };
+      })
+    );
+
+    // Send certificates with course details
     res.status(200).json({
       certificates: certificates,
     });
@@ -212,3 +227,6 @@ router.get("/verify/:certificateId", async (req, res) => {
 });
 
 module.exports = router;
+
+
+

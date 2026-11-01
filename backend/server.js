@@ -1,4 +1,4 @@
-require("dotenv").config();
+﻿require("dotenv").config();
 // const lectureRoutes = require("./routes/lectureRoutes");
 const lectureRoutes = require("./routes/lectureRoutes.r2");
 const liveClassRoutes = require("./routes/liveClassRoutes");
@@ -24,7 +24,20 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const app = express();
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "https://hvactutorial.com",
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        process.env.FRONTEND_URL,
+        "https://hvactutorial.com",
+        "http://localhost:5000",
+        "http://127.0.0.1:5000",
+      ].filter(Boolean);
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
@@ -100,3 +113,4 @@ app.get("/", function (req, res) {
 app.listen(PORT, function () {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+

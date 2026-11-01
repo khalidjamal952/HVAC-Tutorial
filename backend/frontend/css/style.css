@@ -2028,3 +2028,34 @@ body.dark-mode .purchase-notification-footer {
 
 
 }
+/* FINAL DESKTOP NAVBAR ALIGNMENT FIX */
+@media (min-width: 851px) {
+  .navbar .nav-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 24px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  .navbar .nav-container > .logo {
+    flex: 0 0 auto !important;
+    margin-right: 20px !important;
+    white-space: nowrap !important;
+  }
+
+  .navbar .nav-container > .nav-menu {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 28px !important;
+    margin-left: auto !important;
+    min-width: 0 !important;
+  }
+
+  .navbar .nav-menu > a {
+    white-space: nowrap !important;
+  }
+}
+

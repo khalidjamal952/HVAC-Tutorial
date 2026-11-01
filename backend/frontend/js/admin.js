@@ -1649,7 +1649,11 @@ async function renderAdminLectures() {
   // COURSE FOLDER VIEW
   if (selectedLectureCourseId === null) {
     if (lectureTotal) {
-      lectureTotal.textContent = allLectures.length;
+      lectureTotal.textContent = allLectureCourses.reduce((total, course) => {
+        return total + allLectures.filter(
+          (lecture) => String(lecture.courseId) === String(course.id)
+        ).length;
+      }, 0);
     }
 
     if (lecturesEmpty) {

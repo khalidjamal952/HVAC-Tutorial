@@ -66,6 +66,18 @@ const fileFilter = (req, file, cb) => {
   const extension = path.extname(file.originalname).toLowerCase();
   const allowedTypes = allowedMimeTypes[extension];
 
+  if (file.fieldname === "supportDocuments") {
+    if (extension === ".pdf" && file.mimetype === "application/pdf") {
+      return cb(null, true);
+    }
+
+    return cb(new Error("Support documents must be PDF files only."), false);
+  }
+
+  if (file.fieldname !== "pdf") {
+    return cb(new Error("Invalid file field."), false);
+  }
+
   if (allowedTypes && allowedTypes.includes(file.mimetype)) {
     return cb(null, true);
   }
@@ -82,6 +94,7 @@ const upload = multer({
   fileFilter,
   limits: {
     fileSize: 300 * 1024 * 1024,
+    files: 101,
   },
 });
 
@@ -99,6 +112,16 @@ async function cleanupTempFile(file) {
       console.error("Temporary PDF Cleanup Error:", error.message);
     }
   }
+}
+
+async function cleanupTempFiles(files) {
+  if (!files) return;
+
+  const allFiles = Array.isArray(files)
+    ? files
+    : Object.values(files).flat();
+
+  await Promise.all(allFiles.map(cleanupTempFile));
 }
 
 // =========================================
@@ -174,8 +197,17 @@ router.get("/", async (req, res) => {
       status: "Active",
     }).sort({ createdAt: -1 });
 
+    const safeEbooks = ebooks.map((ebook) => {
+      const ebookData = ebook.toObject();
+
+      // Never expose private support-document storage paths publicly.
+      delete ebookData.supportDocuments;
+
+      return ebookData;
+    });
+
     res.status(200).json({
-      ebooks,
+      ebooks: safeEbooks,
     });
   } catch (error) {
     console.error("Get E-Books Error:", error);
@@ -193,9 +225,15 @@ router.get("/", async (req, res) => {
 router.post(
   "/",
   adminAuthMiddleware,
-  upload.single("pdf"),
+  upload.fields([
+    { name: "pdf", maxCount: 1 },
+    { name: "supportDocuments", maxCount: 100 },
+  ]),
   async (req, res) => {
-    let uploadedKey = null;
+    const uploadedKeys = [];
+    const files = req.files || {};
+    const mainFile = files.pdf?.[0];
+    const supportFiles = files.supportDocuments || [];
 
     try {
       const { title, description, category, price } = req.body;
@@ -206,9 +244,9 @@ router.post(
         });
       }
 
-      if (!req.file) {
+      if (!mainFile) {
         return res.status(400).json({
-          message: "Please select a supported file.",
+          message: "Please select a supported E-Book file.",
         });
       }
 
@@ -218,35 +256,62 @@ router.post(
         });
       }
 
-      const extension = path.extname(req.file.originalname).toLowerCase();
-      uploadedKey = `ebooks/${Date.now()}-${crypto.randomBytes(8).toString("hex")}${extension}`;
+      const extension = path.extname(mainFile.originalname).toLowerCase();
+      const mainKey = `ebooks/${Date.now()}-${crypto.randomBytes(8).toString("hex")}${extension}`;
 
-      await uploadEbookToR2(req.file, uploadedKey);
+      await uploadEbookToR2(mainFile, mainKey);
+      uploadedKeys.push(mainKey);
+
+      const supportDocuments = [];
+
+      for (const file of supportFiles) {
+        const supportExtension = path.extname(file.originalname).toLowerCase();
+
+        if (supportExtension !== ".pdf" || file.mimetype !== "application/pdf") {
+          throw new Error("Support documents must be PDF files only.");
+        }
+
+        const supportKey = `ebooks/support/${Date.now()}-${crypto.randomBytes(8).toString("hex")}.pdf`;
+
+        await uploadEbookToR2(file, supportKey);
+        uploadedKeys.push(supportKey);
+
+        supportDocuments.push({
+          fileName: path.basename(file.originalname),
+          filePath: supportKey,
+          relativePath: file.originalname,
+          mimeType: file.mimetype,
+          size: file.size,
+        });
+      }
 
       const ebook = await Ebook.create({
         title: title.trim(),
         description: description.trim(),
         category: category.trim(),
-        type: path.extname(req.file.originalname).replace(".", "").toUpperCase(),
+        type: extension.replace(".", "").toUpperCase(),
         price: Number(price) || 0,
-        fileName: req.file.originalname,
-        filePath: uploadedKey,
+        fileName: path.basename(mainFile.originalname),
+        filePath: mainKey,
+        supportDocuments,
         status: "Active",
       });
 
+      uploadedKeys.length = 0;
+
       return res.status(201).json({
-        message: "E-Book uploaded to Cloudflare R2 successfully.",
+        message: "E-Book and support documents uploaded successfully.",
         ebook,
       });
     } catch (error) {
       console.error("Add E-Book Error:", error);
 
-      if (uploadedKey && s3) {
+      for (const key of uploadedKeys) {
         try {
           await s3.send(
             new DeleteObjectCommand({
               Bucket: R2_BUCKET_NAME,
-              Key: uploadedKey,
+              Key: key,
             }),
           );
         } catch (cleanupError) {
@@ -255,24 +320,28 @@ router.post(
       }
 
       return res.status(500).json({
-        message: "Unable to upload E-Book.",
+        message: "Unable to upload E-Book and support documents.",
       });
     } finally {
-      await cleanupTempFile(req.file);
+      await cleanupTempFiles(files);
     }
   },
 );
-
-// =========================================
 // UPDATE E-BOOK
 // =========================================
 
 router.put(
   "/:id",
   adminAuthMiddleware,
-  upload.single("pdf"),
+  upload.fields([
+    { name: "pdf", maxCount: 1 },
+    { name: "supportDocuments", maxCount: 100 },
+  ]),
   async (req, res) => {
-    let newUploadedKey = null;
+    const files = req.files || {};
+    const mainFile = files.pdf?.[0];
+    const supportFiles = files.supportDocuments || [];
+    const uploadedKeys = [];
 
     try {
       const ebook = await Ebook.findById(req.params.id);
@@ -291,56 +360,61 @@ router.put(
       if (price !== undefined) ebook.price = Number(price) || 0;
 
       const oldFilePath = ebook.filePath;
-      const oldFileName = ebook.fileName;
 
-      // Replace file only when a new file is selected
-      if (req.file) {
+      if (mainFile || supportFiles.length > 0) {
         if (!isR2Configured() || !s3) {
           return res.status(503).json({
             message: "Cloudflare R2 is not configured.",
           });
         }
+      }
 
-        const extension = path.extname(req.file.originalname).toLowerCase();
-        newUploadedKey = `ebooks/${Date.now()}-${crypto.randomBytes(8).toString("hex")}${extension}`;
+      // Replace the main E-Book file only when a new file is selected.
+      if (mainFile) {
+        const extension = path.extname(mainFile.originalname).toLowerCase();
+        const newKey = `ebooks/${Date.now()}-${crypto.randomBytes(8).toString("hex")}${extension}`;
 
-        // Upload new PDF first
-        await uploadEbookToR2(req.file, newUploadedKey);
+        await uploadEbookToR2(mainFile, newKey);
+        uploadedKeys.push(newKey);
 
-        ebook.fileName = req.file.originalname;
-        ebook.filePath = newUploadedKey;
+        ebook.fileName = path.basename(mainFile.originalname);
+        ebook.filePath = newKey;
         ebook.type = extension.replace(".", "").toUpperCase();
       }
 
-      // Save database before deleting old PDF
-      try {
-        await ebook.save();
-      } catch (databaseError) {
-        if (newUploadedKey) {
-          try {
-            await s3.send(
-              new DeleteObjectCommand({
-                Bucket: R2_BUCKET_NAME,
-                Key: newUploadedKey,
-              }),
-            );
-          } catch (cleanupError) {
-            console.error("New R2 PDF Rollback Error:", cleanupError.message);
-          }
+      // Append new support PDFs without removing existing documents.
+      for (const file of supportFiles) {
+        const extension = path.extname(file.originalname).toLowerCase();
+
+        if (extension !== ".pdf" || file.mimetype !== "application/pdf") {
+          throw new Error("Support documents must be PDF files only.");
         }
 
-        throw databaseError;
+        const key = `ebooks/support/${Date.now()}-${crypto.randomBytes(8).toString("hex")}.pdf`;
+
+        await uploadEbookToR2(file, key);
+        uploadedKeys.push(key);
+
+        ebook.supportDocuments.push({
+          fileName: path.basename(file.originalname),
+          filePath: key,
+          relativePath: file.originalname.replace(/\\/g, "/"),
+          mimeType: "application/pdf",
+          size: file.size,
+        });
       }
 
-      // Delete old file only after successful database update
-      if (newUploadedKey && oldFilePath && oldFilePath !== newUploadedKey) {
+      await ebook.save();
+
+      // Database save succeeded. Keep newly uploaded files.
+      uploadedKeys.length = 0;
+
+      // Delete the old main PDF only after the database update succeeds.
+      if (mainFile && oldFilePath && oldFilePath !== ebook.filePath) {
         try {
           await deleteStoredEbook(oldFilePath);
         } catch (deleteError) {
-          console.error(
-            "Old E-Book Cleanup Warning:",
-            deleteError.message,
-          );
+          console.error("Old E-Book Cleanup Warning:", deleteError.message);
         }
       }
 
@@ -351,15 +425,28 @@ router.put(
     } catch (error) {
       console.error("Update E-Book Error:", error);
 
+      // Roll back newly uploaded R2 files if the update fails.
+      for (const key of uploadedKeys) {
+        try {
+          await s3.send(
+            new DeleteObjectCommand({
+              Bucket: R2_BUCKET_NAME,
+              Key: key,
+            }),
+          );
+        } catch (cleanupError) {
+          console.error("R2 Rollback Error:", cleanupError.message);
+        }
+      }
+
       return res.status(500).json({
         message: "Unable to update E-Book.",
       });
     } finally {
-      await cleanupTempFile(req.file);
+      await cleanupTempFiles(files);
     }
   },
 );
-
 // =========================================
 // DELETE E-BOOK
 // =========================================
@@ -374,16 +461,30 @@ router.delete("/:id", adminAuthMiddleware, async (req, res) => {
       });
     }
 
+    // Collect the main PDF and all support PDF storage keys.
+    const storageKeys = [
+      ebook.filePath,
+      ...(ebook.supportDocuments || []).map((doc) => doc.filePath),
+    ].filter(Boolean);
+
     await Ebook.findByIdAndDelete(req.params.id);
 
-    try {
-      await deleteStoredEbook(ebook.filePath);
-    } catch (deleteError) {
-      console.error("E-Book Storage Cleanup Warning:", deleteError.message);
-    }
+    // Delete all associated files from R2 after database deletion.
+    const cleanupResults = await Promise.allSettled(
+      storageKeys.map((key) => deleteStoredEbook(key)),
+    );
+
+    cleanupResults.forEach((result) => {
+      if (result.status === "rejected") {
+        console.error(
+          "E-Book Storage Cleanup Warning:",
+          result.reason?.message || result.reason,
+        );
+      }
+    });
 
     return res.status(200).json({
-      message: "E-Book deleted successfully.",
+      message: "E-Book and its support documents deleted successfully.",
     });
   } catch (error) {
     console.error("Delete E-Book Error:", error);
@@ -482,6 +583,9 @@ router.get("/admin/:id/preview", adminAuthMiddleware, async (req, res) => {
 });
 
 module.exports = router;
+
+
+
 
 
 
