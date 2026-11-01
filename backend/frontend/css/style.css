@@ -2059,3 +2059,36 @@ body.dark-mode .purchase-notification-footer {
   }
 }
 
+
+/* =========================================
+   FINAL MOBILE NAVBAR - DARK MODE TEXT FIX
+========================================= */
+
+@media (max-width: 768px) {
+
+  body.dark-mode .navbar .nav-menu {
+    background: #111827 !important;
+    border-color: #334155 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  body.dark-mode .navbar .nav-menu a {
+    color: #f8fafc !important;
+    background: transparent !important;
+  }
+
+  body.dark-mode .navbar .nav-menu a:hover {
+    color: #60a5fa !important;
+    background: #1e293b !important;
+  }
+
+  body.dark-mode .navbar .nav-menu .cart-link {
+    color: #f8fafc !important;
+  }
+
+  body.dark-mode .navbar .menu-toggle {
+    color: #f8fafc !important;
+  }
+
+}
+

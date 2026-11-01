@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -17,7 +17,7 @@
       <div class="container nav-container">
         <a href="../index.html" class="logo"> HVAC <span>Tutorial</span> </a>
 
-        <button class="menu-toggle" id="menuToggle" type="button">â˜°</button>
+        <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
 
         <div class="nav-menu">
           <a href="../index.html">Home</a>
@@ -25,12 +25,8 @@
           <a href="courses.html"> Courses </a>
 
           <a href="live-classes.html"> Live Classes </a>
-          <button class="theme-toggle" id="themeToggle" type="button">
-            ðŸŒ™
-          </button>
-          <a href="cart.html" class="cart-link">
-            ðŸ›’ Cart
-            <span class="cart-count">0</span>
+          <button class="theme-toggle" id="themeToggle" type="button"><svg class="theme-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/></svg></button>
+          <a href="cart.html" class="cart-link"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> Cart <span class="cart-count">0</span>
           </a>
 
           <a href="dashboard.html"> Dashboard </a>
@@ -121,20 +117,26 @@
               type="button"
               id="printCertificateBtn"
               class="certificate-action-btn"
-              onclick="window.print()"
             >
-              ðŸ–¨ï¸ Print Certificate
+              <span aria-hidden="true">🖨</span>
+              Print Certificate
+            </button>
+
+            <button
+              type="button"
+              id="downloadCertificateBtn"
+              class="certificate-action-btn certificate-download-btn"
+            >
+              <span aria-hidden="true">↓</span>
+              Download PDF
             </button>
 
             <a href="dashboard.html" class="certificate-back-btn">
-              â† Back to Dashboard
+              <span aria-hidden="true">←</span>
+              Back to Dashboard
             </a>
           </div>
-        </div>
-      </div>
-    </main>
-
-    <!-- FOOTER -->
+<!-- FOOTER -->
 
     <footer class="footer">
       <div class="footer-container container">

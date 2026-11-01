@@ -1,4 +1,4 @@
-﻿// =========================================
+// =========================================
 // CERTIFICATE AUTHENTICATION
 // =========================================
 
@@ -293,6 +293,14 @@ if (studentName && courseName && certificateId && completionDate) {
 
 if (printCertificateBtn) {
   printCertificateBtn.addEventListener("click", function () {
+    window.print();
+  });
+}
+
+const downloadCertificateBtn = document.getElementById("downloadCertificateBtn");
+
+if (downloadCertificateBtn) {
+  downloadCertificateBtn.addEventListener("click", function () {
     window.print();
   });
 }

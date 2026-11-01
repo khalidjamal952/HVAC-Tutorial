@@ -396,34 +396,69 @@
 .certificate-actions {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  margin-top: 25px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 28px;
 }
 
 .certificate-action-btn,
 .certificate-back-btn {
-  padding: 12px 20px;
-  border-radius: 8px;
+  min-height: 46px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 22px;
+  border: 1px solid transparent;
+  border-radius: 10px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
   cursor: pointer;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
 }
 
 .certificate-action-btn {
-  border: none;
-  background: #2563eb;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #ffffff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
 }
 
 .certificate-action-btn:hover {
-  background: #1d4ed8;
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 7px 16px rgba(37, 99, 235, 0.28);
+}
+
+.certificate-download-btn {
+  background: linear-gradient(135deg, #059669, #047857);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.20);
+}
+
+.certificate-download-btn:hover {
+  background: linear-gradient(135deg, #047857, #065f46);
+  transform: translateY(-2px);
 }
 
 .certificate-back-btn {
-  border: 1px solid #d1d5db;
+  border-color: #d1d5db;
   background: #ffffff;
   color: #374151;
+}
+
+.certificate-back-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+  transform: translateY(-2px);
+}
+
+.certificate-action-btn:focus-visible,
+.certificate-back-btn:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.35);
+  outline-offset: 3px;
 }
 
 /* =========================================
