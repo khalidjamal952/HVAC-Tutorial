@@ -164,6 +164,22 @@ if (uniqueCourses.length > 0 && myCoursesGrid) {
     };
 
     // =====================================
+    // GET ACTUAL LECTURE COUNT FROM DATABASE
+    let actualLessonCount = Number(details.lessons) || 0;
+
+    try {
+      const lectureResponse = await fetch(
+        `/api/lectures/course/${encodeURIComponent(course.id)}/preview`
+      );
+
+      const lectureData = await lectureResponse.json();
+
+      if (lectureResponse.ok && Array.isArray(lectureData.lectures)) {
+        actualLessonCount = lectureData.lectures.length;
+      }
+    } catch (error) {
+      console.error("My Courses Lecture Count Error:", error);
+    }
     // GET COURSE PROGRESS
     // =====================================
 
@@ -247,7 +263,7 @@ if (uniqueCourses.length > 0 && myCoursesGrid) {
                   <div class="my-course-footer">
 
     <span class="course-meta">
-        ${details.lessons} Lessons
+        ${actualLessonCount} Lessons
     </span>
 
     ${
