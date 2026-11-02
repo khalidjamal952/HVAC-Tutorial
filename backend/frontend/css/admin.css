@@ -2600,3 +2600,174 @@ body.dark-mode .course-point-delete {
     width: 100%;
   }
 }
+
+
+/* MOBILE RESPONSIVE LAYOUT FIX */
+
+@media (max-width: 700px) {
+  .admin-nav-container {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .admin-logo {
+    font-size: 18px;
+  }
+
+  .admin-nav-menu {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 18px;
+  }
+
+  .admin-dashboard-page {
+    overflow-x: hidden;
+  }
+
+  .admin-dashboard-page > .container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 14px;
+    padding-right: 14px;
+    box-sizing: border-box;
+  }
+
+  .admin-dashboard-header h1 {
+    font-size: clamp(24px, 6vw, 32px);
+    overflow-wrap: anywhere;
+  }
+
+  .admin-management-section {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  #addStudentForm {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  #addStudentForm .admin-form-group {
+    min-width: 0;
+    width: 100%;
+  }
+
+  #addStudentForm input,
+  #addStudentForm select {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .student-toolbar {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .student-search {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .student-search input {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .admin-table-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-table {
+    min-width: 650px;
+  }
+}
+
+@media (max-width: 400px) {
+  .admin-nav-container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .admin-nav-menu {
+    gap: 10px 14px;
+  }
+
+  .admin-dashboard-page > .container {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+
+/* ADMIN HAMBURGER MOBILE MENU */
+
+.admin-menu-toggle {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .admin-nav-container {
+    position: relative;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .admin-menu-toggle {
+    display: flex;
+    width: 42px;
+    height: 38px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 7px;
+    margin-left: auto;
+    border: 1px solid #475569;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .admin-menu-toggle span {
+    display: block;
+    width: 21px;
+    height: 2px;
+    border-radius: 2px;
+    background: #ffffff;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .admin-menu-toggle.active span:first-child {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .admin-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .admin-menu-toggle.active span:last-child {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .admin-nav-menu {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 15px 0 5px;
+  }
+
+  .admin-nav-menu.active {
+    display: flex;
+  }
+}

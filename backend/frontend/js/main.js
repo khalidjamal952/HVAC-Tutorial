@@ -390,3 +390,43 @@ document.addEventListener("DOMContentLoaded", function () {
   }, 30000);
 });
 
+
+// ADMIN MOBILE HAMBURGER NAVIGATION
+(function () {
+  const container = document.querySelector(".admin-nav-container");
+  const nav = document.querySelector(".admin-nav-menu");
+
+  if (!container || !nav) return;
+
+  const toggle = document.createElement("button");
+  toggle.type = "button";
+  toggle.className = "admin-menu-toggle";
+  toggle.setAttribute("aria-label", "Toggle admin navigation");
+  toggle.setAttribute("aria-expanded", "false");
+  toggle.innerHTML = '<span></span><span></span><span></span>';
+
+  container.insertBefore(toggle, nav);
+
+  toggle.addEventListener("click", function (event) {
+    event.stopPropagation();
+    const isOpen = nav.classList.toggle("active");
+    toggle.classList.toggle("active", isOpen);
+    toggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  nav.querySelectorAll("a").forEach(function (link) {
+    link.addEventListener("click", function () {
+      nav.classList.remove("active");
+      toggle.classList.remove("active");
+      toggle.setAttribute("aria-expanded", "false");
+    });
+  });
+
+  document.addEventListener("click", function (event) {
+    if (!container.contains(event.target)) {
+      nav.classList.remove("active");
+      toggle.classList.remove("active");
+      toggle.setAttribute("aria-expanded", "false");
+    }
+  });
+})();
