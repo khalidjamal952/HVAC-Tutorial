@@ -1232,25 +1232,29 @@ if (adminCoursesTableBody) {
         // =============================
 
         if (editingId) {
+          const formData = new FormData();
+
+          formData.append("title", title);
+          formData.append("category", category);
+          formData.append("lessons", lessons);
+          formData.append("duration", duration);
+          formData.append("price", price);
+          formData.append("originalPrice", originalPrice);
+          formData.append("description", description);
+          formData.append("outcomes", outcomes);
+          formData.append("requirements", requirements);
+          formData.append("audience", audience);
+
+          const thumbnailInput = document.getElementById("courseThumbnail");
+
+          if (thumbnailInput && thumbnailInput.files.length > 0) {
+            formData.append("thumbnail", thumbnailInput.files[0]);
+          }
+
           const response = await fetch("/api/courses/admin/" + editingId, {
             method: "PUT",
             credentials: "include",
-            headers: {
-              "Content-Type": "application/json",
-            },
-
-            body: JSON.stringify({
-              title: title,
-              category: category,
-              lessons: lessons,
-              duration: duration,
-              price: price,
-              originalPrice: originalPrice,
-              description: description,
-              outcomes: outcomes,
-              requirements: requirements,
-              audience: audience,
-            }),
+            body: formData,
           });
 
           const data = await response.json();
