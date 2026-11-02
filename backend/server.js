@@ -1,7 +1,8 @@
-﻿require("dotenv").config();
+require("dotenv").config();
 // const lectureRoutes = require("./routes/lectureRoutes");
 const lectureRoutes = require("./routes/lectureRoutes.r2");
 const liveClassRoutes = require("./routes/liveClassRoutes");
+const youtubeVideoRoutes = require("./routes/youtubeVideoRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const path = require("path");
 const userRoutes = require("./routes/userRoutes");
@@ -85,6 +86,7 @@ app.use("/api/ebook-purchases", ebookPurchaseRoutes);
 app.use("/api/razorpay", razorpayRoutes);
 app.use("/api/lectures", lectureRoutes);
 app.use("/api/live-classes", liveClassRoutes);
+app.use("/api/youtube-videos", youtubeVideoRoutes);
 app.use("/api/coupons", couponRoutes);
 app.use("/api/ratings", ratingRoutes);
 app.use("/api/categories", categoryRoutes);

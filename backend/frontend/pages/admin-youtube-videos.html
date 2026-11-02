@@ -1,0 +1,202 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Video Management - HVAC Tutorial</title>
+
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/responsive.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  <link rel="icon" type="image/png" href="../assets/Hvac%20logo/hvac%20logo.png" />
+</head>
+
+<body>
+  <nav class="admin-navbar">
+    <div class="admin-nav-container">
+      <a href="admin.html" class="admin-logo">
+        HVAC <span>Tutorial</span>
+        <small>Admin</small>
+      </a>
+
+      <div class="admin-nav-menu">
+        <a href="admin.html">Dashboard</a>
+        <a href="courses.html">Website</a>
+        <button class="theme-toggle" id="themeToggle" type="button">🌙</button>
+        <a href="#" id="adminLogoutBtn">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="admin-dashboard-page">
+    <div class="container">
+
+      <div class="admin-dashboard-header">
+        <div>
+          <span class="admin-page-label">ADMIN PANEL</span>
+          <h1>YouTube Video Management</h1>
+          <p>Add and manage videos displayed on your homepage.</p>
+        </div>
+
+        <div class="admin-stat-card">
+          <div class="admin-stat-icon">▶</div>
+          <div>
+            <span>Total Videos</span>
+            <strong id="youtubeVideoTotal">0</strong>
+          </div>
+        </div>
+      </div>
+
+      <section class="admin-management-section">
+        <div class="course-admin-toolbar">
+          <button type="button" class="admin-primary-btn" id="addYoutubeVideoBtn">
+            + Add YouTube Video
+          </button>
+
+          <input
+            type="text"
+            id="youtubeVideoSearch"
+            class="course-admin-search"
+            placeholder="Search YouTube videos..."
+          />
+        </div>
+
+        <div class="admin-table-wrapper">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Video</th>
+                <th>Title</th>
+                <th>Featured</th>
+                <th>Homepage Status</th>
+                <th>Display Order</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="youtubeVideosTableBody"></tbody>
+          </table>
+        </div>
+
+        <div id="youtubeVideosEmpty" class="admin-empty-state" style="display:none">
+          <div class="admin-empty-icon">▶</div>
+          <h3>No YouTube Videos Found</h3>
+          <p>Add your first YouTube video to display it on your homepage.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="admin-modal" id="youtubeVideoModal">
+    <div class="admin-modal-content">
+      <div class="admin-modal-header">
+        <h2 id="youtubeVideoModalTitle">Add YouTube Video</h2>
+        <button type="button" class="admin-modal-close" id="closeYoutubeVideoModal">×</button>
+      </div>
+
+      <form id="youtubeVideoForm">
+        <div class="admin-form-grid">
+
+          <div class="admin-form-group">
+            <label for="youtubeVideoTitle">Video Title</label>
+            <input
+              type="text"
+              id="youtubeVideoTitle"
+              placeholder="Enter video title"
+              maxlength="150"
+              required
+            />
+          </div>
+
+          <div class="admin-form-group">
+            <label for="youtubeVideoUrl">YouTube Video URL</label>
+            <input
+              type="url"
+              id="youtubeVideoUrl"
+              placeholder="https://www.youtube.com/watch?v=..."
+              required
+            />
+          </div>
+
+          <div class="admin-form-group">
+            <label for="youtubeVideoDescription">Description</label>
+            <textarea
+              id="youtubeVideoDescription"
+              rows="4"
+              placeholder="Enter video description..."
+              maxlength="1000"
+            ></textarea>
+          </div>
+
+          <div class="admin-form-group">
+            <label for="youtubeVideoOrder">Display Order</label>
+            <input type="number" id="youtubeVideoOrder" value="0" min="0" />
+          </div>
+
+          <div class="admin-form-group">
+            <label>
+              <input type="checkbox" id="youtubeVideoActive" checked />
+              Show on Homepage
+            </label>
+          </div>
+
+          <div class="admin-form-group">
+            <label>
+              <input type="checkbox" id="youtubeVideoFeatured" />
+              Set as Featured Video
+            </label>
+          </div>
+
+          <div class="admin-form-group">
+            <label>Video Preview</label>
+            <div id="youtubeVideoPreview" style="max-width:420px">
+              <p>Paste a valid YouTube URL to preview its thumbnail.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="admin-modal-actions">
+          <button type="button" class="admin-secondary-btn" id="cancelYoutubeVideoBtn">
+            Cancel
+          </button>
+          <button type="submit" class="admin-primary-btn" id="saveYoutubeVideoBtn">
+            Save Video
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer admin-footer">
+    <div class="footer-container container">
+      <div class="footer-brand">
+        <h3>HVAC <span>Tutorial</span></h3>
+        <p>Manage selected YouTube videos displayed on the HVAC Tutorial homepage.</p>
+      </div>
+
+      <div class="footer-links">
+        <h4>Admin</h4>
+        <a href="admin.html">Dashboard</a>
+        <a href="admin-courses.html">Courses</a>
+        <a href="admin-students.html">Students</a>
+        <a href="admin-youtube-videos.html">YouTube Videos</a>
+      </div>
+
+      <div class="footer-links">
+        <h4>Platform</h4>
+        <a href="courses.html">View Website</a>
+        <a href="live-classes.html">Live Classes</a>
+        <a href="#" id="adminFooterLogout">Logout</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© <span id="currentYear"></span> HVAC Tutorial. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/admin.js"></script>
+  <script src="../js/youtube-admin.js"></script>
+</body>
+</html>
