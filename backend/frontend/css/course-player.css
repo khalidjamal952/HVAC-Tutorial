@@ -750,3 +750,95 @@ body.dark-mode .lecture-item.active .lecture-number {
     padding: 10px;
   }
 }
+
+/* COURSE LECTURE ACCESS BADGES */
+.lecture-access-label {
+  display: inline-block;
+  width: fit-content;
+  margin-top: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #fee2e2;
+  color: #b91c1c !important;
+  font-size: 10px !important;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.lecture-access-label.preview {
+  background: #dcfce7;
+  color: #15803d !important;
+}
+
+.lecture-status {
+  font-weight: 700;
+}
+
+/* PROFESSIONAL COURSE PURCHASE BUTTON */
+#coursePurchaseBox {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 0;
+}
+
+#coursePurchaseBox[hidden] {
+  display: none !important;
+}
+
+#coursePurchaseBox #coursePurchasePrice {
+  color: #172554;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+#buyCourseBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 11px 22px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.22);
+  transition: all 0.25s ease;
+}
+
+#buyCourseBtn::before {
+  content: "\1F6D2";
+  font-size: 15px;
+}
+
+#buyCourseBtn:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 7px 16px rgba(37, 99, 235, 0.3);
+}
+
+#buyCourseBtn:active {
+  transform: translateY(0);
+}
+
+#buyCourseBtn:focus-visible {
+  outline: 3px solid rgba(59, 130, 246, 0.35);
+  outline-offset: 3px;
+}
+
+@media (max-width: 480px) {
+  #coursePurchaseBox {
+    gap: 10px;
+  }
+
+  #buyCourseBtn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}

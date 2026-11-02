@@ -19,20 +19,22 @@ if (!currentUser) {
 const urlParams = new URLSearchParams(window.location.search);
 
 const courseId = urlParams.get("id") || "hvac-fundamentals";
+const isPreviewUiTest =
+  window.location.hostname === "localhost" &&
+  urlParams.get("previewTest") === "1";
+
+function canAccessAllLectures() {
+  return Boolean(window.hasPurchasedCourse) && !isPreviewUiTest;
+}
 
 // =========================================
 // CHECK COURSE PURCHASE ACCESS
 // =========================================
 
 async function checkCourseAccess() {
-  // const token = localStorage.getItem("hvacToken");
-
-  // if (!token) {
-  //   window.location.replace("login.html");
-  //   return false;
-  // }
-
   try {
+    window.hasPurchasedCourse = false;
+
     const response = await fetch("/api/orders/access/" + courseId, {
       method: "GET",
       credentials: "include",
@@ -40,18 +42,24 @@ async function checkCourseAccess() {
 
     const data = await response.json();
 
-    if (!response.ok || !data.access) {
-      alert("You have not purchased this course.");
-      window.location.replace("courses.html");
+    // A 403 means the student has not purchased the course.
+    // Allow the player to load free preview lectures.
+    if (response.status === 403 && data.access === false) {
+      window.hasPurchasedCourse = false;
+      console.log("Free preview access enabled.");
+      return true;
+    }
+
+    if (!response.ok) {
+      console.error("Course access verification failed:", data);
       return false;
     }
+
+    window.hasPurchasedCourse = Boolean(data.access);
 
     return true;
   } catch (error) {
     console.error("Course Access Check Error:", error);
-
-    alert("Unable to verify course access.");
-    window.location.replace("courses.html");
     return false;
   }
 }
@@ -402,6 +410,12 @@ const courseCategory = document.getElementById("courseCategory");
 
 const courseDescription = document.getElementById("courseDescription");
 
+const coursePurchaseBox = document.getElementById("coursePurchaseBox");
+
+const coursePurchasePrice = document.getElementById("coursePurchasePrice");
+
+const buyCourseBtn = document.getElementById("buyCourseBtn");
+
 const courseProgress = document.getElementById("courseProgress");
 
 const lectureList = document.getElementById("lectureList");
@@ -421,6 +435,62 @@ const completeLectureBtn = document.getElementById("completeLectureBtn");
 const previousLecture = document.getElementById("previousLecture");
 
 const nextLecture = document.getElementById("nextLecture");
+function setupCoursePurchaseButton() {
+  if (!coursePurchaseBox || !coursePurchasePrice || !buyCourseBtn) return;
+
+  // Purchased students do not need the purchase button.
+  if (canAccessAllLectures()) {
+    coursePurchaseBox.hidden = true;
+    return;
+  }
+
+  const price = Number(course.price);
+
+  if (!course.id || !course.title || !Number.isFinite(price) || price <= 0) {
+    coursePurchaseBox.hidden = true;
+    console.warn("Course purchase details are unavailable.");
+    return;
+  }
+
+  coursePurchasePrice.textContent =
+    "Full Course Price: " +
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(price);
+
+  coursePurchaseBox.hidden = false;
+
+  buyCourseBtn.onclick = function () {
+    try {
+      const cart = JSON.parse(localStorage.getItem("hvacCart") || "[]");
+
+      if (!Array.isArray(cart)) {
+        throw new Error("Invalid cart data");
+      }
+
+      const alreadyAdded = cart.some(function (item) {
+        return item.id === course.id;
+      });
+
+      if (!alreadyAdded) {
+        cart.push({
+          id: course.id,
+          title: course.title,
+          price: price,
+        });
+
+        localStorage.setItem("hvacCart", JSON.stringify(cart));
+      }
+
+      window.location.href = "checkout.html";
+    } catch (error) {
+      console.error("Course Cart Error:", error);
+      alert("Unable to add this course to your cart. Please try again.");
+    }
+  };
+}
 
 // =========================================
 // COURSE INFORMATION
@@ -629,7 +699,7 @@ async function loadLecturesFromBackend() {
     // FETCH COURSE LECTURES
     // =========================================
 
-    const response = await fetch("/api/lectures/course/" + courseId, {
+    const response = await fetch("/api/lectures/course/" + courseId + "/preview", {
       method: "GET",
       credentials: "include",
     });
@@ -655,6 +725,8 @@ async function loadLecturesFromBackend() {
         video: lecture.video || "",
         description: lecture.description || "",
         thumbnail: lecture.thumbnail || "",
+        number: lecture.number,
+        isPreview: lecture.isPreview === true,
       };
     });
 
@@ -715,9 +787,9 @@ function renderLectures() {
 
   course.lectures.forEach(function (lecture, index) {
     const lectureItem = document.createElement("button");
+    const isLocked = !canAccessAllLectures() && !lecture.isPreview;
 
     lectureItem.type = "button";
-
     lectureItem.className = "lecture-item";
 
     if (index === currentLectureIndex) {
@@ -728,47 +800,59 @@ function renderLectures() {
       lectureItem.classList.add("completed");
     }
 
+    if (isLocked) {
+      lectureItem.classList.add("locked");
+    }
+
     lectureItem.innerHTML = `
-  ${
-    lecture.thumbnail
-      ? `
-        <img
-          src="${lecture.thumbnail}"
-          alt="${lecture.title}"
-          class="lecture-thumbnail"
-        />
-      `
-      : `
-        <div class="lecture-thumbnail lecture-thumbnail-placeholder">
-          🎥
-        </div>
-      `
-  }
+      ${
+        lecture.thumbnail
+          ? `
+            <img
+              src="${lecture.thumbnail}"
+              alt="${lecture.title}"
+              class="lecture-thumbnail"
+            />
+          `
+          : `
+            <div class="lecture-thumbnail lecture-thumbnail-placeholder">
+              VIDEO
+            </div>
+          `
+      }
 
-  <div class="lecture-number">
-    ${completedLectures.includes(index) ? "✓" : index + 1}
-  </div>
+      <div class="lecture-number">
+        ${completedLectures.includes(index) ? "\u2713" : index + 1}
+      </div>
 
-  <div class="lecture-info">
-    <strong>
-      ${lecture.title}
-    </strong>
+      <div class="lecture-info">
+        <strong>${lecture.title}</strong>
+        <span>${lecture.duration || ""}</span>
+        ${
+          isLocked
+            ? '<span class="lecture-access-label">LOCKED</span>'
+            : lecture.isPreview && !canAccessAllLectures()
+              ? '<span class="lecture-access-label preview">FREE PREVIEW</span>'
+              : ""
+        }
+      </div>
 
-    <span>
-      ${lecture.duration}
-    </span>
-  </div>
-
-  ${
-    completedLectures.includes(index)
-      ? `<span class="lecture-status">✓</span>`
-      : ""
-  }
-`;
+      ${
+        completedLectures.includes(index)
+          ? '<span class="lecture-status">\u2713</span>'
+          : isLocked
+            ? '<span class="lecture-status">LOCKED</span>'
+            : ""
+      }
+    `;
 
     lectureItem.addEventListener("click", function () {
-      currentLectureIndex = index;
+      if (isLocked) {
+        alert("This lecture is locked. Please purchase this course to continue.");
+        return;
+      }
 
+      currentLectureIndex = index;
       loadLecture();
     });
 
@@ -777,6 +861,7 @@ function renderLectures() {
 }
 
 // =========================================
+// LOAD LECTURE// =========================================
 // LOAD LECTURE
 // =========================================
 
@@ -846,7 +931,7 @@ async function loadLecture(
   // VIDEO
   // =========================================
 
-  if (lecture.video) {
+  if (lecture.lectureId) {
     // const token = localStorage.getItem("hvacToken");
 
     // Clear previous Blob URL to prevent memory leaks.
@@ -940,13 +1025,13 @@ async function loadLecture(
   // =========================================
 
   if (completedLectures.includes(currentLectureIndex)) {
-    completeLectureBtn.textContent = "✓ Completed";
+    completeLectureBtn.textContent = "\u2713 Completed";
 
     completeLectureBtn.classList.add("completed");
 
     completeLectureBtn.disabled = false;
   } else {
-    completeLectureBtn.textContent = "✓ Mark as Completed";
+    completeLectureBtn.textContent = "\u2713 Mark as Completed";
 
     completeLectureBtn.classList.remove("completed");
 
@@ -1002,7 +1087,24 @@ lectureVideo.addEventListener("ended", async function () {
   }
 
   if (finishedIndex < course.lectures.length - 1) {
-    currentLectureIndex = finishedIndex + 1;
+    const nextIndex = finishedIndex + 1;
+    const nextLecture = course.lectures[nextIndex];
+
+    const nextLectureLocked =
+      !canAccessAllLectures() && !nextLecture.isPreview;
+
+    if (nextLectureLocked) {
+      currentLectureIndex = finishedIndex;
+      lectureVideo.pause();
+      lectureVideo.removeAttribute("src");
+      lectureVideo.load();
+      lectureTitle.textContent = "Course Preview Completed";
+      renderLectures();
+      alert("You have completed the free preview. Purchase this course to unlock all remaining lectures.");
+      return;
+    }
+
+    currentLectureIndex = nextIndex;
     loadLecture();
 
     lectureVideo.addEventListener(
@@ -1061,7 +1163,18 @@ previousLecture.addEventListener("click", function () {
 
 nextLecture.addEventListener("click", function () {
   if (currentLectureIndex < course.lectures.length - 1) {
-    currentLectureIndex++;
+    const nextIndex = currentLectureIndex + 1;
+    const nextLectureItem = course.lectures[nextIndex];
+
+    const isLocked =
+      !canAccessAllLectures() && !nextLectureItem.isPreview;
+
+    if (isLocked) {
+      alert("You have completed the free preview. Please purchase this course to unlock the remaining lectures.");
+      return;
+    }
+
+    currentLectureIndex = nextIndex;
     saveProgressToBackend();
     loadLecture();
   }
@@ -1079,6 +1192,8 @@ async function initializeCoursePlayer() {
   }
 
   const hasAccess = await checkCourseAccess();
+
+  setupCoursePurchaseButton();
 
   if (!hasAccess) {
     return;

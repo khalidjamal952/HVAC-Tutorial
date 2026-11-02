@@ -714,10 +714,25 @@ router.get("/video/:lectureId", authMiddleware, async (req, res) => {
       "courses.id": lecture.courseId,
     });
 
-    if (!order)
-      return res
-        .status(403)
-        .json({ message: "You have not purchased this course." });
+    // Allow unpaid users to access only the first two preview lectures.
+    if (!order) {
+      const courseLectures = await Lecture.find({
+        courseId: lecture.courseId,
+      })
+        .select("lectureId")
+        .sort({ number: 1 })
+        .lean();
+
+      const lectureIndex = courseLectures.findIndex(
+        (item) => item.lectureId === lecture.lectureId
+      );
+
+      if (lectureIndex === -1 || lectureIndex >= 2) {
+        return res.status(403).json({
+          message: "You have not purchased this course.",
+        });
+      }
+    }
 
     const requestedQuality = String(req.query.quality || "720p");
 
@@ -857,11 +872,19 @@ router.get("/course/:courseId/preview", async (req, res) => {
     const courseId = req.params.courseId;
 
     const lectures = await Lecture.find({ courseId })
-      .select("courseId number title description")
+      .select("lectureId courseId number title description duration thumbnail")
       .sort({ number: 1 })
       .lean();
 
-    return res.status(200).json({ lectures });
+    const previewLectures = lectures.map((lecture, index) => ({
+      ...lecture,
+      isPreview: index < 2,
+    }));
+
+    return res.status(200).json({
+      lectures: previewLectures,
+      previewCount: Math.min(lectures.length, 2),
+    });
   } catch (error) {
     console.error("Course Preview Error:", error);
 
