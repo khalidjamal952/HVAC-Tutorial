@@ -273,7 +273,7 @@ function renderCourses() {
     </div>
 
     <a
-        href="course-details.html?id=${course.id}"
+        href="course-player.html?id=${course.id}"
         class="course-btn"
     >
         View Course
