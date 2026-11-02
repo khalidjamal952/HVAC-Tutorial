@@ -1,4 +1,4 @@
-﻿const express = require("express");
+const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
@@ -476,13 +476,25 @@ router.get(
         document.fileName || "support-document.pdf",
       );
 
+      const mimeType = document.mimeType || "application/octet-stream";
+
+      const inlineMimeTypes = new Set([
+        "application/pdf",
+        "image/jpeg",
+        "image/png",
+        "image/webp",
+        "text/plain"
+      ]);
+
       const disposition =
-        req.query.action === "download" ? "attachment" : "inline";
+        req.query.action === "download" || !inlineMimeTypes.has(mimeType)
+          ? "attachment"
+          : "inline";
 
       const command = new GetObjectCommand({
         Bucket: R2_BUCKET_NAME,
         Key: document.filePath,
-        ResponseContentType: "application/pdf",
+        ResponseContentType: mimeType,
         ResponseContentDisposition:
           `${disposition}; filename="${fileName.replace(/["\\]/g, "_")}"`,
       });

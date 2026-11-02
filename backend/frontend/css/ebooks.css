@@ -935,3 +935,8 @@ body.dark-mode .support-document-name {
   margin-top: 12px;
 }
 
+
+/* FIX: Keep E-Book cards at their own content height */
+.ebooks-grid {
+  align-items: start;
+}

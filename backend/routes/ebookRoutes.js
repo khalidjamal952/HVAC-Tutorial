@@ -45,36 +45,40 @@ const storage = multer.diskStorage({
 // =========================================
 
 const allowedMimeTypes = {
-  ".pdf": ["application/pdf"],
+  ".pdf": ["application/pdf", "application/octet-stream"],
   ".doc": ["application/msword", "application/octet-stream"],
   ".docx": ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/octet-stream"],
   ".ppt": ["application/vnd.ms-powerpoint", "application/octet-stream"],
   ".pptx": ["application/vnd.openxmlformats-officedocument.presentationml.presentation", "application/octet-stream"],
   ".xls": ["application/vnd.ms-excel", "application/octet-stream"],
   ".xlsx": ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/octet-stream"],
+  ".csv": ["text/csv", "application/csv", "application/vnd.ms-excel", "application/octet-stream"],
+  ".txt": ["text/plain", "application/octet-stream"],
+  ".rtf": ["application/rtf", "text/rtf", "application/octet-stream"],
+  ".zip": ["application/zip", "application/x-zip-compressed", "application/octet-stream"],
+  ".rar": ["application/vnd.rar", "application/x-rar-compressed", "application/octet-stream"],
+  ".7z": ["application/x-7z-compressed", "application/octet-stream"],
   ".jpg": ["image/jpeg", "application/octet-stream"],
   ".jpeg": ["image/jpeg", "application/octet-stream"],
   ".png": ["image/png", "application/octet-stream"],
-  ".zip": ["application/zip", "application/x-zip-compressed", "application/octet-stream"],
+  ".webp": ["image/webp", "application/octet-stream"],
   ".dwg": ["application/acad", "application/x-acad", "application/octet-stream"],
   ".dxf": ["application/dxf", "application/x-dxf", "application/octet-stream"],
   ".dwt": ["application/octet-stream", "application/acad"],
-  ".dwf": ["model/vnd.dwf", "application/octet-stream"]
+  ".dwf": ["model/vnd.dwf", "application/octet-stream"],
+  ".odt": ["application/vnd.oasis.opendocument.text", "application/octet-stream"],
+  ".ods": ["application/vnd.oasis.opendocument.spreadsheet", "application/octet-stream"],
+  ".odp": ["application/vnd.oasis.opendocument.presentation", "application/octet-stream"]
 };
 
 const fileFilter = (req, file, cb) => {
   const extension = path.extname(file.originalname).toLowerCase();
   const allowedTypes = allowedMimeTypes[extension];
 
-  if (file.fieldname === "supportDocuments") {
-    if (extension === ".pdf" && file.mimetype === "application/pdf") {
-      return cb(null, true);
-    }
-
-    return cb(new Error("Support documents must be PDF files only."), false);
-  }
-
-  if (file.fieldname !== "pdf") {
+  if (
+    file.fieldname !== "supportDocuments" &&
+    file.fieldname !== "pdf"
+  ) {
     return cb(new Error("Invalid file field."), false);
   }
 
@@ -82,7 +86,10 @@ const fileFilter = (req, file, cb) => {
     return cb(null, true);
   }
 
-  cb(new Error("Unsupported file format. Please upload an allowed document, image, ZIP, or AutoCAD file."), false);
+  return cb(
+    new Error("Unsupported file format. Please upload a supported document, image, ZIP, or AutoCAD file."),
+    false
+  );
 };
 
 // =========================================
@@ -267,11 +274,13 @@ router.post(
       for (const file of supportFiles) {
         const supportExtension = path.extname(file.originalname).toLowerCase();
 
-        if (supportExtension !== ".pdf" || file.mimetype !== "application/pdf") {
-          throw new Error("Support documents must be PDF files only.");
+        if (!allowedMimeTypes[supportExtension] ||
+            !allowedMimeTypes[supportExtension].includes(file.mimetype)) {
+          throw new Error(`Unsupported support document format: ${supportExtension}`);
         }
 
-        const supportKey = `ebooks/support/${Date.now()}-${crypto.randomBytes(8).toString("hex")}.pdf`;
+        const safeExtension = supportExtension || ".bin";
+        const supportKey = `ebooks/support/${Date.now()}-${crypto.randomBytes(8).toString("hex")}${safeExtension}`;
 
         await uploadEbookToR2(file, supportKey);
         uploadedKeys.push(supportKey);
@@ -280,7 +289,7 @@ router.post(
           fileName: path.basename(file.originalname),
           filePath: supportKey,
           relativePath: file.originalname,
-          mimeType: file.mimetype,
+          mimeType: file.mimetype || "application/octet-stream",
           size: file.size,
         });
       }
@@ -382,15 +391,18 @@ router.put(
         ebook.type = extension.replace(".", "").toUpperCase();
       }
 
-      // Append new support PDFs without removing existing documents.
+      // Append new multi-format support documents without removing existing documents.
       for (const file of supportFiles) {
         const extension = path.extname(file.originalname).toLowerCase();
 
-        if (extension !== ".pdf" || file.mimetype !== "application/pdf") {
-          throw new Error("Support documents must be PDF files only.");
+        if (
+          !allowedMimeTypes[extension] ||
+          !allowedMimeTypes[extension].includes(file.mimetype)
+        ) {
+          throw new Error(`Unsupported support document format: ${extension}`);
         }
 
-        const key = `ebooks/support/${Date.now()}-${crypto.randomBytes(8).toString("hex")}.pdf`;
+        const key = `ebooks/support/${Date.now()}-${crypto.randomBytes(8).toString("hex")}${extension}`;
 
         await uploadEbookToR2(file, key);
         uploadedKeys.push(key);
@@ -399,7 +411,7 @@ router.put(
           fileName: path.basename(file.originalname),
           filePath: key,
           relativePath: file.originalname.replace(/\\/g, "/"),
-          mimeType: "application/pdf",
+          mimeType: file.mimetype || "application/octet-stream",
           size: file.size,
         });
       }
@@ -583,18 +595,3 @@ router.get("/admin/:id/preview", adminAuthMiddleware, async (req, res) => {
 });
 
 module.exports = router;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

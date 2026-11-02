@@ -1,4 +1,4 @@
-const API_BASE_URL = "";
+﻿const API_BASE_URL = "";
 
 // =========================================
 // ELEMENTS
@@ -60,23 +60,33 @@ const ebookSupportFileInfo = document.getElementById("ebookSupportFileInfo");
 const ebookSupportFileCount = document.getElementById("ebookSupportFileCount");
 const ebookSupportTotalSize = document.getElementById("ebookSupportTotalSize");
 
-// SUPPORT PDF FOLDER SELECTION
+// SUPPORT MULTI-FORMAT FOLDER SELECTION
+const allowedSupportExtensions = [
+  ".pdf", ".doc", ".docx", ".ppt", ".pptx",
+  ".xls", ".xlsx", ".csv", ".txt", ".rtf",
+  ".zip", ".rar", ".7z",
+  ".jpg", ".jpeg", ".png", ".webp",
+  ".dwg", ".dxf", ".dwt", ".dwf",
+  ".odt", ".ods", ".odp"
+];
+
 if (ebookSupportFiles) {
   ebookSupportFiles.addEventListener("change", function () {
     const selectedFiles = Array.from(this.files || []);
 
-    const pdfFiles = selectedFiles.filter(function (file) {
-      return file.name.toLowerCase().endsWith(".pdf");
+    const validSupportFiles = selectedFiles.filter(function (file) {
+      const extension = file.name.substring(file.name.lastIndexOf(".")).toLowerCase();
+      return allowedSupportExtensions.includes(extension);
     });
 
-    const totalBytes = pdfFiles.reduce(function (total, file) {
+    const totalBytes = validSupportFiles.reduce(function (total, file) {
       return total + file.size;
     }, 0);
 
     const totalMB = (totalBytes / (1024 * 1024)).toFixed(2);
 
     if (ebookSupportFileCount) {
-      ebookSupportFileCount.textContent = `${pdfFiles.length} PDFs selected`;
+      ebookSupportFileCount.textContent = `${validSupportFiles.length} support files selected`;
     }
 
     if (ebookSupportTotalSize) {
@@ -84,15 +94,19 @@ if (ebookSupportFiles) {
     }
 
     if (ebookSupportFileInfo) {
-      ebookSupportFileInfo.style.display = pdfFiles.length ? "block" : "none";
+      ebookSupportFileInfo.style.display = validSupportFiles.length ? "block" : "none";
     }
 
-    if (selectedFiles.length !== pdfFiles.length) {
-      alert("Only PDF files will be included. Non-PDF files will be ignored.");
+    if (selectedFiles.length !== validSupportFiles.length) {
+      alert("Some unsupported files were excluded. Please select supported document formats only.");
     }
 
-    if (selectedFiles.length > 100) {
-      alert("Please select a folder containing no more than 100 files.");
+    if (validSupportFiles.length > 100) {
+      alert("Please select no more than 100 supported support documents.");
+    }
+
+    if (validSupportFiles.some(file => file.size > 300 * 1024 * 1024)) {
+      alert("One or more support files exceed the 300 MB per-file limit.");
     }
   });
 }
@@ -414,20 +428,32 @@ if (ebookForm) {
     const price = ebookPrice.value || 0;
 
     const file = ebookFile.files[0];
-    const selectedSupportFiles = Array.from(
+
+    const allSupportFiles = Array.from(
       ebookSupportFiles?.files || []
-    ).filter((supportFile) =>
-      supportFile.name.toLowerCase().endsWith(".pdf")
     );
 
+    const selectedSupportFiles = allSupportFiles.filter((supportFile) => {
+      const extension = supportFile.name
+        .substring(supportFile.name.lastIndexOf("."))
+        .toLowerCase();
+
+      return allowedSupportExtensions.includes(extension);
+    });
+
+    if (selectedSupportFiles.length !== allSupportFiles.length) {
+      alert("Some files have unsupported formats. Please select supported files only.");
+      return;
+    }
+
     if (selectedSupportFiles.length > 100) {
-      alert("You can upload a maximum of 100 support PDFs.");
+      alert("You can upload a maximum of 100 support documents.");
       return;
     }
 
     for (const supportFile of selectedSupportFiles) {
       if (supportFile.size > 300 * 1024 * 1024) {
-        alert(`Support PDF "${supportFile.name}" exceeds 300 MB.`);
+        alert(`Support file "${supportFile.name}" exceeds 300 MB.`);
         return;
       }
     }
@@ -659,11 +685,3 @@ if (ebookModal) {
 // =========================================
 
 loadEbooks();
-
-
-
-
-
-
-
-
