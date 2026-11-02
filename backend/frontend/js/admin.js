@@ -1849,7 +1849,15 @@ async function renderAdminLectures() {
   const backButton = document.createElement("button");
   backButton.type = "button";
   backButton.className = "lecture-back-btn";
-  backButton.textContent = "â† Back to Courses";
+  backButton.innerHTML = `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round"
+           stroke-linejoin="round" aria-hidden="true">
+        <path d="M19 12H5"></path>
+        <path d="m12 19-7-7 7-7"></path>
+      </svg>
+      <span>Back to Courses</span>
+    `;
 
   backButton.addEventListener("click", () => {
     selectedLectureCourseId = null;
@@ -1863,7 +1871,16 @@ async function renderAdminLectures() {
 
   const heading = document.createElement("h3");
   heading.className = "lecture-folder-heading";
-  heading.textContent = `ðŸ“ ${selectedCourse.title}`;
+  heading.innerHTML = `
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round"
+           stroke-linejoin="round" aria-hidden="true">
+        <path d="M22 10 12 5 2 10l10 5 10-5Z"></path>
+        <path d="M6 12v5c3 2.5 9 2.5 12 0v-5"></path>
+      </svg>
+      <span></span>
+    `;
+    heading.querySelector("span").textContent = selectedCourse.title;
 
   backCell.append(backButton, heading);
   backRow.appendChild(backCell);
@@ -1901,7 +1918,17 @@ async function renderAdminLectures() {
     courseCell.textContent = selectedCourse.title;
 
     const videoCell = document.createElement("td");
-    videoCell.textContent = "ðŸŽ¥ Video";
+    videoCell.innerHTML = `
+        <span class="lecture-video-label">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2" stroke-linecap="round"
+               stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+            <path d="m10 9 5 3-5 3V9Z"></path>
+          </svg>
+          <span>Video</span>
+        </span>
+      `;
 
     const actionsCell = document.createElement("td");
     const actions = document.createElement("div");
