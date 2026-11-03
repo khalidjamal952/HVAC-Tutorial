@@ -28,7 +28,7 @@
 
         <!-- Mobile Menu -->
 
-        <button class="menu-toggle" id="menuToggle" type="button">☰</button>
+        <button class="menu-toggle" id="menuToggle" type="button">â˜°</button>
 
         <!-- Navigation -->
 
@@ -40,11 +40,11 @@
           <a href="live-classes.html"> Live Classes </a>
           <a href="ebooks.html">E-Books</a>
           <button class="theme-toggle" id="themeToggle" type="button">
-            🌙
+            ðŸŒ™
           </button>
 
           <a href="cart.html" class="cart-link">
-            🛒 Cart
+            ðŸ›’ Cart
             <span class="cart-count">0</span>
           </a>
 
@@ -127,7 +127,7 @@
               <div id="videoThumbnailOverlay" class="video-thumbnail-overlay">
                 <img id="videoThumbnailImage" src="" alt="Lecture Thumbnail" />
 
-                <div class="video-thumbnail-play">▶</div>
+                <div class="video-thumbnail-play">â–¶</div>
               </div>
             </div>
 
@@ -145,7 +145,7 @@
                 id="completeLectureBtn"
                 class="complete-btn"
               >
-                ✓ Mark as Completed
+                âœ“ Mark as Completed
               </button>
             </div>
 
@@ -184,7 +184,70 @@
           </aside>
         </section>
 
-        <!-- =========================================
+                <!-- COURSE OVERVIEW -->
+        <section class="course-overview" aria-label="Course overview">
+          <div class="course-overview-grid">
+
+            <article class="course-overview-card">
+              <h2>What You'll Learn</h2>
+              <div id="learningOutcomesList" class="course-overview-list"></div>
+            </article>
+
+            <article class="course-overview-card">
+              <h2>Requirements</h2>
+              <div id="courseRequirementsList" class="course-overview-list"></div>
+            </article>
+
+            <article class="course-overview-card">
+              <h2>Target Audience</h2>
+              <div id="courseAudienceList" class="course-overview-list"></div>
+            </article>
+
+          </div>
+        </section>
+        <!-- COURSE RATING AND STUDENT REVIEWS -->
+        <section class="course-section course-rating-section" id="courseRatingSection">
+          <h2>Rate This Course</h2>
+          <p class="rating-subtitle">Share your experience with this course.</p>
+
+          <div id="ratingFormContainer">
+            <div class="star-rating" id="starRating">
+              <button type="button" class="rating-star" data-rating="1" aria-label="1 star">&#9733;</button>
+              <button type="button" class="rating-star" data-rating="2" aria-label="2 stars">&#9733;</button>
+              <button type="button" class="rating-star" data-rating="3" aria-label="3 stars">&#9733;</button>
+              <button type="button" class="rating-star" data-rating="4" aria-label="4 stars">&#9733;</button>
+              <button type="button" class="rating-star" data-rating="5" aria-label="5 stars">&#9733;</button>
+            </div>
+
+            <p id="selectedRatingText">Select a rating</p>
+
+            <textarea id="ratingReview" class="rating-review"
+              placeholder="Write your review (optional)..." rows="4"></textarea>
+
+            <button type="button" id="submitRatingBtn" class="rating-submit-btn">
+              Submit Rating
+            </button>
+
+            <p class="rating-purchase-note">
+              Only students who have purchased this course can submit a rating.
+            </p>
+          </div>
+
+          <div class="rating-summary">
+            <div class="rating-summary-main">
+              <strong id="averageRating">0.0</strong>
+              <span>/ 5</span>
+            </div>
+            <div class="rating-summary-stars" id="averageRatingStars">&#9734;&#9734;&#9734;&#9734;&#9734;</div>
+            <p>Based on <strong id="totalRatings">0</strong> ratings</p>
+          </div>
+
+          <div class="course-reviews">
+            <h3>Student Reviews</h3>
+            <div id="courseReviewsList"><p>Loading reviews...</p></div>
+          </div>
+        </section>
+<!-- =========================================
                  NAVIGATION BUTTONS
             ========================================== -->
 
@@ -194,13 +257,9 @@
             id="previousLecture"
             class="lecture-nav-btn"
             disabled
-          >
-            ← Previous
-          </button>
+          >&#8592; Previous</button>
 
-          <button type="button" id="nextLecture" class="lecture-nav-btn">
-            Next →
-          </button>
+          <button type="button" id="nextLecture" class="lecture-nav-btn">Next &#8594;</button>
         </section>
       </div>
     </main>
@@ -245,7 +304,7 @@
 
       <div class="footer-bottom">
         <p>
-          © <span id="currentYear"></span>
+          Â© <span id="currentYear"></span>
           HVAC Tutorial. All rights reserved.
         </p>
       </div>

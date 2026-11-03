@@ -39,11 +39,10 @@ async function loadCourses() {
             }
 
             const ratingData = await ratingResponse.json();
-            console.log("Rating API:", course.id, ratingData);
+
             return {
               ...course,
               rating: Number(ratingData.averageRating || 0),
-              totalRatings: Number(ratingData.totalRatings || 0),
             };
           } catch (error) {
             console.error(`Rating Error for ${course.id}:`, error);
@@ -59,71 +58,72 @@ async function loadCourses() {
       allCourses = [];
     }
     // LOAD COUPONS
+
     try {
-      // const token = localStorage.getItem("hvacToken");
+      const token = localStorage.getItem("hvacToken");
 
-      // if (!token) {
-      //   allCourses = allCourses.map(function (course) {
-      //     return {
-      //       ...course,
-      //       coupon: null,
-      //     };
-      //   });
+      if (!token) {
+        allCourses = allCourses.map(function (course) {
+          return {
+            ...course,
+            coupon: null,
+          };
+        });
+      } else {
+        const coursesWithCoupons = [];
 
-      //   renderCourses();
-      //   return;
-      // }
-
-      const coursesWithCoupons = [];
-
-      for (const course of allCourses) {
-        try {
-          const couponResponse = await fetch(
-            `/api/coupons/available/${course.id}`,
-            {
-              credentials: "include",
-            },
-          );
-
-          if (!couponResponse.ok) {
-            console.warn(
-              `Coupon request failed for ${course.id}:`,
-              couponResponse.status,
+        for (const course of allCourses) {
+          try {
+            const couponResponse = await fetch(
+              `/api/coupons/available/${course.id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              },
             );
+
+            if (!couponResponse.ok) {
+              console.warn(
+                `Coupon request failed for ${course.id}:`,
+                couponResponse.status,
+              );
+
+              coursesWithCoupons.push({
+                ...course,
+                coupon: null,
+              });
+
+              continue;
+            }
+
+            const couponData = await couponResponse.json();
+
+            const coupon =
+              Array.isArray(couponData.coupons) && couponData.coupons.length > 0
+                ? couponData.coupons[0]
+                : null;
+
+            coursesWithCoupons.push({
+              ...course,
+              coupon,
+            });
+          } catch (error) {
+            console.error(`Coupon Error for ${course.id}:`, error);
 
             coursesWithCoupons.push({
               ...course,
               coupon: null,
             });
-
-            continue;
           }
-
-          const couponData = await couponResponse.json();
-
-          const coupon =
-            Array.isArray(couponData.coupons) && couponData.coupons.length > 0
-              ? couponData.coupons[0]
-              : null;
-
-          coursesWithCoupons.push({
-            ...course,
-            coupon: coupon,
-          });
-        } catch (error) {
-          console.error(`Coupon Error for ${course.id}:`, error);
-
-          coursesWithCoupons.push({
-            ...course,
-            coupon: null,
-          });
         }
-      }
 
-      allCourses = coursesWithCoupons;
+        allCourses = coursesWithCoupons;
+      }
     } catch (couponError) {
       console.error("Coupon Fetch Error:", couponError);
     }
+
     renderCourses();
   } catch (error) {
     console.error("Courses Backend Error:", error);
@@ -137,6 +137,33 @@ async function loadCourses() {
 // RENDER COURSES
 // =========================
 
+// NORMALIZE COURSE CATEGORIES
+function normalizeCourseCategory(category) {
+  const value = String(category || "").trim().toLowerCase().replace(/\s+/g, " ");
+
+  if (value === "ac" || value.includes("hvac") || value.includes("air conditioning")) return "hvac";
+  if (value.includes("vrf") || value.includes("vrv")) return "vrf-vrv";
+  if (value.includes("refrigeration")) return "refrigeration";
+  if (value.includes("electrical")) return "electrical";
+  if (value.includes("service")) return "service";
+
+  return value;
+}
+
+function getCourseCategoryLabel(category) {
+  const key = normalizeCourseCategory(category);
+
+  if (key === "hvac") return "HVAC Design";
+  if (key === "vrf-vrv") return "VRF/VRV Design";
+  if (key === "refrigeration") return "Refrigeration";
+  if (key === "electrical") return "Electrical";
+  if (key === "service") return "Installation & Service";
+
+  return String(category || "Other")
+    .trim()
+    .replace(/[-_]/g, " ")
+    .replace(/\b\w/g, letter => letter.toUpperCase());
+}
 function renderCourses() {
   if (!coursesGrid) {
     return;
@@ -145,35 +172,18 @@ function renderCourses() {
   coursesGrid.innerHTML = "";
 
   allCourses.forEach(function (course) {
-    let courseIcon = "❄️";
+    const categoryKey = normalizeCourseCategory(course.category);
+    let courseIcon = "&#10052;";
 
-    if (course.category === "refrigeration") {
-      courseIcon = "🧊";
-    } else if (course.category === "electrical") {
-      courseIcon = "⚡";
-    } else if (course.category === "service") {
-      courseIcon = "🛠️";
+    if (categoryKey === "refrigeration") {
+      courseIcon = "&#10052;";
+    } else if (categoryKey === "electrical") {
+      courseIcon = "&#9889;";
+    } else if (categoryKey === "service") {
+      courseIcon = "&#128295;";
     }
 
-    const categoryLabels = {
-      ac: "Air Conditioning",
-      "air-conditioning": "Air Conditioning",
-      refrigeration: "Refrigeration",
-      electrical: "Electrical",
-      service: "Installation & Service",
-      "frontend-project": "Frontend Project",
-    };
-
-    const categoryKey = String(course.category || "")
-      .trim()
-      .toLowerCase();
-
-    const categoryName =
-      categoryLabels[categoryKey] ||
-      categoryKey.replace(/[-_]/g, " ").replace(/\b\w/g, function (letter) {
-        return letter.toUpperCase();
-      }) ||
-      "Uncategorized";
+    const categoryName = getCourseCategoryLabel(course.category);
 
     const card = document.createElement("article");
 
@@ -186,13 +196,12 @@ function renderCourses() {
     ${
       course.thumbnail
         ? `<img
-                    src="${course.thumbnail}"
-                    alt="${course.title}"
-                    class="course-thumbnail"
-               >`
-        : `<div class="course-image-icon">
-                    ${courseIcon}
-               </div>`
+             src="${course.thumbnail}"
+             alt="${course.title}"
+             class="course-thumbnail"
+             onerror="this.style.display='none'"
+           >`
+        : `<div class="course-image-icon">${courseIcon}</div>`
     }
 
     <span class="course-category">
@@ -204,42 +213,32 @@ function renderCourses() {
             <div class="course-content">
 
                 <h2>${course.title}</h2>
-              
-<div class="course-description-wrapper">
-    <p class="course-description">
-        ${course.description || "No description available"}
-    </p>
 
-    ${
-      course.description && course.description.length > 100
-        ? `<button type="button" class="course-read-more-btn">
-                Read More
-              </button>`
-        : ""
-    }
-</div>
-
-
-              <div class="course-meta">
-  ${
-    Number(course.totalRatings) > 0
-      ? `<span>⭐ ${Number(course.rating).toFixed(1)}</span>`
-      : ""
-  }
-
-  <span>
-    👨‍🎓 ${course.students || 0} Students
-  </span>
+                <div class="course-description-wrapper">
+    <p class="course-description">${course.description || ""}</p>
+    ${(course.description || "").length > 120 ? '<button type="button" class="course-read-more-btn" aria-expanded="false">Read More</button>' : ""}
 </div>
 
                 <div class="course-meta">
 
                     <span>
-                        📚 ${course.lessons || 0} Lessons
+                        &#9733; ${Number(course.rating ?? 0).toFixed(1)}
                     </span>
 
                     <span>
-                        ⏱️ ${course.duration || "N/A"}
+                        &#127891; ${course.students || 0} Students
+                    </span>
+
+                </div>
+
+                <div class="course-meta">
+
+                    <span>
+                        &#128218; ${course.lessons || 0} Lessons
+                    </span>
+
+                    <span>
+                        &#9201; ${course.duration || "N/A"}
                     </span>
 
                 </div>
@@ -247,13 +246,13 @@ function renderCourses() {
                            course.coupon
                              ? `
     <div class="course-coupon">
-        🎟️ Coupon Available
+        &#127991; Coupon Available
         <strong>${course.coupon.code}</strong>
         <span>
     Save ${
       course.coupon.discountType === "percentage"
         ? course.coupon.discountValue + "%"
-        : "₹" + course.coupon.discountValue
+        : "&#8377;" + course.coupon.discountValue
     }
 </span>
     </div>
@@ -264,11 +263,11 @@ function renderCourses() {
 
     <div>
         <strong>
-            ₹${course.price}
+            &#8377;${course.price}
         </strong>
 
         <del>
-            ₹${course.originalPrice || ""}
+            &#8377;${course.originalPrice || ""}
         </del>
     </div>
 
@@ -285,12 +284,28 @@ function renderCourses() {
 
     coursesGrid.appendChild(card);
     const readMoreButton = card.querySelector(".course-read-more-btn");
-    const description = card.querySelector(".course-description");
 
-    if (readMoreButton && description) {
+    if (readMoreButton) {
       readMoreButton.addEventListener("click", function () {
-        const expanded = description.classList.toggle("expanded");
-        readMoreButton.textContent = expanded ? "Read Less" : "Read More";
+        const description = card.querySelector(".course-description");
+        const shouldExpand = !description.classList.contains("expanded");
+
+        document.querySelectorAll(".course-description.expanded").forEach(function (openDescription) {
+          openDescription.classList.remove("expanded");
+
+          const openButton = openDescription.parentElement.querySelector(".course-read-more-btn");
+
+          if (openButton) {
+            openButton.textContent = "Read More";
+            openButton.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        if (shouldExpand) {
+          description.classList.add("expanded");
+          readMoreButton.textContent = "Read Less";
+          readMoreButton.setAttribute("aria-expanded", "true");
+        }
       });
     }
   });
@@ -326,7 +341,12 @@ function createDynamicFilters() {
   const categories = [];
 
   allCourses.forEach(function (course) {
-    if (course.category && !categories.includes(course.category)) {
+    if (
+      course.category &&
+      !categories.some(item =>
+        normalizeCourseCategory(item) === normalizeCourseCategory(course.category)
+      )
+    ) {
       categories.push(course.category);
     }
   });
@@ -338,16 +358,12 @@ function createDynamicFilters() {
     button.className = "filter-btn";
     button.dataset.category = category;
 
-    button.textContent = category
-      .replace(/[-_]/g, " ")
-      .replace(/\b\w/g, function (letter) {
-        return letter.toUpperCase();
-      });
+    button.textContent = getCourseCategoryLabel(category);
 
     filterContainer.appendChild(button);
   });
 }
-// const filterButtons = document.querySelectorAll(".filter-btn");
+// Filter buttons are queried dynamically after rendering.
 
 let currentCategory = "all";
 
@@ -381,7 +397,8 @@ function filterCourses() {
       title.includes(searchText) || description.includes(searchText);
 
     const matchesCategory =
-      currentCategory === "all" || category === currentCategory;
+      currentCategory === "all" ||
+      normalizeCourseCategory(category) === normalizeCourseCategory(currentCategory);
 
     if (matchesSearch && matchesCategory) {
       card.style.display = "flex";
@@ -401,9 +418,6 @@ function filterCourses() {
 // =========================
 
 function setupCourseFilters() {
-  // Get the latest buttons after dynamic categories are created
-  const filterButtons = document.querySelectorAll(".course-filter .filter-btn");
-
   if (searchBtn) {
     searchBtn.onclick = function () {
       filterCourses();
@@ -416,26 +430,33 @@ function setupCourseFilters() {
     };
   }
 
+  // Query the newly generated filter buttons every time.
+  const filterContainer = document.querySelector(".course-filter");
+  const filterButtons = filterContainer
+    ? filterContainer.querySelectorAll(".filter-btn")
+    : document.querySelectorAll(".filter-btn");
+
   filterButtons.forEach(function (button) {
     button.onclick = function () {
+      currentCategory = button.dataset.category || "all";
+
       filterButtons.forEach(function (btn) {
-        btn.classList.remove("active");
+        btn.classList.toggle("active", btn === button);
       });
-
-      button.classList.add("active");
-
-      currentCategory = button.dataset.category;
 
       filterCourses();
     };
-  });
 
-  filterButtons.forEach(function (button) {
-    if (button.dataset.category === currentCategory) {
-      button.classList.add("active");
-    } else {
-      button.classList.remove("active");
-    }
+    const isActive =
+      normalizeCourseCategory(button.dataset.category) ===
+      normalizeCourseCategory(currentCategory);
+
+    button.classList.toggle(
+      "active",
+      currentCategory === "all"
+        ? button.dataset.category === "all"
+        : isActive
+    );
   });
 
   filterCourses();

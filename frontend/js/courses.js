@@ -137,6 +137,33 @@ async function loadCourses() {
 // RENDER COURSES
 // =========================
 
+// NORMALIZE COURSE CATEGORIES
+function normalizeCourseCategory(category) {
+  const value = String(category || "").trim().toLowerCase().replace(/\s+/g, " ");
+
+  if (value === "ac" || value.includes("hvac") || value.includes("air conditioning")) return "hvac";
+  if (value.includes("vrf") || value.includes("vrv")) return "vrf-vrv";
+  if (value.includes("refrigeration")) return "refrigeration";
+  if (value.includes("electrical")) return "electrical";
+  if (value.includes("service")) return "service";
+
+  return value;
+}
+
+function getCourseCategoryLabel(category) {
+  const key = normalizeCourseCategory(category);
+
+  if (key === "hvac") return "HVAC Design";
+  if (key === "vrf-vrv") return "VRF/VRV Design";
+  if (key === "refrigeration") return "Refrigeration";
+  if (key === "electrical") return "Electrical";
+  if (key === "service") return "Installation & Service";
+
+  return String(category || "Other")
+    .trim()
+    .replace(/[-_]/g, " ")
+    .replace(/\b\w/g, letter => letter.toUpperCase());
+}
 function renderCourses() {
   if (!coursesGrid) {
     return;
@@ -145,25 +172,18 @@ function renderCourses() {
   coursesGrid.innerHTML = "";
 
   allCourses.forEach(function (course) {
-    let courseIcon = "❄️";
+    const categoryKey = normalizeCourseCategory(course.category);
+    let courseIcon = "&#10052;";
 
-    if (course.category === "refrigeration") {
-      courseIcon = "🧊";
-    } else if (course.category === "electrical") {
-      courseIcon = "⚡";
-    } else if (course.category === "service") {
-      courseIcon = "🛠️";
+    if (categoryKey === "refrigeration") {
+      courseIcon = "&#10052;";
+    } else if (categoryKey === "electrical") {
+      courseIcon = "&#9889;";
+    } else if (categoryKey === "service") {
+      courseIcon = "&#128295;";
     }
 
-    let categoryName = "Air Conditioning";
-
-    if (course.category === "refrigeration") {
-      categoryName = "Refrigeration";
-    } else if (course.category === "electrical") {
-      categoryName = "Electrical";
-    } else if (course.category === "service") {
-      categoryName = "Installation & Service";
-    }
+    const categoryName = getCourseCategoryLabel(course.category);
 
     const card = document.createElement("article");
 
@@ -194,18 +214,19 @@ function renderCourses() {
 
                 <h2>${course.title}</h2>
 
-                <p>
-                    ${course.description}
-                </p>
+                <div class="course-description-wrapper">
+    <p class="course-description">${course.description || ""}</p>
+    ${(course.description || "").length > 120 ? '<button type="button" class="course-read-more-btn" aria-expanded="false">Read More</button>' : ""}
+</div>
 
                 <div class="course-meta">
 
                     <span>
-                        ⭐ ${course.rating || 4.8}
+                        &#9733; ${Number(course.rating ?? 0).toFixed(1)}
                     </span>
 
                     <span>
-                        👨‍🎓 ${course.students || 0} Students
+                        &#127891; ${course.students || 0} Students
                     </span>
 
                 </div>
@@ -213,11 +234,11 @@ function renderCourses() {
                 <div class="course-meta">
 
                     <span>
-                        📚 ${course.lessons || 0} Lessons
+                        &#128218; ${course.lessons || 0} Lessons
                     </span>
 
                     <span>
-                        ⏱️ ${course.duration || "N/A"}
+                        &#9201; ${course.duration || "N/A"}
                     </span>
 
                 </div>
@@ -225,13 +246,13 @@ function renderCourses() {
                            course.coupon
                              ? `
     <div class="course-coupon">
-        🎟️ Coupon Available
+        &#127991; Coupon Available
         <strong>${course.coupon.code}</strong>
         <span>
     Save ${
       course.coupon.discountType === "percentage"
         ? course.coupon.discountValue + "%"
-        : "₹" + course.coupon.discountValue
+        : "&#8377;" + course.coupon.discountValue
     }
 </span>
     </div>
@@ -242,11 +263,11 @@ function renderCourses() {
 
     <div>
         <strong>
-            ₹${course.price}
+            &#8377;${course.price}
         </strong>
 
         <del>
-            ₹${course.originalPrice || ""}
+            &#8377;${course.originalPrice || ""}
         </del>
     </div>
 
@@ -262,6 +283,31 @@ function renderCourses() {
         `;
 
     coursesGrid.appendChild(card);
+    const readMoreButton = card.querySelector(".course-read-more-btn");
+
+    if (readMoreButton) {
+      readMoreButton.addEventListener("click", function () {
+        const description = card.querySelector(".course-description");
+        const shouldExpand = !description.classList.contains("expanded");
+
+        document.querySelectorAll(".course-description.expanded").forEach(function (openDescription) {
+          openDescription.classList.remove("expanded");
+
+          const openButton = openDescription.parentElement.querySelector(".course-read-more-btn");
+
+          if (openButton) {
+            openButton.textContent = "Read More";
+            openButton.setAttribute("aria-expanded", "false");
+          }
+        });
+
+        if (shouldExpand) {
+          description.classList.add("expanded");
+          readMoreButton.textContent = "Read Less";
+          readMoreButton.setAttribute("aria-expanded", "true");
+        }
+      });
+    }
   });
 
   createDynamicFilters();
@@ -295,7 +341,12 @@ function createDynamicFilters() {
   const categories = [];
 
   allCourses.forEach(function (course) {
-    if (course.category && !categories.includes(course.category)) {
+    if (
+      course.category &&
+      !categories.some(item =>
+        normalizeCourseCategory(item) === normalizeCourseCategory(course.category)
+      )
+    ) {
       categories.push(course.category);
     }
   });
@@ -307,16 +358,12 @@ function createDynamicFilters() {
     button.className = "filter-btn";
     button.dataset.category = category;
 
-    button.textContent = category
-      .replace(/[-_]/g, " ")
-      .replace(/\b\w/g, function (letter) {
-        return letter.toUpperCase();
-      });
+    button.textContent = getCourseCategoryLabel(category);
 
     filterContainer.appendChild(button);
   });
 }
-const filterButtons = document.querySelectorAll(".filter-btn");
+// Filter buttons are queried dynamically after rendering.
 
 let currentCategory = "all";
 
@@ -350,7 +397,8 @@ function filterCourses() {
       title.includes(searchText) || description.includes(searchText);
 
     const matchesCategory =
-      currentCategory === "all" || category === currentCategory;
+      currentCategory === "all" ||
+      normalizeCourseCategory(category) === normalizeCourseCategory(currentCategory);
 
     if (matchesSearch && matchesCategory) {
       card.style.display = "flex";
@@ -382,27 +430,35 @@ function setupCourseFilters() {
     };
   }
 
+  // Query the newly generated filter buttons every time.
+  const filterContainer = document.querySelector(".course-filter");
+  const filterButtons = filterContainer
+    ? filterContainer.querySelectorAll(".filter-btn")
+    : document.querySelectorAll(".filter-btn");
+
   filterButtons.forEach(function (button) {
     button.onclick = function () {
+      currentCategory = button.dataset.category || "all";
+
       filterButtons.forEach(function (btn) {
-        btn.classList.remove("active");
+        btn.classList.toggle("active", btn === button);
       });
-
-      button.classList.add("active");
-
-      currentCategory = button.dataset.category;
 
       filterCourses();
     };
+
+    const isActive =
+      normalizeCourseCategory(button.dataset.category) ===
+      normalizeCourseCategory(currentCategory);
+
+    button.classList.toggle(
+      "active",
+      currentCategory === "all"
+        ? button.dataset.category === "all"
+        : isActive
+    );
   });
 
-  filterButtons.forEach(function (button) {
-    if (button.dataset.category === currentCategory) {
-      button.classList.add("active");
-    } else {
-      button.classList.remove("active");
-    }
-  });
   filterCourses();
 }
 

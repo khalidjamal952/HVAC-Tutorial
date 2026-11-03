@@ -382,6 +382,7 @@ async function loadCourseFromBackend() {
 
     // Use MongoDB course data
     course = backendCourse;
+    renderCourseOverview(course);
 
     // Lectures will be loaded separately
     course.lectures = [];
@@ -423,6 +424,54 @@ const completeLectureBtn = document.getElementById("completeLectureBtn");
 const previousLecture = document.getElementById("previousLecture");
 
 const nextLecture = document.getElementById("nextLecture");
+
+// COURSE OVERVIEW RENDERER
+
+const learningOutcomesList = document.getElementById("learningOutcomesList");
+const courseRequirementsList = document.getElementById("courseRequirementsList");
+const courseAudienceList = document.getElementById("courseAudienceList");
+
+function renderCourseOverview(courseData) {
+  const sections = [
+    {
+      element: learningOutcomesList,
+      value: courseData?.outcomes,
+      emptyMessage: "Learning outcomes will be updated soon."
+    },
+    {
+      element: courseRequirementsList,
+      value: courseData?.requirements,
+      emptyMessage: "No specific requirements listed."
+    },
+    {
+      element: courseAudienceList,
+      value: courseData?.audience,
+      emptyMessage: "Target audience information will be updated soon."
+    }
+  ];
+
+  sections.forEach(({ element, value, emptyMessage }) => {
+    if (!element) return;
+
+    element.replaceChildren();
+
+    const points = String(value || "")
+      .split(/\r?\n/)
+      .map(point => point.trim())
+      .filter(Boolean);
+
+    if (points.length === 0) {
+      element.textContent = emptyMessage;
+      return;
+    }
+
+    points.forEach(point => {
+      const item = document.createElement("div");
+      item.textContent = "✓ " + point;
+      element.appendChild(item);
+    });
+  });
+}
 
 // =========================================
 // COURSE INFORMATION
@@ -1077,3 +1126,194 @@ window.addEventListener("pageshow", function () {
     window.location.replace("login.html");
   }
 });
+
+// =========================================
+// COURSE PLAYER RATING SYSTEM
+// =========================================
+
+(function initializeCoursePlayerRatings() {
+  const ratingSection = document.getElementById("courseRatingSection");
+  if (!ratingSection) return;
+
+  let selectedRating = 0;
+
+  const ratingStars = ratingSection.querySelectorAll(".rating-star");
+  const selectedRatingText = document.getElementById("selectedRatingText");
+  const ratingReview = document.getElementById("ratingReview");
+  const submitRatingBtn = document.getElementById("submitRatingBtn");
+  const averageRating = document.getElementById("averageRating");
+  const averageRatingStars = document.getElementById("averageRatingStars");
+  const totalRatings = document.getElementById("totalRatings");
+  const courseReviewsList = document.getElementById("courseReviewsList");
+
+  // SELECT STAR RATING
+  ratingStars.forEach(function (star) {
+    star.addEventListener("click", function () {
+      selectedRating = Number(star.dataset.rating);
+
+      ratingStars.forEach(function (item) {
+        const active = Number(item.dataset.rating) <= selectedRating;
+        item.classList.toggle("active", active);
+        item.setAttribute("aria-pressed", String(active));
+      });
+
+      selectedRatingText.textContent =
+        selectedRating + " out of 5 stars selected";
+    });
+  });
+
+  // LOAD COURSE RATINGS AND REVIEWS
+  async function loadCourseRatings() {
+    try {
+      const response = await fetch(
+        "/api/ratings/" + encodeURIComponent(courseId),
+        { method: "GET" }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Unable to load course ratings.");
+      }
+
+      const average = Number(data.averageRating || 0);
+      const count = Number(data.totalRatings || 0);
+
+      averageRating.textContent = average.toFixed(1);
+      totalRatings.textContent = count;
+
+      const roundedRating = Math.max(0, Math.min(5, Math.round(average)));
+
+      averageRatingStars.textContent =
+        "\u2605".repeat(roundedRating) +
+        "\u2606".repeat(5 - roundedRating);
+
+      courseReviewsList.replaceChildren();
+
+      if (!Array.isArray(data.ratings) || data.ratings.length === 0) {
+        courseReviewsList.textContent = "No reviews yet.";
+        return;
+      }
+
+      data.ratings.forEach(function (item) {
+        const reviewItem = document.createElement("div");
+        reviewItem.className = "course-review-item";
+
+        const reviewHeader = document.createElement("div");
+        reviewHeader.className = "course-review-header";
+
+        const name = document.createElement("strong");
+        name.className = "course-review-name";
+        name.textContent =
+          (item.user && item.user.name) || "Student";
+
+        const stars = document.createElement("span");
+        stars.className = "course-review-stars";
+
+        const rating = Math.max(0, Math.min(5, Number(item.rating) || 0));
+
+        stars.textContent =
+          "\u2605".repeat(rating) +
+          "\u2606".repeat(5 - rating);
+
+        reviewHeader.appendChild(name);
+        reviewHeader.appendChild(stars);
+        reviewItem.appendChild(reviewHeader);
+
+        if (item.review && item.review.trim()) {
+          const reviewText = document.createElement("p");
+          reviewText.className = "course-review-text";
+          reviewText.textContent = item.review;
+          reviewItem.appendChild(reviewText);
+        }
+
+        courseReviewsList.appendChild(reviewItem);
+      });
+
+    } catch (error) {
+      console.error("Course Rating Load Error:", error);
+      courseReviewsList.textContent = "Unable to load student reviews.";
+    }
+  }
+
+  // SUBMIT OR UPDATE COURSE RATING
+  submitRatingBtn.addEventListener("click", async function () {
+    if (!courseId) {
+      alert("Course not found.");
+      return;
+    }
+
+    if (selectedRating === 0) {
+      alert("Please select a rating first.");
+      return;
+    }
+
+    const review = ratingReview.value.trim();
+
+    try {
+      submitRatingBtn.disabled = true;
+      submitRatingBtn.textContent = "Submitting...";
+
+      const response = await fetch(
+        "/api/ratings/" + encodeURIComponent(courseId),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            rating: selectedRating,
+            review: review
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 401) {
+        localStorage.removeItem("hvacToken");
+        localStorage.removeItem("hvacCurrentUser");
+        localStorage.removeItem("hvacRememberMe");
+
+        alert("Your session has expired. Please login again.");
+        window.location.href = "login.html";
+        return;
+      }
+
+      if (response.status === 403) {
+        alert(data.message || "You can rate only courses you have purchased.");
+        return;
+      }
+
+      if (!response.ok) {
+        alert(data.message || "Unable to submit rating.");
+        return;
+      }
+
+      alert("Your rating has been submitted successfully.");
+
+      selectedRating = 0;
+
+      ratingStars.forEach(function (star) {
+        star.classList.remove("active");
+        star.setAttribute("aria-pressed", "false");
+      });
+
+      selectedRatingText.textContent = "Select a rating";
+      ratingReview.value = "";
+
+      await loadCourseRatings();
+
+    } catch (error) {
+      console.error("Submit Rating Error:", error);
+      alert("Unable to submit rating. Please try again.");
+
+    } finally {
+      submitRatingBtn.disabled = false;
+      submitRatingBtn.textContent = "Submit Rating";
+    }
+  });
+
+  loadCourseRatings();
+})();
